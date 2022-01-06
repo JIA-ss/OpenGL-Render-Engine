@@ -2,54 +2,71 @@
 #define _WINDOW_H__
 
 #include "common/headers.h"
+#include <functional>
+#include <vector>
+#include <map>
+#include "basicTypes.h"
 namespace Pipline
 {
-    GLFWwindow* InitWindow(int width, int height, const char* title)
+    class Window;
+    class WindowManager
     {
-        glfwInit();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-            // for MacOS
-        //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-        GLFWwindow* window = glfwCreateWindow(800, 600, "review window", NULL, NULL);
-        if (window == nullptr)
+    private:
+        std::vector<Window*> m_windows;
+        static WindowManager* _instance_;
+    public:
+        static WindowManager* Instance()
         {
-            std::cout << "create failed" << std::endl;
-            glfwTerminate();
-            return window;
+            if (!_instance_)
+            {
+                _instance_ = new WindowManager();
+            }
+            return _instance_;
         }
 
-        glfwMakeContextCurrent(window);
-        glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height)
-        {
-            std::cout << "window resize width:" << width << ", height:" << height << std::endl;
-        });
+        Window* GenerateWindow(int width, int height, const char* title);
+        Window* GetWindow(int id);
+        void DeleteWindow(int id);
+        inline int GetWindowNum() const { return m_windows.size(); }
+        
+    public:
+        void InvokeWindowResizeCallback(GLFWwindow* window, int width, int height);
+    };
 
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        {
-            std::cout << "Failed to initialize GLAD" << std::endl;
-            glViewport(0, 0, width, height);
-            return window;
-        }
 
-        return window;
-    }
 
-    void doUpdate(GLFWwindow* window)
+
+    class Window
     {
-        if (!window)
-        {
-            return;
-        }
+    friend WindowManager;
+    private:
+        GLFWwindow* m_window = nullptr;
+        int m_width;
+        int m_height;
+        int m_id;
+        std::string m_title;
+        Color m_bgColor;
+        std::map<int, std::function<void(int,int)>> m_resizeCallbacks;
+    private:
+        void init();
+        void InvokeResizeCallbacks(GLFWwindow* window, int width, int height);
+    public:
+        Window(int width, int height, const char* title);
+        ~Window();
+    
+    public:
+        void doUpdate();
+        int AddFramebufferSizeCallback(std::function<void(int,int)> func);
+        int DeleteFramebufferSizeCallback(int id);
+        inline void CloseWindow();
+        void SetBgColor(const Color& color) { m_bgColor = color; }
 
-        while(!glfwWindowShouldClose(window))
-        {
-
-        }
-    }
+        inline int getWindowHeight() const { return m_height; }
+        inline int getWindowWidth() const { return m_width; }
+        inline std::string getTitle() const { return m_title; }
+        inline int getWindowID() const { return m_id; }
+        inline GLFWwindow* getGLFWwindow() const { return m_window; }
+    };
 }
 
 #endif

@@ -47,6 +47,7 @@ target_include_directories(OpenGL_Study
     PUBLIC ${GLFW_DIR}/include
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
     PUBLIC ${LIB_DIR}/glm
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_compile_definitions(OpenGL_Study PRIVATE STB_IMAGE_IMPLEMENTATION)
