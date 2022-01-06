@@ -46,10 +46,12 @@ namespace Pipline
         int m_id;
         std::string m_title;
         Color m_bgColor;
-        std::map<int, std::function<void(int,int)>> m_resizeCallbacks;
+        std::vector<std::function<void(int,int)>> m_resizeCallbacks;
+        std::vector<std::function<void()> > m_updateCallbacks;
     private:
         void init();
         void InvokeResizeCallbacks(GLFWwindow* window, int width, int height);
+        void InvokeUpdateCallback();
     public:
         Window(int width, int height, const char* title);
         ~Window();
@@ -57,7 +59,11 @@ namespace Pipline
     public:
         void doUpdate();
         int AddFramebufferSizeCallback(std::function<void(int,int)> func);
-        int DeleteFramebufferSizeCallback(int id);
+        void DeleteFramebufferSizeCallback(int id);
+
+        int AddUpdateCallback(std::function<void()> func);
+        void DeleteUpdateCallback(int id);
+
         inline void CloseWindow();
         void SetBgColor(const Color& color) { m_bgColor = color; }
 

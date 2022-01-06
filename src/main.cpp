@@ -16,6 +16,11 @@ int main()
     });
     window->SetBgColor(Color(0.5,0.5,0.5,0.5));
 
+    window->AddUpdateCallback([]()
+    {
+        std::cout << "update" << std::endl;
+    });
+
     window->doUpdate();
     return 1;
 }

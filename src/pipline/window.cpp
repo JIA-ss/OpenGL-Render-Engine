@@ -86,8 +86,38 @@ using namespace Pipline;
     int Window::AddFramebufferSizeCallback(std::function<void(int,int)> func)
     {
         int id = m_resizeCallbacks.size();
-        m_resizeCallbacks[id] = func;
+        m_resizeCallbacks.push_back(func);
         return id;
+    }
+
+    void Window::DeleteFramebufferSizeCallback(int id)
+    {
+        if (id >= 0 && id < m_resizeCallbacks.size())
+        {
+            m_resizeCallbacks.erase(m_resizeCallbacks.begin() + id);
+        }
+    }
+
+    int Window::AddUpdateCallback(std::function<void()> func)
+    { 
+        m_updateCallbacks.push_back(func); 
+        return m_updateCallbacks.size() - 1; 
+    }
+
+    void Window::DeleteUpdateCallback(int id)
+    {
+        if (id >= 0 && id < m_updateCallbacks.size())
+        {
+            m_updateCallbacks.erase(m_updateCallbacks.begin() + id);
+        }
+    }
+
+    void Window::InvokeUpdateCallback()
+    {
+        for (auto&& func : m_updateCallbacks)
+        {
+            func();
+        }
     }
 
     void Window::InvokeResizeCallbacks(GLFWwindow* window, int width, int height)
@@ -95,9 +125,9 @@ using namespace Pipline;
         if (window != m_window)
             return;
 
-        for(auto&& it : m_resizeCallbacks)
+        for(auto&& func : m_resizeCallbacks)
         {
-            it.second(width, height);
+            func(width, height);
         }
 
         m_width = width;
@@ -110,6 +140,8 @@ using namespace Pipline;
         {
             glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, m_bgColor.a);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            InvokeUpdateCallback();
 
             glfwSwapBuffers(m_window);
             glfwPollEvents();
