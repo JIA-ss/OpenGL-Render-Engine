@@ -2,8 +2,8 @@
 
 using namespace Pipline;
 
-    WindowManager* WindowManager::_instance_ = nullptr;
-    
+    IMPLEMENT_SINGLETON(WindowManager)
+
     Window* WindowManager::GenerateWindow(int width, int height, const char* title)
     {
         Window* window = new Window(width, height, title);

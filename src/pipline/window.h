@@ -11,19 +11,10 @@ namespace Pipline
     class Window;
     class WindowManager
     {
+    DECLARE_SINGLETON(WindowManager)
     private:
         std::vector<Window*> m_windows;
-        static WindowManager* _instance_;
     public:
-        static WindowManager* Instance()
-        {
-            if (!_instance_)
-            {
-                _instance_ = new WindowManager();
-            }
-            return _instance_;
-        }
-
         Window* GenerateWindow(int width, int height, const char* title);
         Window* GetWindow(int id);
         void DeleteWindow(int id);

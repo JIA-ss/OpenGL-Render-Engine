@@ -1,11 +1,9 @@
 #include "pipline/window.h"
+
 using namespace Pipline;
 int main()
 {
-    //return cameraMain();
-    //return HELLOTRIANGLE::helloTriangleRenderLoop();
-    //return Review::reviewMain();
-
+    WindowManager::InitSingleTon();
     Window* window = WindowManager::Instance()->GenerateWindow(800, 600, "test");
     window->AddFramebufferSizeCallback([window](int width, int height)
     {
@@ -16,11 +14,20 @@ int main()
     });
     window->SetBgColor(Color(0.5,0.5,0.5,0.5));
     
-    window->AddUpdateCallback([]()
-    {
-
-    });
     window->AddPreUpdateCallback([]()
+    {
+        std::vector<float> vertices = 
+        {
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.0f,  0.5f, 0.0f
+        };
+        unsigned int VBO;
+        glGenBuffers(1, &VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+    });
+
+    window->AddUpdateCallback([]()
     {
 
     });

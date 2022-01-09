@@ -6,9 +6,12 @@ set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 set(OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/output)
 set(GLAD_DIR ${LIB_DIR}/GLAD)
 set(GLFW_DIR ${LIB_DIR}/GLFW)
+set(LIBUV_PATH ${LIB_DIR}/libuv)
 
 set(ALL_LIBS 
     GLAD
+    uv
+    uv_a
     OpenGL_Study
 )
 
@@ -30,11 +33,13 @@ FILE(
 
 createSrcGroups(MAIN_SRC_FILES)
 
+add_subdirectory(${LIBUV_PATH})
+
 
 add_library(GLAD ${GLAD_DIR}/src/glad.c)
 add_executable(OpenGL_Study ${MAIN_SRC_FILES})
 
-target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib)
+target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib uv uv_a)
 target_link_directories(OpenGL_Study
     PUBLIC ${GLFW_DIR}/lib-vc2019/
 )
@@ -48,6 +53,7 @@ target_include_directories(OpenGL_Study
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
     PUBLIC ${LIB_DIR}/glm
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PUBLIC ${LIBUV_PATH}/include
 )
 
 target_compile_definitions(OpenGL_Study PRIVATE STB_IMAGE_IMPLEMENTATION)
