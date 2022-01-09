@@ -48,23 +48,22 @@ namespace Pipline
         Color m_bgColor;
         std::vector<std::function<void(int,int)>> m_resizeCallbacks;
         std::vector<std::function<void()> > m_updateCallbacks;
+        std::vector<std::function<void()> > m_preUpdateCallbacks;
+        std::vector<std::function<void()> > m_postUpdateCallbacks;
     private:
         void init();
         void InvokeResizeCallbacks(GLFWwindow* window, int width, int height);
         void InvokeUpdateCallback();
+        void InvokePreUpdateCallback();
+        void InvokePostUpdateCallback();
     public:
         Window(int width, int height, const char* title);
-        ~Window();
+        ~Window() { delete m_window; m_window = nullptr; }
     
     public:
         void doUpdate();
-        int AddFramebufferSizeCallback(std::function<void(int,int)> func);
-        void DeleteFramebufferSizeCallback(int id);
+        void Close();
 
-        int AddUpdateCallback(std::function<void()> func);
-        void DeleteUpdateCallback(int id);
-
-        inline void CloseWindow();
         void SetBgColor(const Color& color) { m_bgColor = color; }
 
         inline int getWindowHeight() const { return m_height; }
@@ -72,6 +71,18 @@ namespace Pipline
         inline std::string getTitle() const { return m_title; }
         inline int getWindowID() const { return m_id; }
         inline GLFWwindow* getGLFWwindow() const { return m_window; }
+    public:
+        int AddFramebufferSizeCallback(std::function<void(int,int)> func);
+        void DeleteFramebufferSizeCallback(int id);
+
+        int AddUpdateCallback(std::function<void()> func);
+        void DeleteUpdateCallback(int id);
+
+        int AddPreUpdateCallback(std::function<void()> func);
+        void DeletePreUpdateCallback(int id);
+
+        int AddPostUpdateCallback(std::function<void()> func);
+        void DeletePostUpdateCallback(int id);
     };
 }
 

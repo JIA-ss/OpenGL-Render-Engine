@@ -15,10 +15,18 @@ int main()
         glfwSwapBuffers(window->getGLFWwindow());
     });
     window->SetBgColor(Color(0.5,0.5,0.5,0.5));
-
+    
     window->AddUpdateCallback([]()
     {
-        std::cout << "update" << std::endl;
+
+    });
+    window->AddPreUpdateCallback([]()
+    {
+
+    });
+
+    window->AddPostUpdateCallback([](){
+
     });
 
     window->doUpdate();

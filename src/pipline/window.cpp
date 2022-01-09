@@ -120,6 +120,51 @@ using namespace Pipline;
         }
     }
 
+    int Window::AddPreUpdateCallback(std::function<void()> func)
+    { 
+        m_preUpdateCallbacks.push_back(func); 
+        return m_preUpdateCallbacks.size() - 1; 
+    }
+
+    void Window::DeletePreUpdateCallback(int id)
+    {
+        if (id >= 0 && id < m_preUpdateCallbacks.size())
+        {
+            m_preUpdateCallbacks.erase(m_preUpdateCallbacks.begin() + id);
+        }
+    }
+
+    void Window::InvokePreUpdateCallback()
+    {
+        for (auto&& func : m_preUpdateCallbacks)
+        {
+            func();
+        }
+    }
+
+        int Window::AddPostUpdateCallback(std::function<void()> func)
+    { 
+        m_postUpdateCallbacks.push_back(func); 
+        return m_postUpdateCallbacks.size() - 1; 
+    }
+
+    void Window::DeletePostUpdateCallback(int id)
+    {
+        if (id >= 0 && id < m_postUpdateCallbacks.size())
+        {
+            m_postUpdateCallbacks.erase(m_postUpdateCallbacks.begin() + id);
+        }
+    }
+
+    void Window::InvokePostUpdateCallback()
+    {
+        for (auto&& func : m_postUpdateCallbacks)
+        {
+            func();
+        }
+    }
+    
+
     void Window::InvokeResizeCallbacks(GLFWwindow* window, int width, int height)
     {
         if (window != m_window)
@@ -141,7 +186,9 @@ using namespace Pipline;
             glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, m_bgColor.a);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            InvokePreUpdateCallback();
             InvokeUpdateCallback();
+            InvokePostUpdateCallback();
 
             glfwSwapBuffers(m_window);
             glfwPollEvents();
@@ -150,7 +197,7 @@ using namespace Pipline;
         glfwTerminate();
     }
 
-    void Window::CloseWindow()
+    void Window::Close()
     {
         glfwSetWindowShouldClose(m_window, true);
     }
