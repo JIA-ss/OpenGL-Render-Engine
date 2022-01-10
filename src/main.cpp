@@ -1,10 +1,30 @@
 #include "pipline/window.h"
-
+#include "tools/fileWatcher.h"
+#include <string>
 using namespace Pipline;
 int main()
 {
     WindowManager::InitSingleTon();
+    Util::FileWatcherManager::InitSingleTon();
+    Util::FileWatcher* watcher = Util::FileWatcherManager::Instance()->CreateFileWatcher("F:\\StudyProj\\openGLStudy\\review\\resources", true);
+    watcher->AddCreateFileCallback([](const std::string& path, const std::string& name){
+        std::cout << "CreateFile: " << path << " " << name << std::endl;
+    });
+    watcher->AddDeleteFileCallback([](const std::string& path, const std::string& name){
+        std::cout << "DeleteFile: " << path << " " << name << std::endl;
+    });
+    watcher->AddModifyFileCallback([](const std::string& path, const std::string& name){
+        std::cout << "ModifyFile: " << path << " " << name << std::endl;
+    });
+
+
+
+
     Window* window = WindowManager::Instance()->GenerateWindow(800, 600, "test");
+    window->AddPreUpdateCallback([](){ Util::FileWatcherManager::Instance()->Update(); });
+
+
+
     window->AddFramebufferSizeCallback([window](int width, int height)
     {
         std::cout << "Window Resize:" << width << ", " << height << std::endl;
