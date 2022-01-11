@@ -16,4 +16,5 @@ public:     \
 #define IMPLEMENT_SINGLETON(T)  \
     T* T::_instance_ = nullptr;
 
+#define DEFAULT_RESOURCE_PATH "F:\\StudyProj\\openGLStudy\\review\\resources"
 #endif

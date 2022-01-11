@@ -11,5 +11,5 @@ uniform float percent;
 
 void main()
 {
-     FragColor = mix(texture(texture1, TexCoord), texture(texture2, vec2(1.0 - TexCoord.x, TexCoord.y)), percent);
+     FragColor = mix(texture(texture1, TexCoord), texture(texture2, vec2(1.0 - TexCoord.x, TexCoord.y)), percent); 
 }
