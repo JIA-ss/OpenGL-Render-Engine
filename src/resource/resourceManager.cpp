@@ -32,7 +32,7 @@ void ResourceManager::InitResource(eResourceType type)
         {
             auto path = it.path();
             m_resourceMap[type][path.filename().string()] = Util::readFile(path.string().c_str());
-            std::cout << "ResourceManager::InitResource " << path << std::endl;
+            std::cout << "ResourceManager::InitResource " << path << path.filename() << std::endl;
         }
     }
 
