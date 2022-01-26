@@ -55,7 +55,7 @@ Shader::Shader(const char* vsName, const char* fsName)
     Resource::ShaderRef vRef = Resource::ResourceManager::Instance()->GetResource(vsName, Resource::shader);
     Resource::ShaderRef fRef = Resource::ResourceManager::Instance()->GetResource(fsName, Resource::shader);
 
-    if (vRef == Resource::sResourceRef::invalid)
+    if (vRef.isNull())
     {
         std::string t = "false";
     }

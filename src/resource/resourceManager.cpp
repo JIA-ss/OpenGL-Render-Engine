@@ -20,7 +20,26 @@ std::string ResourceManager::getResourceRootPath(eResourceType type)
 
 void ResourceManager::ImportResource(const char* path, eResourceType type)
 {
+    std::filesystem::path path_(path);
+    std::string filename = path_.filename().string();
+    sResourceRef ref = GetResource(filename.c_str(), type);
+    if (ref.isNull())
+    {
+        ref = ResourceFactory::ImportResourceByType(path, type);
+        m_resourceMap[type][filename] = ref;
+    }
+    else
+    {
+        ref->loadFromPath(path);
+    }
 
+    if (type == shader)
+    {
+        ShaderRef sRef = ref;
+        std::cout << "===" << path << "=== " << "content before" << std::endl;
+        std::cout << sRef->getContent() << std::endl;
+        std::cout << "===" << path << "=== " << "content over" << std::endl;
+    }
 }
 
 void ResourceManager::InitShaderResource()
@@ -34,13 +53,13 @@ void ResourceManager::InitShaderResource()
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<ShaderResource>(path_str.c_str());
         m_resourceMap[shader][it_path.filename().string()] = res;
-        std::cout << "ResourceManager::InitResource " << path << path.filename() << std::endl;
+        std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
     }
 }
 
 void ResourceManager::InitTextureResource()
 {
-    std::filesystem::path path = getResourceRootPath(shader);
+    std::filesystem::path path = getResourceRootPath(texture);
     for (auto it : std::filesystem::directory_iterator(path))
     {
         if (!it.exists())
@@ -48,8 +67,8 @@ void ResourceManager::InitTextureResource()
         std::filesystem::path it_path = it.path();
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<TextureResource>(path_str.c_str());
-        m_resourceMap[shader][it_path.filename().string()] = res;
-        std::cout << "ResourceManager::InitResource " << path << path.filename() << std::endl;
+        m_resourceMap[texture][it_path.filename().string()] = res;
+        std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
     }
 }
 
@@ -63,8 +82,8 @@ void ResourceManager::InitResource(eResourceType type)
         InitShaderResource();
         break;
     case texture:
-        break;
         InitTextureResource();
+        break;
     default:
         break;
     }

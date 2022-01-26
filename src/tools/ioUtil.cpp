@@ -73,8 +73,8 @@ char* Util::readFile_Native(const char* path, size_t& size, bool isText)
     FILE* file = fopen(path, "rb+");
     if (file == nullptr)
     {
-        fclose(file);
-        std::cout << "Read File Failed: " << path << std::endl;
+        //fclose(file);
+        std::cout << "Read File Failed: " << path << strerror(errno) << std::endl;
         size = 0;
         return nullptr;
     }
@@ -91,7 +91,7 @@ char* Util::readFile_Native(const char* path, size_t& size, bool isText)
         return nullptr;
     }
 
-    
+
     char* buf = nullptr;
     if (isText)
         buf = new char[len + 1]();

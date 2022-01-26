@@ -72,10 +72,12 @@ class TextureResource : public BaseResource
 private:
     std::string m_name;
     std::string m_path;
+    int m_width = 0, m_height = 0, m_channels = 0;
 public:
     const std::string& getName() const { return m_name; }
     const std::string& getPath() const { return m_path; }
     virtual void loadFromPath(const char* path) override;
+    ~TextureResource();
 };
 
 class sResourceRef
@@ -87,7 +89,7 @@ protected:
 public:
     static sResourceRef invalid;
 public:
-    inline bool isNull() const { return m_resource == nullptr; }
+    inline bool isNull() const { return m_resource == nullptr || this == &invalid; }
     eResourceType getType() const { return m_type; }
 public:
     sResourceRef(std::shared_ptr<BaseResource> res) { m_resource = res; }
@@ -95,6 +97,7 @@ public:
     sResourceRef(const sResourceRef& other);
     sResourceRef& operator = (const sResourceRef& other);
     inline bool operator == (const sResourceRef& other) { return m_resource == other.m_resource; }
+    inline std::shared_ptr<BaseResource> operator -> () { return ptr(); }
 };
 
 template <class T>
@@ -126,6 +129,8 @@ class ResourceFactory
 private:
     template<class T>
     static tResourceRef<T> ImportResource(const char* path);
+
+    static sResourceRef ImportResourceByType(const char* path, eResourceType type);
 };
 
 //extern template ShaderRef ResourceFactory::ImportResource<ShaderResource>(const char*);

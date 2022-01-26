@@ -29,13 +29,13 @@ void FileWatcher::Update()
 void FileWatcher::FileChangeCallback(uv_fs_event_t* handle, const char* fileName, int events, int status)
 {
     std::filesystem::path p = std::filesystem::absolute(handle->path);
-    std::string path_str = p.string();
-    FileWatcher* watcher = FileWatcherManager::Instance()->GetFileWatcher(path_str.c_str());
+    std::string rootPath = p.string();
+    FileWatcher* watcher = FileWatcherManager::Instance()->GetFileWatcher(rootPath.c_str());
     if (!watcher)
     {
         return;
     }
-    
+    std::string path_str = (p / fileName).string();
     if (events & UV_RENAME)
     {
         if (std::filesystem::exists(p / fileName))
