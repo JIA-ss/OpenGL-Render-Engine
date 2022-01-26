@@ -1,6 +1,6 @@
 #include "fileWatcher.h"
 #include <filesystem>
-
+#include <iostream>
 using namespace Util;
 
 IMPLEMENT_SINGLETON(FileWatcherManager)
@@ -96,6 +96,7 @@ FileWatcher* FileWatcherManager::CreateFileWatcher(const char* path, bool isRecu
     {
         FileWatcher* watcher = new FileWatcher();
         watcher->Init(std::filesystem::absolute(path).string().c_str(), isRecursive);
+        std::cout << "CreateFileWatcher: " << path << std::endl;
         m_watchers[path] = watcher;
         return watcher;
     }

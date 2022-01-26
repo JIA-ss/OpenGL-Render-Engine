@@ -4,6 +4,7 @@
 #include "tools/fileWatcher.h"
 #include "resource/resourceManager.h"
 #include <string>
+#include "test.h"
 using namespace Pipline;
 
 void InitSingleTons()
@@ -79,7 +80,7 @@ int main()
     });
 
 
-
+    test::test();
     window->doUpdate();
     return 1;
 }

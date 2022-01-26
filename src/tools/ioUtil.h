@@ -1,38 +1,24 @@
-#ifndef _IO_UTIL_
-#define _IO_UTIL_
+#pragma once
 
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include <filesystem>
 
 namespace Util
 {
 
-std::string readFile(const char* filePath)
-{
-    std::ifstream istream(filePath, std::ios::binary);
+std::string readFile(const char* filePath);
 
-    if (!istream.is_open())
-    {
-        std::cout << "Util::readFile" << filePath << "Failed" << std::endl;
-        return "";
-    }
+void readFile(const char* path, std::vector<unsigned char>& dst);
 
-    std::string res;
-    res.assign(std::istreambuf_iterator<char>(istream), std::istreambuf_iterator<char>());
-    return res;
-/*
-    //or stringstream
-    std::stringstream fileContent;
-    fileContent << istream.rdbuf();
-    istream.close();
-    res = fileContent.str();
-    return res;
-*/
+void readFile(const char* path, std::vector<char>& dst);
+
+char* readFile_Effective(const char* path);
+
+char* readFile_Native(const char* path, size_t& size, bool isText = true);
+
+bool writeFile_Native(const char* path, const char* src, int sz);
 }
-
-
-}
-
-#endif // _IO_UTIL_

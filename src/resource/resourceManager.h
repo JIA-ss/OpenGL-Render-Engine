@@ -3,19 +3,13 @@
 
 #include "common/def.h"
 #include "tools/fileWatcher.h"
+#include "tools/ioUtil.h"
+#include "resourceBasic.h"
 #include <unordered_map>
 namespace Resource
 {
 
-enum eResourceType
-{
-    ResourceTypeBegin = 0,
-    vertextShader = 1,
-    fragShader = 2,
-    pngTexture = 3,
-    jpgTexture = 4,
-    ResourceTypeEnd = 5
-};
+
 
 class ResourceManager
 {
@@ -23,13 +17,17 @@ class ResourceManager
 public:
     ~ResourceManager();
     void Init();
-    const char* GetResource(const char* name, eResourceType type);
+    void ImportResource(const char* path, eResourceType type);
+    sResourceRef GetResource(const char* name, eResourceType type);
+    void DeleteResource(const char* name, eResourceType type);
 private:
     std::string getResourceRootPath(eResourceType type);
     void InitResource(eResourceType type);
+    void InitShaderResource();
+    void InitTextureResource();
 private:
     std::string m_rootResourcePath;
-    std::unordered_map<eResourceType, std::unordered_map<std::string, std::string>> m_resourceMap;
+    std::unordered_map<eResourceType, std::unordered_map<std::string, sResourceRef>> m_resourceMap;
 };
 
 

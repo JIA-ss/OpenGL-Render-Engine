@@ -1,6 +1,6 @@
 #include "Shader.h"
 #include "resource/resourceManager.h"
-
+#include "resource/resourceBasic.h"
 using namespace Pipline;
 
 
@@ -52,8 +52,16 @@ static unsigned int compileShader(const char* vShaderCode, const char* fShaderCo
 
 Shader::Shader(const char* vsName, const char* fsName)
 {
-    const char* vertexCode = Resource::ResourceManager::Instance()->GetResource(vsName, Resource::vertextShader);
-    const char* fragmentCode = Resource::ResourceManager::Instance()->GetResource(fsName, Resource::fragShader);
+    Resource::ShaderRef vRef = Resource::ResourceManager::Instance()->GetResource(vsName, Resource::shader);
+    Resource::ShaderRef fRef = Resource::ResourceManager::Instance()->GetResource(fsName, Resource::shader);
+
+    if (vRef == Resource::sResourceRef::invalid)
+    {
+        std::string t = "false";
+    }
+
+    const char* vertexCode = vRef->getContent();
+    const char* fragmentCode = fRef->getContent();
     
     //编译着色器
     ID = compileShader(vertexCode, fragmentCode);
