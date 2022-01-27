@@ -4,7 +4,7 @@
 #include "tools/fileWatcher.h"
 #include "resource/resourceManager.h"
 #include <string>
-#include "test.h"
+#include "test/test.h"
 using namespace Pipline;
 
 void InitSingleTons()

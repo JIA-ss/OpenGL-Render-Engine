@@ -55,30 +55,6 @@ public:
     virtual void loadFromPath(const char* path) {}
 };
 
-class ShaderResource : public BaseResource
-{
-private:
-    std::string m_name;
-    std::string m_path;
-public:
-    const std::string& getName() const { return m_name; }
-    const std::string& getPath() const { return m_path; }
-    const char* getContent() const { return (char*)rawData().buffer(); }
-    virtual void loadFromPath(const char* path) override;
-};
-
-class TextureResource : public BaseResource
-{
-private:
-    std::string m_name;
-    std::string m_path;
-    int m_width = 0, m_height = 0, m_channels = 0;
-public:
-    const std::string& getName() const { return m_name; }
-    const std::string& getPath() const { return m_path; }
-    virtual void loadFromPath(const char* path) override;
-    ~TextureResource();
-};
 
 class sResourceRef
 {
@@ -117,10 +93,6 @@ public:
     inline std::shared_ptr<T> get() const { return std::dynamic_pointer_cast<T>(m_resource); }
     inline std::shared_ptr<T> operator -> () { return get(); }
 };
-
-
-typedef tResourceRef<TextureResource> TextureRef;
-typedef tResourceRef<ShaderResource> ShaderRef;
 
 class ResourceManager;
 class ResourceFactory

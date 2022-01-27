@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "resource/resourceManager.h"
 #include "resource/resourceBasic.h"
+#include "resource/types/ShaderResource.h"
 using namespace Pipline;
 
 

@@ -1,5 +1,7 @@
 #include "resourceManager.h"
 #include "tools/fileWatcher.h"
+#include "resource/types/TextureResource.h"
+#include "resource/types/ShaderResource.h"
 #include <filesystem>
 using namespace Resource;
 
