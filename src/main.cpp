@@ -53,6 +53,7 @@ int main()
 
 
     test::drawTriangle(window);
+    test::drawTexture(window);
     window->doUpdate();
     return 1;
 }
