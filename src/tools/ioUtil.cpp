@@ -1,5 +1,6 @@
 #include "ioUtil.h"
-
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 std::string Util::readFile(const char* filePath)
 {
@@ -92,11 +93,11 @@ char* Util::readFile_Native(const char* path, size_t& size, bool isText)
     }
 
 
-    char* buf = nullptr;
+    unsigned char* buf = nullptr;
     if (isText)
-        buf = new char[len + 1]();
+        buf = new unsigned char[len + 1]();
     else
-        buf = new char[len]();
+        buf = new unsigned char[len]();
     
 
     size_t res = fread(buf, 1, len, file);
@@ -115,7 +116,7 @@ char* Util::readFile_Native(const char* path, size_t& size, bool isText)
     }
 
     fclose(file);
-    return buf;
+    return (char*)buf;
 }
 
 bool Util::writeFile_Native(const char* path, const char* src, int sz)
@@ -150,4 +151,25 @@ bool Util::writeFile_Native(const char* path, const char* src, int sz)
     }
     fclose(file);
     return true;
+}
+
+std::filesystem::path Util::getSrcPath()
+{
+    std::filesystem::path curPath = std::filesystem::current_path();
+    return curPath.parent_path();
+}
+
+unsigned char* Util::loadTextureFromFile(const char* path, int* width, int* height, int* channels, int other_param)
+{
+    return stbi_load(path, width, height, channels, other_param);
+}
+
+unsigned char* Util::loadTextureFromMemory(unsigned char* buffer, size_t bufferSize, int*width, int* height, int* channels, int other_param)
+{
+    return stbi_load_from_memory(buffer, bufferSize, width, height, channels, other_param);
+}
+
+void Util::freeTextureBuffer(void* buffer)
+{
+    stbi_image_free(buffer);
 }

@@ -64,11 +64,13 @@ Shader::Shader(const char* vsName, const char* fsName)
     const char* vertexCode = vRef->getContent();
     const char* fragmentCode = fRef->getContent();
     
+    //std::cout << "vertex shader:" << std::endl << vertexCode << std::endl << " frag shader: " << std::endl << fragmentCode << std::endl;
+
     //编译着色器
     ID = compileShader(vertexCode, fragmentCode);
 }
 
-void Shader::use()
+void Shader::use() const
 {
     glUseProgram(ID);
 }

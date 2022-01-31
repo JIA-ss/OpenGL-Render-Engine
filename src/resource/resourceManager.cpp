@@ -12,9 +12,9 @@ std::string ResourceManager::getResourceRootPath(eResourceType type)
     switch (type)
     {
     case shader:
-        return m_rootResourcePath + "\\shaders";
+        return (m_rootResourcePath / "shaders").string();
     case texture:
-        return m_rootResourcePath + "\\textures";
+        return (m_rootResourcePath / "textures").string();
     default:
         assert(false);
     }
@@ -55,7 +55,7 @@ void ResourceManager::InitShaderResource()
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<ShaderResource>(path_str.c_str());
         m_resourceMap[shader][it_path.filename().string()] = res;
-        std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
+        //std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
     }
 }
 
@@ -70,7 +70,7 @@ void ResourceManager::InitTextureResource()
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<TextureResource>(path_str.c_str());
         m_resourceMap[texture][it_path.filename().string()] = res;
-        std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
+        //std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
     }
 }
 
@@ -121,7 +121,13 @@ void ResourceManager::InitResource(eResourceType type)
 
 void ResourceManager::Init()
 {
-    m_rootResourcePath = DEFAULT_RESOURCE_PATH;
+    //m_rootResourcePath = Util::getSrcPath().parent_path() / "resources";
+    m_rootResourcePath = std::filesystem::path("C:\\Users\\62772\\Desktop\\git\\OpenGl_study\\resources");
+    if (!std::filesystem::exists(m_rootResourcePath))
+    {
+        std::cout << "Get Paht of Root Resource Failed: " << m_rootResourcePath << std::endl;
+        return;
+    }
     for (int i = ResourceTypeBegin + 1; i < ResourceTypeEnd; i++)
     {
         InitResource((eResourceType)i);

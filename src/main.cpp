@@ -5,6 +5,8 @@
 #include "resource/resourceManager.h"
 #include <string>
 #include "test/test.h"
+#include "tools/ioUtil.h"
+
 using namespace Pipline;
 
 void InitSingleTons()
@@ -47,40 +49,10 @@ int main()
     InitMgrs();
     Window* window = WindowInit();
 
-    float vertex[] = 
-    {
-        // 位置              // 颜色
-        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
-        0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部
-    };
-
-    unsigned int indices[] = 
-    {
-        0,1,2,
-        1,2,3,
-        0,2,3,
-        0,1,3
-    };
-    Pipline::Shader shader = Pipline::Shader("shader1.vs", "shader2.fs");
-    unsigned int vao = Pipline::GenerateVao(vertex, sizeof(vertex), indices, sizeof(indices));
-
-    window->AddPreUpdateCallback([&shader, &vao]()
-    {
-        shader.use();
-        static float colorValue = 0.0f;
-        float timeValue = glfwGetTime();
-        shader.setFloat("xOffSet", (colorValue + sin(timeValue) / 2.0f + 0.5f)/5.f);
-        
-        colorValue = sin(timeValue) / 2.0f + 0.5f;
-        shader.setVec4("myColor", 0.0f,colorValue, 0.0f, 1.0f);
-
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-    });
 
 
-    test::test();
+
+    test::drawTriangle(window);
     window->doUpdate();
     return 1;
 }

@@ -21,4 +21,16 @@ char* readFile_Effective(const char* path);
 char* readFile_Native(const char* path, size_t& size, bool isText = true);
 
 bool writeFile_Native(const char* path, const char* src, int sz);
+
+std::filesystem::path getSrcPath();
+
+
+unsigned char* loadTextureFromFile(const char* path, int* width, int* height, int* channels, int other_param);
+
+unsigned char* loadTextureFromMemory(unsigned char* buffer, size_t bufferSize, int*width, int* height, int* channels, int other_param);
+
+void freeTextureBuffer(void* buffer);
+
+
+
 }

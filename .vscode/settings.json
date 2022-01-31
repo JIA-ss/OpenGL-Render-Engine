@@ -60,6 +60,7 @@
         "xlocmes": "cpp",
         "xlocmon": "cpp",
         "xloctime": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "xmemory0": "cpp"
     }
 }

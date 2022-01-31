@@ -1,6 +1,5 @@
 #include "TextureResource.h"
 #include "tools/ioUtil.h"
-#include "stb_image.h"
 
 using namespace Resource;
 
@@ -40,12 +39,12 @@ void TextureResource::loadFromPath(const char *path)
         return;
     }
 
-    unsigned char *idata = stbi_load_from_memory(fileContent, size, &m_width, &m_height, &m_channels, 0);
+    unsigned char *idata = Util::loadTextureFromMemory(fileContent, size, &m_width, &m_height, &m_channels, 0);
     delete[] fileContent;
     int imgSize = m_width * m_height * m_channels;
     m_rawData.append(idata, imgSize);
 
-    stbi_image_free(idata);
+    Util::freeTextureBuffer(idata);
     m_isReady = true;
 }
 
