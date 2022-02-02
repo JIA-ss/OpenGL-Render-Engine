@@ -7,4 +7,7 @@ namespace test{
     void drawTriangle(Window* window);
     void drawTexture(Window* window);
     void drawTextureWithBuff(Window* window);
+
+    void drawTwoTexture(Window* window);
+    void drawTwoTextureWithBuff(Window* window);
 }

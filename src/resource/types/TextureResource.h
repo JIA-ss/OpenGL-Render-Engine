@@ -1,6 +1,6 @@
 #pragma once
 #include "resource/resourceBasic.h"
-
+#include "common/headers.h"
 namespace Resource
 {
 
@@ -18,6 +18,7 @@ public:
     inline int getHeight() const { return m_height; }
     inline int getChannels() const { return m_channels; }
     const unsigned char* getTextureData() const { return m_rawData.buffer(); }
+    GLint getFormat() const { return m_channels == 4 ? GL_RGBA : GL_RGB; }
     ~TextureResource();
 };
 

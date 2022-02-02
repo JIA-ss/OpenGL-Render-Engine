@@ -65,6 +65,14 @@ void Texture2DInfo::addAttrib(unsigned int prop, unsigned int value)
     }
 }
 
+void Texture2DInfo::setDefaultAttrib()
+{
+    addAttrib(GL_TEXTURE_WRAP_S, GL_REPEAT);
+    addAttrib(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    addAttrib(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    addAttrib(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
 void Buffer::addVertexData(const Vector3& pos, const Color& color)
 {
     m_vertexPos.emplace_back(pos);
@@ -258,6 +266,7 @@ void Buffer::use() const
     assert(m_isReady);
     for (size_t i = 0; i < m_textures.size(); i++)
     {
+        glActiveTexture(GL_TEXTURE0 + i);
         m_textures[i].use();
     }
 }

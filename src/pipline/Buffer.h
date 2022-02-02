@@ -21,6 +21,7 @@ private:
 public:
     void prepare();
     void use() const;
+    void setDefaultAttrib();
 public:
     Texture2DInfo(const char* name, bool enableMipMap = true) : m_textureName(name), m_enableMipMap(enableMipMap) {}
     Texture2DInfo() = delete;
