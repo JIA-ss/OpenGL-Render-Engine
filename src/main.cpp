@@ -37,7 +37,7 @@ Window* WindowInit()
         glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers(window->getGLFWwindow());
     });
-    window->SetBgColor(Color(0.5,0.5,0.5,0.5));
+    window->SetBgColor(Color{0.5,0.5,0.5,0.5});
 
     return window;
 }
@@ -52,8 +52,8 @@ int main()
 
 
 
-    test::drawTriangle(window);
-    test::drawTexture(window);
+    //test::drawTriangle(window);
+    test::drawTextureWithBuff(window);
     window->doUpdate();
     return 1;
 }

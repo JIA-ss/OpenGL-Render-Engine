@@ -4,6 +4,8 @@
 #include "resource/types/TextureResource.h"
 #include "tools/ioUtil.h"
 #include "pipline/Shader.h"
+#include "pipline/Buffer.h"
+#include "pipline/basicTypes.h"
 
 void test::drawTriangle(Window* window)
 {
@@ -71,6 +73,59 @@ void test::drawTriangle(Window* window)
     });
 }
 
+void test::drawTextureWithBuff(Window* window)
+{
+    std::vector<Vector3> pos = 
+    {
+        {-0.5f, -0.5f, 0.0f},
+        {-0.5f, 0.5f, 0.0f},
+        {0.5f, -0.5f, 0.0f},
+        {0.5f, 0.5f, 0.0f}
+    };
+
+    std::vector<Color> color = 
+    {
+        {0.0f, 1.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f},
+        {1.0f, 0.0f, 0.0f},
+        {0.5f, 0.5f, 0.5f}
+    };
+
+    std::vector<Vector2> uv = 
+    {
+        {0.0f, 0.0f},
+        {0.0f, 1.0f},
+        {1.0f, 0.0f},
+        {1.0f, 1.0f}
+    };
+
+    std::vector<unsigned int> indices = 
+    {
+        0,1,2,
+        1,3,2
+    };
+
+    Pipline::Buffer buffer;
+    buffer.setVertexData(pos, color, uv);
+    buffer.setIndices(indices);
+
+    Pipline::Shader shader = Pipline::Shader("simpleTexture.vs", "simpleTexture.fs");
+
+    Pipline::Texture2DInfo tex("blockes.png");
+    tex.addAttrib(GL_TEXTURE_WRAP_S, GL_REPEAT);
+    tex.addAttrib(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    tex.addAttrib(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    tex.addAttrib(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    buffer.addTexture(tex);
+
+    buffer.prepare();
+    window->AddUpdateCallback([shader, buffer](){
+        buffer.use();
+        shader.use();
+        buffer.draw();
+    });
+}
 
 void test::drawTexture(Window* window)
 {

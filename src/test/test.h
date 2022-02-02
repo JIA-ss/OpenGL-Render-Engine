@@ -6,4 +6,5 @@ using namespace Pipline;
 namespace test{
     void drawTriangle(Window* window);
     void drawTexture(Window* window);
+    void drawTextureWithBuff(Window* window);
 }
