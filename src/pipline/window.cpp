@@ -181,10 +181,18 @@ void Window::InvokeResizeCallbacks(GLFWwindow* window, int width, int height)
 
 void Window::doUpdate()
 {
+    if (m_enableZTest)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+
     while(!glfwWindowShouldClose(m_window))
     {
         glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, m_bgColor.a);
-        glClear(GL_COLOR_BUFFER_BIT);
+        GLbitfield mask = GL_COLOR_BUFFER_BIT;
+        if (m_enableZTest)
+            mask |= GL_DEPTH_BUFFER_BIT;
+        glClear(mask);
 
         InvokePreUpdateCallback();
         InvokeUpdateCallback();

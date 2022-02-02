@@ -42,6 +42,8 @@ namespace Pipline
         std::vector<std::function<void()> > m_preUpdateCallbacks;
         std::vector<std::function<void()> > m_postUpdateCallbacks;
     private:
+        bool m_enableZTest = false;
+    private:
         void init();
         void InvokeResizeCallbacks(GLFWwindow* window, int width, int height);
         void InvokeUpdateCallback();
@@ -62,6 +64,9 @@ namespace Pipline
         inline std::string getTitle() const { return m_title; }
         inline int getWindowID() const { return m_id; }
         inline GLFWwindow* getGLFWwindow() const { return m_window; }
+
+        inline void enableZTest(bool v) { m_enableZTest = v; }
+        inline bool isEnableZTest() const { return m_enableZTest;}
     public:
         int AddFramebufferSizeCallback(std::function<void(int,int)> func);
         void DeleteFramebufferSizeCallback(int id);

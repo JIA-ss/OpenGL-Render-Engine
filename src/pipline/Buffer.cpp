@@ -116,6 +116,29 @@ void Buffer::setVertexData(const std::vector<Vector3>& pos, const std::vector<Co
     m_texCoord = tex;
     m_dirtyFlag = true;
 }
+void Buffer::setVertexPos(float* data, size_t size)
+{
+    if (!data)
+        return;
+    m_vertexPos.resize((size / sizeof(float)) / 3);
+    memcpy(m_vertexPos.data(), data, size);
+}
+
+void Buffer::setVertexColor(float* data, size_t size)
+{
+    if (!data)
+        return;
+    m_vertexColor.resize((size / sizeof(float)) / 3);
+    memcpy(m_vertexColor.data(), data, size);
+}
+
+void Buffer::setTexCoord(float* data, size_t size)
+{
+    if (!data)
+        return;
+    m_texCoord.resize((size/sizeof(float)) / 2);
+    memcpy(m_texCoord.data(), data, size);
+}
 
 size_t Buffer::dataAlignment()
 {
@@ -203,11 +226,11 @@ void Buffer::prepare()
     for (int i = 0; i < m_finalDataSize; i++)
     {
         std::cout << m_finalData[i] << '\t';
-        if ((i+1) % 8 == 0)
+        if ((i+1) % 5 == 0)
             std::cout << std::endl;
     }
 
-    if (m_finalDataSize == 0 || m_indices.empty())
+    if (m_finalDataSize == 0)
     {
         m_isReady = false;
         return;
@@ -217,13 +240,15 @@ void Buffer::prepare()
     glBindVertexArray(m_vao);
 
     glGenBuffers(1, &m_vbo);
-    glGenBuffers(1, &m_ebo);
-
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, m_finalDataSize * sizeof(float), m_finalData.get(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices.size(), m_indices.data(), GL_STATIC_DRAW);
 
+    if (!m_indices.empty())
+    {
+        glGenBuffers(1, &m_ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * m_indices.size(), m_indices.data(), GL_STATIC_DRAW);
+    }
     /*index：第几个属性，从0开始取，0，1，2，顺序自己定义，例如顶点位置，纹理，法线
     这里只有顶点位置，也只能讨论顶点位置，所以为0
     size：一个顶点所有数据的个数，这里每个顶点又两个浮点数属性值，所以是2
@@ -277,11 +302,14 @@ void Buffer::use() const
         glActiveTexture(GL_TEXTURE0 + i);
         m_textures[i].use();
     }
+    glBindVertexArray(m_vao);
 }
 
 void Buffer::draw() const
 {
     assert(m_isReady);
-    glBindVertexArray(m_vao);
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+    if (m_indices.empty())
+        glDrawArrays(GL_TRIANGLES, 0, m_vertexPos.size());
+    else
+        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
 }

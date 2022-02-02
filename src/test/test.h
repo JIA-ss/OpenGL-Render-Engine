@@ -15,4 +15,5 @@ namespace test{
     void transformTest(Window* window);
 
     void _3Dtest(Window* window);
+    void _3DMultiSmile(Window* window);
 }
