@@ -200,12 +200,13 @@ void Buffer::prepare()
 {
     combineVertexData();
 
-    for (int i = 0; i < m_finalDataSize; i++)
-    {
-        std::cout << m_finalData[i] << " ";
-        if ((i+1) % 8 == 0)
-            std::cout << std::endl;
-    }
+    //for (int i = 0; i < m_finalDataSize; i++)
+    //{
+    //    std::cout << m_finalData[i] << '\t';
+    //    if ((i+1) % 8 == 0)
+    //        std::cout << std::endl;
+    //}
+    
     if (m_finalDataSize == 0 || m_indices.empty())
     {
         m_isReady = false;

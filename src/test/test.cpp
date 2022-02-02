@@ -7,6 +7,10 @@
 #include "pipline/Buffer.h"
 #include "pipline/basicTypes.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 void test::drawTriangle(Window* window)
 {
     float vertex[] = 
@@ -207,7 +211,7 @@ void test::drawTexture(Window* window)
     });
 }
 
-void test::drawTwoTextureWithBuff(Window* window)
+Pipline::Shader test::drawTwoTextureWithBuff(Window* window)
 {
     Pipline::Shader ourShader("texture.vs", "texture.fs");
     Pipline::Buffer buffer;
@@ -258,13 +262,21 @@ void test::drawTwoTextureWithBuff(Window* window)
 
     buffer.prepare();
 
-    window->AddUpdateCallback([ourShader, buffer](){
+    window->AddPreUpdateCallback([buffer](){
         buffer.use();
-        ourShader.use();
-        ourShader.setFloat("percent", 0.2);
-        buffer.draw();
     });
 
+    window->AddUpdateCallback([ourShader](){
+        ourShader.use();
+        ourShader.setFloat("percent", 0.2);
+        glm::mat4 transform(1.0f);
+        ourShader.setMat4f("transform", glm::value_ptr(transform));
+    });
+
+    window->AddPostUpdateCallback([buffer](){
+        buffer.draw();
+    });
+    return ourShader;
 }
 
 void test::drawTwoTexture(Window* window)
@@ -376,5 +388,16 @@ void test::drawTwoTexture(Window* window)
         ourShader.setFloat("percent", 0.2);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    });
+}
+
+void test::transformTest(Window* window)
+{
+    Pipline::Shader shader = test::drawTwoTextureWithBuff(window);
+    window->AddUpdateCallback([shader](){
+        glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        shader.setMat4f("transform", glm::value_ptr(transform));
     });
 }

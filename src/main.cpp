@@ -53,7 +53,8 @@ int main()
     //test::drawTriangle(window);
     //test::drawTextureWithBuff(window);
     //test::drawTwoTexture(window);
-    test::drawTwoTextureWithBuff(window);
+    //test::drawTwoTextureWithBuff(window);
+    test::transformTest(window);
     window->doUpdate();
     return 1;
 }

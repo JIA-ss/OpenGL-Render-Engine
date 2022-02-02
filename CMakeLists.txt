@@ -53,6 +53,7 @@ target_link_directories(OpenGL_Study
 target_include_directories(GLAD PUBLIC ${GLAD_DIR}/include)
 
 target_include_directories(OpenGL_Study 
+    PUBLIC ${LIB_DIR}
     PUBLIC ${GLAD_DIR}/include
     PUBLIC ${GLFW_DIR}/include
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
