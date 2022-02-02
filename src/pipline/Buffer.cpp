@@ -37,8 +37,12 @@ void Texture2DInfo::prepare()
         std::cout << "Texture2DInfo::use::Failed! " << m_textureName << std::endl;
         return;
     }
-    GLint imgType = m_texRef->getChannels() == 4 ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, imgType, m_texRef->getWidth(), m_texRef->getHeight(), 0, imgType, GL_UNSIGNED_BYTE, m_texRef->getTextureData());
+    GLint imgType = m_texRef->getFormat();
+    int width = m_texRef->getWidth();
+    int height= m_texRef->getHeight();
+    const ubyte* data = m_texRef->getTextureData();
+
+    glTexImage2D(GL_TEXTURE_2D, 0, imgType, width, height, 0, imgType, GL_UNSIGNED_BYTE, data);
     if (m_enableMipMap)
         glGenerateMipmap(GL_TEXTURE_2D);
 }
@@ -153,11 +157,15 @@ void Buffer::combineVertexData()
     m_dirtyFlag = false;
 
     size_t vertexNum = dataAlignment();
-    size_t newSize = vertexNum * 3;
-    if (!m_vertexColor.empty())
-        newSize += vertexNum * 3;
-    if (!m_texCoord.empty())
-        newSize += vertexNum * 2;
+    size_t newSize = 0;
+    int strid = 3;
+    bool hasColorData = !m_vertexColor.empty();
+    bool hasTexCoordData = !m_texCoord.empty();
+    if (hasColorData)
+        strid += 3;
+    if (hasTexCoordData)
+        strid += 2;
+    newSize = vertexNum * strid;
 
     if (newSize > m_finalDataCapacity)
     {
@@ -165,21 +173,23 @@ void Buffer::combineVertexData()
         m_finalDataCapacity = newSize;
         m_finalData = std::shared_ptr<float[]>(new float[newSize]());
     }
-    size_t curPos = 0;
-    for (size_t i = 0; i < newSize; i++)
+
+    size_t tmpIdx = 0;
+    for (size_t row = 0; row < vertexNum; ++row)
     {
-        float* dataPtr = m_finalData.get();
-        memcpy(dataPtr + curPos, m_vertexPos.data() + i, 3*sizeof(float));
-        curPos += 3;
-        if (!m_vertexColor.empty())
+        for (int i = 0; i < 3; i++)
+            m_finalData[row * strid + i] = m_vertexPos[row][i];
+        tmpIdx = 3;
+        if (hasColorData)
         {
-            memcpy(dataPtr + curPos, m_vertexColor.data() + i, 3*sizeof(float));
-            curPos += 3;
+            for (int i = 0; i < 3; i++)
+                m_finalData[row * strid + i + tmpIdx] = m_vertexColor[row][i];
+            tmpIdx += 3;
         }
-        if (!m_texCoord.empty())
+        if (hasTexCoordData)
         {
-            memcpy(dataPtr + curPos, m_texCoord.data() + i, 2*sizeof(float));
-            curPos += 2;
+            for (int i = 0; i < 2; i++)
+                m_finalData[row * strid + i + tmpIdx] = m_texCoord[row][i];
         }
     }
 
@@ -194,11 +204,8 @@ void Buffer::prepare()
     {
         std::cout << m_finalData[i] << " ";
         if ((i+1) % 8 == 0)
-        {
             std::cout << std::endl;
-        }
     }
-
     if (m_finalDataSize == 0 || m_indices.empty())
     {
         m_isReady = false;

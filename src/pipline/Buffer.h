@@ -25,6 +25,7 @@ public:
 public:
     Texture2DInfo(const char* name, bool enableMipMap = true) : m_textureName(name), m_enableMipMap(enableMipMap) {}
     Texture2DInfo() = delete;
+    ~Texture2DInfo() { }
     void changeTexture(const char* name);
     void addAttrib(unsigned int prop, unsigned int value);
 };
