@@ -13,4 +13,6 @@ namespace test{
     Shader drawTwoTextureWithBuff(Window* window);
 
     void transformTest(Window* window);
+
+    void _3Dtest(Window* window);
 }

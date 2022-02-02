@@ -56,9 +56,10 @@ Shader::Shader(const char* vsName, const char* fsName)
     Resource::ShaderRef vRef = Resource::ResourceManager::Instance()->GetResource(vsName, Resource::shader);
     Resource::ShaderRef fRef = Resource::ResourceManager::Instance()->GetResource(fsName, Resource::shader);
 
-    if (vRef.isNull())
+    if (vRef.isNull() || fRef.isNull())
     {
         std::string t = "false";
+        assert(false);
     }
 
     const char* vertexCode = vRef->getContent();

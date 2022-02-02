@@ -10,6 +10,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/type_precision.hpp>
+
 
 void test::drawTriangle(Window* window)
 {
@@ -399,5 +401,63 @@ void test::transformTest(Window* window)
         transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
         transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
         shader.setMat4f("transform", glm::value_ptr(transform));
+    });
+}
+
+void test::_3Dtest(Window* window)
+{
+    Shader shader("camera.vs", "camera.fs");
+    Buffer buffer;
+    Pipline::Texture2DInfo tex1("blockes.png");
+    Pipline::Texture2DInfo tex2("smile.jpg");
+
+    tex1.setDefaultAttrib();
+    tex2.setDefaultAttrib();
+
+    buffer.setVertexPos({
+        {-0.5f, -0.5f, 0.0f},
+        {-0.5f, 0.5f, 0.0f},
+        {0.5f, -0.5f, 0.0f},
+        {0.5f, 0.5f, 0.0f}
+    });
+
+    buffer.setTexCoord({
+        {0.0f, 0.0f},
+        {0.0f, 1.0f},
+        {1.0f, 0.0f},
+        {1.0f, 1.0f}
+    });
+
+    buffer.setIndices({
+        0,1,2,
+        1,3,2
+    });
+
+    buffer.addTexture(tex1);
+    buffer.addTexture(tex2);
+    
+    buffer.prepare();
+    shader.use();
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
+    window->AddUpdateCallback([shader, buffer, window](){
+        buffer.use();
+        shader.use();
+
+                // create transformations
+        glm::mat4 model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        glm::mat4 view          = glm::mat4(1.0f);
+        glm::mat4 projection    = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        
+        projection = glm::perspective(glm::radians(45.0f), (float)window->getWindowWidth() / (float)window->getWindowHeight(), 0.1f, 100.0f);
+        
+        shader.setMat4f("model", glm::value_ptr(model));
+        shader.setMat4f("view", glm::value_ptr(view));
+        shader.setMat4f("projection", glm::value_ptr(projection));
+
+        buffer.draw();
     });
 }

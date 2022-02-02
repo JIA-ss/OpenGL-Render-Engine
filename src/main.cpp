@@ -54,7 +54,8 @@ int main()
     //test::drawTextureWithBuff(window);
     //test::drawTwoTexture(window);
     //test::drawTwoTextureWithBuff(window);
-    test::transformTest(window);
+    //test::transformTest(window);
+    test::_3Dtest(window);
     window->doUpdate();
     return 1;
 }
