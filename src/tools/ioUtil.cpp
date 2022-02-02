@@ -1,4 +1,14 @@
 #include "ioUtil.h"
+
+#if defined(_MSC_VER)
+    #include <direct.h>
+    #define GetCurrentDir _getcwd
+#elif defined(__unix__)
+    #include <unistd.h>
+    #define GetCurrentDir getcwd
+#else
+#endif
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -155,7 +165,9 @@ bool Util::writeFile_Native(const char* path, const char* src, int sz)
 
 std::filesystem::path Util::getSrcPath()
 {
-    std::filesystem::path curPath = std::filesystem::current_path();
+    char buf[500];
+    GetCurrentDir(buf, 500);
+    std::filesystem::path curPath(buf);
     return curPath.parent_path();
 }
 
