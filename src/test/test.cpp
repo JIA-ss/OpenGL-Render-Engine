@@ -462,6 +462,111 @@ void test::_3Dtest(Window* window)
     });
 }
 
+void test::_3DtestMuiltiCube(Window* window)
+{
+    Shader shader("3DMultiCube.vs", "3DMultiCube.fs");
+    Buffer buffer;
+    Pipline::Texture2DInfo tex1("blockes.png");
+    Pipline::Texture2DInfo tex2("smile.jpg");
+
+    tex1.setDefaultAttrib();
+    tex2.setDefaultAttrib();
+
+    buffer.setVertexPos({
+        {-0.5f, -0.5f, 0.0f},
+        {-0.5f, 0.5f, 0.0f},
+        {0.5f, -0.5f, 0.0f},
+        {0.5f, 0.5f, 0.0f},
+
+        {-0.5f, -0.5f, -1.0f},
+        {-0.5f, 0.5f, -1.0f},
+        {0.5f, -0.5f, -1.0f},
+        {0.5f, 0.5f, -1.0f},
+    });
+
+    buffer.setTexCoord({
+        {0.0f, 0.0f},
+        {0.0f, 1.0f},
+        {1.0f, 0.0f},
+        {1.0f, 1.0f},
+
+        {0.0f, 0.0f},
+        {0.0f, 1.0f},
+        {1.0f, 0.0f},
+        {1.0f, 1.0f}
+    });
+
+    buffer.setIndices({
+        0,1,2,
+        1,3,2,
+
+        0,1,4,
+        1,4,5,
+
+        2,3,6,
+        3,6,7,
+
+        1,3,5,
+        3,5,7,
+
+        0,2,4,
+        2,4,6,
+
+        4,5,6,
+        5,7,6
+    });
+
+    buffer.addTexture(tex1);
+    buffer.addTexture(tex2);
+
+    buffer.prepare();
+    shader.use();
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
+            // create transformations
+    glm::mat4 model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    glm::mat4 view          = glm::mat4(1.0f);
+    glm::mat4 projection    = glm::mat4(1.0f);
+    glm::mat4 transform     = glm::mat4(1.0f);
+    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    projection = glm::perspective(glm::radians(45.f), (float)window->getWindowWidth() / (float)window->getWindowHeight(), 0.1f, 100.0f);
+    transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
+    //transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    shader.setMat4f("model", glm::value_ptr(model));
+    shader.setMat4f("view", glm::value_ptr(view));
+    shader.setMat4f("projection", glm::value_ptr(projection));
+    shader.setMat4f("transform", glm::value_ptr(transform));
+
+    window->enableZTest(true);
+    window->AddUpdateCallback([shader, buffer](){
+        glm::vec3 cubePositions[] = {
+            glm::vec3( 0.0f,  0.0f,  0.0f),
+            glm::vec3( 2.0f,  5.0f, -15.0f),
+            glm::vec3(-1.5f, -2.2f, -2.5f),
+            glm::vec3(-3.8f, -2.0f, -12.3f),
+            glm::vec3( 2.4f, -0.4f, -3.5f),
+            glm::vec3(-1.7f,  3.0f, -7.5f),
+            glm::vec3( 1.3f, -2.0f, -2.5f),
+            glm::vec3( 1.5f,  2.0f, -2.5f),
+            glm::vec3( 1.5f,  0.2f, -1.5f),
+            glm::vec3(-1.3f,  1.0f, -1.5f)
+        };
+        buffer.use();
+        shader.use();
+        for (int i = 0; i < 5; i++)
+        {   
+            glm::mat4 transform     = glm::mat4(1.0f);
+            transform = glm::translate(transform, cubePositions[i]);
+            //transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+            shader.setMat4f("transform", glm::value_ptr(transform));
+            buffer.draw();
+        }
+    });
+}
+
 void test::_3DMultiSmile(Window* window)
 {
     Shader shader("3D.vs", "3D.fs");
@@ -580,18 +685,201 @@ void test::_3DMultiSmile(Window* window)
     shader.setInt("texture1", 0);
     shader.setInt("texture2", 1);
 
+    glm::mat4 view          = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    glm::mat4 projection    = glm::mat4(1.0f);
+    projection = glm::perspective(glm::radians(45.0f), (float)window->getWindowWidth() / (float)window->getWindowHeight(), 0.1f, 100.0f);
+    view       = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    // pass transformation matrices to the shader
+    shader.setMat4f("projection", glm::value_ptr(projection)); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+    shader.setMat4f("view", glm::value_ptr(view));
+
+
     window->enableZTest(true);
 
     window->AddUpdateCallback([shader, buffer, window, cubePositions](){
         buffer.use();
         shader.use();
-        glm::mat4 view          = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        glm::mat4 projection    = glm::mat4(1.0f);
-        projection = glm::perspective(glm::radians(45.0f), (float)window->getWindowWidth() / (float)window->getWindowHeight(), 0.1f, 100.0f);
-        view       = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        // pass transformation matrices to the shader
-        shader.setMat4f("projection", glm::value_ptr(projection)); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+
+        glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        float radius = 10.0f;
+        float camX = static_cast<float>(sin(glfwGetTime()) * radius);
+        float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
+        view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shader.setMat4f("view", glm::value_ptr(view));
+
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            // calculate the model matrix for each object and pass it to shader before drawing
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            shader.setMat4f("model", glm::value_ptr(model));
+            buffer.draw();
+        }
+    });
+}
+
+void test::camera(Window* window)
+{
+    Shader shader("3D.vs", "3D.fs");
+    Buffer buffer;
+    Texture2DInfo tex1("blockes.png");
+    Texture2DInfo tex2("smile.jpg");
+    tex1.setDefaultAttrib();
+    tex2.setDefaultAttrib();
+    
+    buffer.addTexture(tex1);
+    buffer.addTexture(tex2);
+
+    float pos[] = {
+        -0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+        -0.5f,  0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+
+        -0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+
+        -0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+
+        -0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f, -0.5f  
+    };
+
+    float uv[] = 
+    {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f
+    };
+
+    // world space positions of our cubes
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
+    buffer.setVertexPos(pos, sizeof(pos));
+    buffer.setTexCoord(uv, sizeof(uv));
+
+    buffer.prepare();
+    shader.use();
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
+    Camera& cam = window->getCamera();
+    cam.setFov(45.f);
+    cam.setCameraPos(Vector3{0.0f, 0.0f, -1.0f});
+    // pass transformation matrices to the shader
+    shader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4())); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+    shader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+
+    cam.setSensitive(0.2f);
+
+    window->enableZTest(true);
+
+    window->AddPreUpdateCallback([window]()
+    {
+        Camera& cam = window->getCamera();
+        glm::vec3 cameraPos = cam.getCameraPos();
+        glm::vec3 cameraFront = cam.getCameraFront();
+        glm::vec3 cameraUp = DEFAULT_CAMERA_UP;
+        float cameraSpeed = cam.getSensitive();
+        if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_W) == GLFW_PRESS)
+            cameraPos += cameraSpeed * cameraFront;
+        if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_S) == GLFW_PRESS)
+            cameraPos -= cameraSpeed * cameraFront;
+        if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_A) == GLFW_PRESS)
+            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_D) == GLFW_PRESS)
+            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        
+        glm::vec3 oriPos = cam.getCameraPos();
+        if (oriPos != cameraPos)
+            cam.setCameraPos(cameraPos);
+    });
+
+    window->AddUpdateCallback([shader, buffer, window, cubePositions](){
+        buffer.use();
+        shader.use();
+
+        Camera cam = window->getCamera();
+
+        // pass transformation matrices to the shader
+        shader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4())); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+        shader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+
 
         for (unsigned int i = 0; i < 10; i++)
         {

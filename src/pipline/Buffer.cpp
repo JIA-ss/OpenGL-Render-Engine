@@ -223,12 +223,12 @@ void Buffer::prepare()
 {
     combineVertexData();
 
-    for (int i = 0; i < m_finalDataSize; i++)
-    {
-        std::cout << m_finalData[i] << '\t';
-        if ((i+1) % 5 == 0)
-            std::cout << std::endl;
-    }
+    //for (int i = 0; i < m_finalDataSize; i++)
+    //{
+    //    std::cout << m_finalData[i] << '\t';
+    //    if ((i+1) % 5 == 0)
+    //        std::cout << std::endl;
+    //}
 
     if (m_finalDataSize == 0)
     {
@@ -305,11 +305,17 @@ void Buffer::use() const
     glBindVertexArray(m_vao);
 }
 
-void Buffer::draw() const
+void Buffer::draw(unsigned int start, unsigned int num) const
 {
     assert(m_isReady);
     if (m_indices.empty())
-        glDrawArrays(GL_TRIANGLES, 0, m_vertexPos.size());
+    {
+        num = num == 0 ? m_vertexPos.size() : num;
+        glDrawArrays(GL_TRIANGLES, start, num);
+    }
     else
-        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+    {
+        num = num == 0 ? m_indices.size() : num;
+        glDrawElements(GL_TRIANGLES, num, GL_UNSIGNED_INT, 0);
+    }
 }

@@ -77,7 +77,7 @@ public:
 public:
     void prepare();
     void use() const;
-    void draw() const;
+    void draw(unsigned int start = 0, unsigned int num = 0) const;
     inline bool isReady() const { return m_isReady; }
 public:
     void setIndices(unsigned int* data, size_t data_size);

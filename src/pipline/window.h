@@ -6,9 +6,11 @@
 #include <vector>
 #include <map>
 #include "basicTypes.h"
+#include "pipline/Camera.h"
 namespace Pipline
 {
     class Window;
+    class Camera;
     class WindowManager
     {
     DECLARE_SINGLETON(WindowManager)
@@ -23,7 +25,6 @@ namespace Pipline
     public:
         void InvokeWindowResizeCallback(GLFWwindow* window, int width, int height);
     };
-
 
 
 
@@ -43,6 +44,8 @@ namespace Pipline
         std::vector<std::function<void()> > m_postUpdateCallbacks;
     private:
         bool m_enableZTest = false;
+    private:
+        Camera m_camera;
     private:
         void init();
         void InvokeResizeCallbacks(GLFWwindow* window, int width, int height);
@@ -79,6 +82,8 @@ namespace Pipline
 
         int AddPostUpdateCallback(std::function<void()> func);
         void DeletePostUpdateCallback(int id);
+    public:
+        Camera& getCamera() { return m_camera; }
     };
 }
 

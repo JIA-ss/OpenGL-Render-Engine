@@ -56,7 +56,10 @@ int main()
     //test::drawTwoTextureWithBuff(window);
     //test::transformTest(window);
     //test::_3Dtest(window);
-    test::_3DMultiSmile(window);
+    //test::_3DMultiSmile(window);
+    //test::_3DtestMuiltiCube(window);
+
+    test::camera(window);
     window->doUpdate();
     return 1;
 }

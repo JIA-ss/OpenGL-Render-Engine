@@ -46,6 +46,7 @@ Window::Window(int width, int height, const char* title)
     m_height = height;
     m_title = title;
     m_bgColor = Color{0,0,0,0};
+    m_camera.setWindow(this);
     init();
 }
 
