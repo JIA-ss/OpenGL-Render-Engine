@@ -27,7 +27,7 @@ void Camera::updateViewMat4()
 
     m_front = glm::normalize(front);
 
-    std::cout << m_cameraPos.x << " " << m_cameraPos.y << " " << m_cameraPos.z << std::endl;
+    //std::cout << m_cameraPos.x << " " << m_cameraPos.y << " " << m_cameraPos.z << std::endl;
     m_viewMat4 = glm::lookAt(m_cameraPos, m_cameraPos + m_front, m_up);
 }
 

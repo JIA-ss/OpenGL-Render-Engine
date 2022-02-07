@@ -864,6 +864,15 @@ void test::camera(Window* window)
             cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_D) == GLFW_PRESS)
             cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_Q) == GLFW_PRESS)
+            cam.addYaw(1.f);
+        if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_E) == GLFW_PRESS)
+            cam.addYaw(-1.f);
+        if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_SPACE) == GLFW_PRESS)
+            cam.addPitch(1.f);
+        if (glfwGetKey(window->getGLFWwindow(), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+            cam.addPitch(-1.f);
+        
         
         glm::vec3 oriPos = cam.getCameraPos();
         if (oriPos != cameraPos)
@@ -874,7 +883,7 @@ void test::camera(Window* window)
         buffer.use();
         shader.use();
 
-        Camera cam = window->getCamera();
+        Camera& cam = window->getCamera();
 
         // pass transformation matrices to the shader
         shader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4())); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
