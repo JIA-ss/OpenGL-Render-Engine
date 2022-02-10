@@ -122,6 +122,7 @@ void Buffer::setVertexPos(float* data, size_t size)
         return;
     m_vertexPos.resize((size / sizeof(float)) / 3);
     memcpy(m_vertexPos.data(), data, size);
+    m_dirtyFlag = true;
 }
 
 void Buffer::setVertexColor(float* data, size_t size)
@@ -130,6 +131,7 @@ void Buffer::setVertexColor(float* data, size_t size)
         return;
     m_vertexColor.resize((size / sizeof(float)) / 3);
     memcpy(m_vertexColor.data(), data, size);
+    m_dirtyFlag = true;
 }
 
 void Buffer::setTexCoord(float* data, size_t size)
@@ -138,6 +140,7 @@ void Buffer::setTexCoord(float* data, size_t size)
         return;
     m_texCoord.resize((size/sizeof(float)) / 2);
     memcpy(m_texCoord.data(), data, size);
+    m_dirtyFlag = true;
 }
 
 size_t Buffer::dataAlignment()

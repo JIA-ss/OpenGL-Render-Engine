@@ -63,3 +63,61 @@ void Camera::pitchFilter()
     else if (m_pitch < m_pitchMin)
         m_pitch = m_pitchMin;
 }
+
+void CameraControl::initKeys()
+{
+    m_dirToKeys.resize(dir::End);
+    addKeyAction(dir::MoveForward, GLFW_KEY_W, GLFW_PRESS);
+    addKeyAction(dir::MoveBackward, GLFW_KEY_S, GLFW_PRESS);
+    addKeyAction(dir::MoveDown, GLFW_KEY_LEFT_CONTROL, GLFW_PRESS);
+    addKeyAction(dir::MoveUp, GLFW_KEY_SPACE, GLFW_PRESS);
+    addKeyAction(dir::MoveLeft, GLFW_KEY_A, GLFW_PRESS);
+    addKeyAction(dir::MoveRight, GLFW_KEY_D, GLFW_PRESS);
+
+    addKeyAction(dir::TurnDown, GLFW_KEY_DOWN, GLFW_PRESS);
+    addKeyAction(dir::TurnUp, GLFW_KEY_UP, GLFW_PRESS);
+    addKeyAction(dir::TurnLeft, GLFW_KEY_LEFT, GLFW_PRESS);
+    addKeyAction(dir::TurnRight, GLFW_KEY_RIGHT, GLFW_PRESS);
+}
+
+bool CameraControl::isTriggered(dir dir) const
+{
+    for (auto it : m_dirToKeys[dir])
+    {
+        if (glfwGetKey(m_cam->getWindow().getGLFWwindow(), it.first) == it.second)
+            return true;
+    }
+
+    return false;
+}
+
+void CameraControl::processActions() const
+{
+    if (!m_enable)
+        return;
+
+    glm::vec3 cameraPos = m_cam->getCameraPos();
+    glm::vec3 cameraFront = m_cam->getCameraFront();
+    glm::vec3 cameraUp = m_cam->getCameraUp();
+    float cameraSpeed = m_cam->getSensitive();
+    if (isTriggered(dir::MoveForward))
+        cameraPos += cameraSpeed * cameraFront;
+    if (isTriggered(dir::MoveBackward))
+        cameraPos -= cameraSpeed * cameraFront;
+    if (isTriggered(dir::MoveLeft))
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (isTriggered(dir::MoveRight))
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (isTriggered(dir::TurnRight))
+        m_cam->addYaw(1.f);
+    if (isTriggered(dir::TurnLeft))
+        m_cam->addYaw(-1.f);
+    if (isTriggered(dir::TurnUp))
+        m_cam->addPitch(1.f);
+    if (isTriggered(dir::TurnDown))
+        m_cam->addPitch(-1.f);
+
+    glm::vec3 oriPos = m_cam->getCameraPos();
+    if (oriPos != cameraPos)
+        m_cam->setCameraPos(cameraPos);
+}

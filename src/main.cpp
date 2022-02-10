@@ -59,7 +59,9 @@ int main()
     //test::_3DMultiSmile(window);
     //test::_3DtestMuiltiCube(window);
 
-    test::camera(window);
+    //test::camera(window);
+    //test::cameraControl(window);
+    test::color(window);
     window->doUpdate();
     return 1;
 }

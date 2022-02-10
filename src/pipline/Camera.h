@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include <unordered_map>
 namespace Pipline
 {
 
@@ -15,11 +15,54 @@ const float     DEFAULT_NEAR_DIS      = 0.1f;
 const float     DEFAULT_FAR_DIS       = 100.f;
 const float     DEFAULT_CAMERA_DIS    = 3.0f;
 
+
+
+class CameraControl
+{
+    friend class Camera;
+public:
+    enum dir
+    {
+        MoveForward = 0,
+        MoveBackward = 1,
+        MoveLeft = 2,
+        MoveRight = 3,
+        MoveUp = 4,
+        MoveDown = 5,
+
+        TurnUp = 6,
+        TurnDown = 7,
+        TurnLeft = 8,
+        TurnRight = 9,
+
+        End = 10,
+    };
+private:
+    std::vector<std::unordered_map<int, int>> m_dirToKeys;
+    bool m_enable = false;
+    Camera* m_cam;
+private:
+    void initKeys();
+    bool isTriggered(dir dir) const;
+public:
+    inline void addKeyAction(dir dir, int glfw_key, int glfw_key_state) { m_dirToKeys[dir][glfw_key] = glfw_key_state; }
+    void processActions() const;
+    inline void enableControl(bool v) { m_enable = v; }
+    inline bool isEnable() const { return m_enable; }
+    inline void setCamera(Camera* cam) { m_cam = cam; }
+
+public:
+    CameraControl() { initKeys(); }
+    ~CameraControl() { }
+};
+
+
 class Window;
 class Camera
 {
 private:
     Window* m_window        = nullptr;
+    CameraControl m_control;
     glm::vec3 m_cameraPos   = DEFAULT_CAMERA_POS;
     glm::vec3 m_up          = DEFAULT_CAMERA_UP;
     glm::vec3 m_front       = DEFAULT_CAMERA_FRONT;
@@ -41,6 +84,11 @@ private:
     void updateProjectionMat4();
     void updateViewMat4();
 public:
+    void enableControl(bool v) { m_control.enableControl(v); if (v) m_control.setCamera(this); }
+    bool isControlEnable() const { return m_control.isEnable(); }
+
+    void processControl() { m_control.processActions(); }
+
     inline Pipline::Window& getWindow() const { return *m_window; }
     inline void setWindow(Window* window) { m_window = window; }
 
@@ -49,11 +97,14 @@ public:
 
     inline void setCameraPos(const glm::vec3& pos) { m_cameraPos = pos; m_ViwMatChanged = true; }
     inline void setCameraPos(const Vector3& pos) { m_cameraPos = glm::vec3(pos.x, pos.y, pos.z); m_ViwMatChanged = true; }
-    inline glm::vec3 getCameraPos() const { return m_cameraPos; }/*  */
+    inline glm::vec3 getCameraPos() const { return m_cameraPos; }
 
-    inline void setCameraFront(const glm::vec3& pos) { m_front = pos; }
-    inline void setCameraFront(const Vector3& pos) { m_front = glm::vec3(pos.x, pos.y, pos.z); }
+    inline void setCameraFront(const glm::vec3& pos) { m_front = pos; m_ViwMatChanged = true; }
+    inline void setCameraFront(const Vector3& pos) { m_front = glm::vec3(pos.x, pos.y, pos.z); m_ViwMatChanged = true; }
     inline glm::vec3 getCameraFront() const { return m_front; }
+
+    inline void setCameraUp(const glm::vec3& pos) { m_up = pos; }
+    inline glm::vec3 getCameraUp() const { return m_up; }
 
     inline float getCameraDistance() const { return m_cameraDistance; }
     inline void setCameraDistance(float dis) { m_cameraDistance = dis; m_ViwMatChanged = true; }
@@ -100,6 +151,5 @@ public:
     Camera(Window* window) : m_window(window) { }
     inline bool isValid() const { m_window != nullptr; }
 };
-
 
 }

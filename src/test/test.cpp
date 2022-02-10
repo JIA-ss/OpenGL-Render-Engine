@@ -902,3 +902,248 @@ void test::camera(Window* window)
         }
     });
 }
+
+void test::cameraControl(Window* window)
+{
+    Shader shader("3D.vs", "3D.fs");
+    Buffer buffer;
+    Texture2DInfo tex1("blockes.png");
+    Texture2DInfo tex2("smile.jpg");
+    tex1.setDefaultAttrib();
+    tex2.setDefaultAttrib();
+    
+    buffer.addTexture(tex1);
+    buffer.addTexture(tex2);
+
+    float pos[] = {
+        -0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+        -0.5f,  0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+
+        -0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+
+        -0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+
+        -0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f, -0.5f  
+    };
+
+    float uv[] = 
+    {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f
+    };
+
+    // world space positions of our cubes
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
+    buffer.setVertexPos(pos, sizeof(pos));
+    buffer.setTexCoord(uv, sizeof(uv));
+
+    buffer.prepare();
+    shader.use();
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
+    Camera& cam = window->getCamera();
+    cam.setFov(45.f);
+    cam.setCameraPos(Vector3{0.0f, 0.0f, -1.0f});
+    // pass transformation matrices to the shader
+    shader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4())); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+    shader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+
+    cam.setSensitive(0.2f);
+
+    window->enableZTest(true);
+    cam.enableControl(true);
+
+    window->AddUpdateCallback([shader, buffer, window, cubePositions](){
+        buffer.use();
+        shader.use();
+
+        Camera& cam = window->getCamera();
+
+        // pass transformation matrices to the shader
+        shader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4())); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+        shader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+
+
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            // calculate the model matrix for each object and pass it to shader before drawing
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            shader.setMat4f("model", glm::value_ptr(model));
+            buffer.draw();
+        }
+    });
+}
+
+void test::color(Window* window)
+{
+    float pos[] = {
+        -0.5f, -0.5f, -0.5f, 
+         0.5f, -0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+        -0.5f,  0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+
+        -0.5f, -0.5f,  0.5f, 
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f, -0.5f,  0.5f, 
+
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f,  0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f,  0.5f, 
+        -0.5f,  0.5f,  0.5f, 
+
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+
+        -0.5f, -0.5f, -0.5f, 
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+
+        -0.5f,  0.5f, -0.5f, 
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f,  0.5f, -0.5f, 
+    };
+    Buffer cubeBuffer, lightBuffer;
+    Shader cubeShader("color.vs", "color.fs");
+    Shader lightShader("color.vs", "color_light.fs");
+    cubeBuffer.setVertexPos(pos, sizeof(pos));
+    lightBuffer.setVertexPos(pos, sizeof(pos));
+    cubeShader.use();
+    cubeShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+    cubeShader.setVec3("lightColor",  1.0f, 1.0f, 1.0f);
+
+    window->enableZTest(true);
+    Camera& cam = window->getCamera();
+    cam.enableControl(true);
+    cam.setSensitive(0.05f);
+    cam.setCameraPos(Vector3{1.2f, 1.0f, 2.2f });
+
+    lightBuffer.prepare();
+    cubeBuffer.prepare();
+
+    window->AddUpdateCallback([cubeBuffer, lightBuffer, cubeShader, lightShader, window]()
+    {
+        Camera& cam = window->getCamera();
+        glm::vec3 lightPos(1.2f, 1.0f, -2.0f);
+
+        lightBuffer.use();
+        lightShader.use();
+        lightShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
+        lightShader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+        lightShader.setMat4f("model", glm::value_ptr(model));
+
+        lightBuffer.draw();
+
+        cubeBuffer.use();
+        cubeShader.use();
+
+        cubeShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
+        cubeShader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+        model = glm::mat4(1.0f);
+        lightShader.setMat4f("model", glm::value_ptr(model));
+        cubeBuffer.draw();
+    });
+
+}

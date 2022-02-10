@@ -194,6 +194,8 @@ void Window::doUpdate()
         if (m_enableZTest)
             mask |= GL_DEPTH_BUFFER_BIT;
         glClear(mask);
+        
+        m_camera.processControl();
 
         InvokePreUpdateCallback();
         InvokeUpdateCallback();

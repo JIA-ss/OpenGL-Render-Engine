@@ -19,4 +19,7 @@ namespace test{
     void _3DMultiSmile(Window* window);
 
     void camera(Window* window);
+    void cameraControl(Window* window);
+
+    void color(Window* window);
 }
