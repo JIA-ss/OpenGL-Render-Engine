@@ -6,7 +6,7 @@
 #include <string>
 #include "test/test.h"
 #include "tools/ioUtil.h"
-
+#include "input/InputManager.h"
 using namespace Pipline;
 
 void InitSingleTons()
@@ -39,6 +39,7 @@ Window* WindowInit()
     });
 
     window->SetBgColor(Color{0.5,0.5,0.5,0.5});
+    WindowManager::Instance()->SetValidWindow(window);
     return window;
 }
 

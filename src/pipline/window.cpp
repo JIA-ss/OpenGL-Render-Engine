@@ -1,5 +1,5 @@
 #include "window.h"
-
+#include "input/InputManager.h"
 using namespace Pipline;
 
 IMPLEMENT_SINGLETON(WindowManager)
@@ -18,6 +18,15 @@ void WindowManager::InvokeWindowResizeCallback(GLFWwindow* window, int width, in
     for (Window* _window : m_windows)
     {
         _window->InvokeResizeCallbacks(window,width,height);
+    }
+}
+
+
+void WindowManager::RecordScrollInfo(GLFWwindow* glfwWindow, double xOffset, double yOffset)
+{
+    for (Window* window : m_windows)
+    {
+        window->getInputMgr()->scroll_callback(glfwWindow, xOffset, yOffset);
     }
 }
 
@@ -52,6 +61,9 @@ Window::Window(int width, int height, const char* title)
 
 void Window::init()
 {
+    m_inputMgr = new InputManager();
+    m_inputMgr->setWindow(this);
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -74,6 +86,10 @@ void Window::init()
     {
         WindowManager::Instance()->InvokeWindowResizeCallback(window, width, height);
         glViewport(0,0,width, height);
+    });
+
+    glfwSetScrollCallback(m_window, [](GLFWwindow* window, double v1, double v2){
+        WindowManager::Instance()->RecordScrollInfo(window, v1, v2);
     });
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -180,6 +196,7 @@ void Window::InvokeResizeCallbacks(GLFWwindow* window, int width, int height)
     m_height = height;
 }
 
+
 void Window::doUpdate()
 {
     if (m_enableZTest)
@@ -195,6 +212,7 @@ void Window::doUpdate()
             mask |= GL_DEPTH_BUFFER_BIT;
         glClear(mask);
         
+        m_inputMgr->update();
         m_camera.processControl();
 
         InvokePreUpdateCallback();
@@ -211,4 +229,22 @@ void Window::doUpdate()
 void Window::Close()
 {
     glfwSetWindowShouldClose(m_window, true);
+}
+
+void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    if (window != getGLFWwindow())
+        return;
+    static bool firstFrame = true;
+    Vector2 scrollValue{xoffset, yoffset};
+    if (firstFrame)
+    {
+        firstFrame = false;
+        m_lastFrameScrollValue = scrollValue;
+        m_curFrameScrollValue = scrollValue;
+        return;
+    }
+
+    m_lastFrameScrollValue = m_curFrameScrollValue;
+    m_curFrameScrollValue = scrollValue;
 }

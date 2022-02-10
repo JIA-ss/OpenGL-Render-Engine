@@ -7,6 +7,7 @@
 #include <map>
 #include "basicTypes.h"
 #include "pipline/Camera.h"
+
 namespace Pipline
 {
     class Window;
@@ -16,18 +17,21 @@ namespace Pipline
     DECLARE_SINGLETON(WindowManager)
     private:
         std::vector<Window*> m_windows;
+        Window* m_curValidWindow = nullptr;
     public:
         Window* GenerateWindow(int width, int height, const char* title);
         Window* GetWindow(int id);
         void DeleteWindow(int id);
         inline int GetWindowNum() const { return m_windows.size(); }
-        
+        Window* GetCurWindow() const { return m_curValidWindow; }
+        inline void SetValidWindow(Window* window) { m_curValidWindow = window; }
     public:
         void InvokeWindowResizeCallback(GLFWwindow* window, int width, int height);
+        void RecordScrollInfo(GLFWwindow* window, double xOffset, double yOffset);
     };
 
 
-
+    class InputManager;
     class Window
     {
     friend WindowManager;
@@ -38,10 +42,15 @@ namespace Pipline
         int m_id;
         std::string m_title;
         Color m_bgColor;
+        Vector2 m_lastFrameMousePos;
+        Vector2 m_curFrameMousePos;
+        Vector2 m_lastFrameScrollValue;
+        Vector2 m_curFrameScrollValue;
         std::vector<std::function<void(int,int)>> m_resizeCallbacks;
         std::vector<std::function<void()> > m_updateCallbacks;
         std::vector<std::function<void()> > m_preUpdateCallbacks;
         std::vector<std::function<void()> > m_postUpdateCallbacks;
+        InputManager* m_inputMgr;
     private:
         bool m_enableZTest = false;
     private:
@@ -83,8 +92,16 @@ namespace Pipline
         int AddPostUpdateCallback(std::function<void()> func);
         void DeletePostUpdateCallback(int id);
     public:
-        Camera& getCamera() { return m_camera; }
+        inline Camera& getCamera() { return m_camera; }
+        InputManager* getInputMgr() { return m_inputMgr; };
+        inline Vector2 getCurMousePos() const { return m_curFrameMousePos; }
+        inline Vector2 getPreMousePos() const { return m_lastFrameMousePos; }
+        inline Vector2 getCurScrollValue() const { return m_curFrameScrollValue; }
+        inline Vector2 getPreScrollValue() const { return m_lastFrameScrollValue; }
+    private:
+        void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+        void mouse_callback(GLFWwindow* window, double xpos, double ypos);
     };
-}
+};
 
 #endif

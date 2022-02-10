@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <unordered_map>
+#include <functional>
 namespace Pipline
 {
 
@@ -21,7 +22,7 @@ class CameraControl
 {
     friend class Camera;
 public:
-    enum dir
+    enum CameraActions
     {
         MoveForward = 0,
         MoveBackward = 1,
@@ -35,24 +36,42 @@ public:
         TurnLeft = 8,
         TurnRight = 9,
 
-        End = 10,
+        ZoomIn = 10,
+        ZoomOut = 11,
+
+        End = 12,
     };
 private:
-    std::vector<std::unordered_map<int, int>> m_dirToKeys;
+    std::vector<std::unordered_map<int, int>> m_actionToKeys;
+    std::vector<std::function<void(float)>> m_actionToResposes;
     bool m_enable = false;
+    bool m_mouseEnable = true;
     Camera* m_cam;
 private:
     void initKeys();
-    bool isTriggered(dir dir) const;
+    void initResponses();
+    bool isTriggered(CameraActions dir) const;
+    void resolveResponse(CameraActions dir, float value = 0.0f) const;
+    void processMouseActions() const;
+private:
+    void moveFrontOrBack(float targetSensitive = 0.0f, bool isFront = true);
+    void moveUpOrDown(float targetSensitive = 0.0f, bool isUp = true);
+    void moveLeftOrRight(float targetSensitive = 0.0f, bool isLeft = true);
+
+    void turnUpOrDown(float targetSensitive = 0.0f, bool isUp = true);
+    void turnLeftOrRight(float targetSensitive = 0.0f, bool isLeft = true);
+
+    void zoomInOrOut(float targetSensitive = 0.0f, bool isZoomIn = true);
 public:
-    inline void addKeyAction(dir dir, int glfw_key, int glfw_key_state) { m_dirToKeys[dir][glfw_key] = glfw_key_state; }
+    inline void addKeyAction(CameraActions dir, int glfw_key, int glfw_key_state) { m_actionToKeys[dir][glfw_key] = glfw_key_state; }
     void processActions() const;
     inline void enableControl(bool v) { m_enable = v; }
     inline bool isEnable() const { return m_enable; }
     inline void setCamera(Camera* cam) { m_cam = cam; }
+    inline Camera* getCamera() const { return m_cam; }
 
 public:
-    CameraControl() { initKeys(); }
+    CameraControl() { initKeys();initResponses(); }
     ~CameraControl() { }
 };
 
@@ -94,8 +113,13 @@ public:
     inline void setSensitive(float v) { m_sensitive = v; m_ViwMatChanged = true; }
     inline float getSensitive() const { return m_sensitive; }
 
-    inline void setCameraPos(const glm::vec3& pos) { m_cameraPos = pos; m_ViwMatChanged = true; }
-    inline void setCameraPos(const Vector3& pos) { m_cameraPos = glm::vec3(pos.x, pos.y, pos.z); m_ViwMatChanged = true; }
+    inline void setCameraPos(const glm::vec3& pos) 
+    { 
+        if (m_cameraPos == pos) return; 
+        m_cameraPos = pos; 
+        m_ViwMatChanged = true; 
+    }
+    inline void setCameraPos(const Vector3& pos) { setCameraPos(glm::vec3(pos.x, pos.y, pos.z)); }
     inline glm::vec3 getCameraPos() const { return m_cameraPos; }
 
     inline void setCameraFront(const glm::vec3& pos) { m_front = pos; m_ViwMatChanged = true; }
@@ -115,7 +139,7 @@ public:
 
     inline void addYaw(float yaw) { m_yaw += yaw * m_sensitive; yawFilter(); }
     inline void addPitch(float pitch) { m_pitch += pitch * m_sensitive; pitchFilter(); }
-
+    inline void addFov(float offset) { m_fov += offset * m_sensitive; fovFilter(); }
 public:
     inline float getFov() const { return m_fov; }
     inline void setFov(float fov) { m_fov = fov; fovFilter(); }
@@ -128,8 +152,8 @@ public:
     inline glm::vec3 getCameraRight() const { return glm::normalize(glm::cross(m_up, -m_front)); }
     inline glm::vec3 getCameraFinalUp() const { return glm::cross(getCameraDirection(), getCameraRight()); }
 private:
-    float m_fovMax = 0.0f;
-    float m_fovMin = 0.0f;
+    float m_fovMax = 50.0f;
+    float m_fovMin = 10.0f;
     
     float m_yawMax = 0.0f;
     float m_yawMin = 0.0f;
