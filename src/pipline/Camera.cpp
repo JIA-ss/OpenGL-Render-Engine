@@ -21,14 +21,17 @@ void Camera::updateViewMat4()
     m_ViwMatChanged = false;
 
     glm::vec3 front;
-    front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+    //front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+    //front.y = sin(glm::radians(m_pitch));
+    //front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+    front.x = sin(glm::radians(-m_yaw)) * cos(glm::radians(m_pitch));
     front.y = sin(glm::radians(m_pitch));
-    front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+    front.z = -cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
 
     m_front = glm::normalize(front);
 
     //std::cout << m_cameraPos.x << " " << m_cameraPos.y << " " << m_cameraPos.z << std::endl;
-    m_viewMat4 = glm::lookAt(m_cameraPos, m_cameraPos + m_front, m_up);
+    m_viewMat4 = glm::lookAt(m_cameraPos, m_cameraPos + m_front, getCameraFinalUp());
 }
 
 void Camera::fovFilter()
@@ -109,13 +112,13 @@ void CameraControl::processActions() const
     if (isTriggered(dir::MoveRight))
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
     if (isTriggered(dir::TurnRight))
-        m_cam->addYaw(1.f);
+        m_cam->addYaw(-10.f);
     if (isTriggered(dir::TurnLeft))
-        m_cam->addYaw(-1.f);
+        m_cam->addYaw(10.f);
     if (isTriggered(dir::TurnUp))
-        m_cam->addPitch(1.f);
+        m_cam->addPitch(10.f);
     if (isTriggered(dir::TurnDown))
-        m_cam->addPitch(-1.f);
+        m_cam->addPitch(-10.f);
 
     glm::vec3 oriPos = m_cam->getCameraPos();
     if (oriPos != cameraPos)

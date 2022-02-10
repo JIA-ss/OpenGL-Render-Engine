@@ -1114,8 +1114,9 @@ void test::color(Window* window)
     window->enableZTest(true);
     Camera& cam = window->getCamera();
     cam.enableControl(true);
-    cam.setSensitive(0.05f);
-    cam.setCameraPos(Vector3{1.2f, 1.0f, 2.2f });
+    cam.setSensitive(0.5f);
+    //cam.setCameraFront(Vector3{0,0,-5});
+    cam.setCameraPos(Vector3{1.2f, 1.0f, 2.f });
 
     lightBuffer.prepare();
     cubeBuffer.prepare();
@@ -1124,6 +1125,16 @@ void test::color(Window* window)
     {
         Camera& cam = window->getCamera();
         glm::vec3 lightPos(1.2f, 1.0f, -2.0f);
+
+        //cam.setCameraFront(lightPos - cam.getCameraPos());
+        static glm::vec3 camPos = glm::vec3(0,0,0);
+        if (camPos != cam.getCameraPos())
+        {
+            camPos = cam.getCameraPos();
+            glm::vec3 ft = cam.getCameraFront();
+            std::cout << "camPos: " << camPos.x << '\t' << camPos.y << '\t' << camPos.z << '\t';
+            std::cout << "camFront: " << ft.x << '\t' << ft.y << '\t' << ft.z << std::endl;
+        }
 
         lightBuffer.use();
         lightShader.use();

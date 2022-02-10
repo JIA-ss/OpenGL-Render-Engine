@@ -86,7 +86,6 @@ private:
 public:
     void enableControl(bool v) { m_control.enableControl(v); if (v) m_control.setCamera(this); }
     bool isControlEnable() const { return m_control.isEnable(); }
-
     void processControl() { m_control.processActions(); }
 
     inline Pipline::Window& getWindow() const { return *m_window; }
@@ -125,6 +124,9 @@ public:
     inline float getFarDistance() const { return m_farDistance; }
     inline void setFarDistance(float dis) { m_farDistance = dis; m_ProjectionMatChanged = true; }
 
+    inline glm::vec3 getCameraDirection() const { return glm::normalize(-m_front);}
+    inline glm::vec3 getCameraRight() const { return glm::normalize(glm::cross(m_up, -m_front)); }
+    inline glm::vec3 getCameraFinalUp() const { return glm::cross(getCameraDirection(), getCameraRight()); }
 private:
     float m_fovMax = 0.0f;
     float m_fovMin = 0.0f;
@@ -147,7 +149,7 @@ public:
     glm::mat4 getViewMat4() { updateViewMat4(); return m_viewMat4; }
 public:
 
-    Camera() = default;
+    Camera() { m_up = glm::cross(getCameraDirection(), getCameraRight()); };
     Camera(Window* window) : m_window(window) { }
     inline bool isValid() const { m_window != nullptr; }
 };
