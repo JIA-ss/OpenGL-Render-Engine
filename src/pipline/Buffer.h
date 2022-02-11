@@ -43,6 +43,7 @@ private:
     bool m_dirtyFlag = false;
     std::vector<Vector3> m_vertexPos;
     std::vector<Color> m_vertexColor;
+    std::vector<Vector3> m_vertexNormal;
     std::vector<Vector2> m_texCoord;
     std::vector<unsigned int> m_indices;
 private:
@@ -53,6 +54,11 @@ public:
     inline void setVertexPos(const std::vector<Vector3>& data) { m_vertexPos = data; m_dirtyFlag = true; }
     inline void setVertexPos(std::vector<Vector3>&& data) { m_vertexPos = std::move(data); m_dirtyFlag = true; }
     inline void addVertexPos(const Vector3& data) { m_vertexPos.emplace_back(data); m_dirtyFlag = true; }
+
+    void setVertexNormal(float* data, size_t data_size);
+    inline void setVertexNormal(const std::vector<Vector3>& data) { m_vertexNormal = data; m_dirtyFlag = true; }
+    inline void setVertexNormal(std::vector<Vector3>&& data) { m_vertexNormal = std::move(data); m_dirtyFlag = true; }
+    inline void addVertexNormal(const Vector3& data) { m_vertexNormal.emplace_back(data); m_dirtyFlag = true; }
 
     void setVertexColor(float* data, size_t data_size);
     inline void setVertexColor(const std::vector<Color>& data) { m_vertexColor = data; m_dirtyFlag = true;}

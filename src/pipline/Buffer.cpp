@@ -125,6 +125,14 @@ void Buffer::setVertexPos(float* data, size_t size)
     m_dirtyFlag = true;
 }
 
+void Buffer::setVertexNormal(float* data, size_t size)
+{
+    if (!data)  return;
+    m_vertexNormal.resize((size/sizeof(float)) / 3);
+    memcpy(m_vertexNormal.data(), data, size);
+    m_dirtyFlag = true;
+}
+
 void Buffer::setVertexColor(float* data, size_t size)
 {
     if (!data)
@@ -146,9 +154,11 @@ void Buffer::setTexCoord(float* data, size_t size)
 size_t Buffer::dataAlignment()
 {
     size_t posNum = m_vertexPos.size();
+    assert(posNum != 0);
+
+    size_t normalNum = m_vertexNormal.size();
     size_t colNum = m_vertexColor.size();
     size_t texCoordNum = m_texCoord.size();
-
 
     if (posNum == 0)
     {
@@ -158,9 +168,11 @@ size_t Buffer::dataAlignment()
     }
 
     size_t colJudge = colNum == 0 ? texCoordNum : colNum;
-    size_t texJudge = texCoordNum == 0 ? colNum : texCoordNum;
+    size_t texJudge = texCoordNum == 0 ? colJudge : texCoordNum;
+    size_t norMalJudge = normalNum == 0 ? texJudge : normalNum;
 
     size_t v1 = colJudge < texJudge ? colJudge : texJudge;
+    v1 = v1 < norMalJudge ? v1 : norMalJudge;
     size_t validSize = v1 < posNum ? v1 : posNum;
 
     if (validSize == 0)
@@ -174,6 +186,9 @@ size_t Buffer::dataAlignment()
         m_vertexColor.erase(m_vertexColor.begin() + validSize, m_vertexColor.end());
     if (texCoordNum > validSize)
         m_texCoord.erase(m_texCoord.begin() + validSize, m_texCoord.end());
+    if (normalNum > validSize)
+        m_vertexNormal.erase(m_vertexNormal.begin() + validSize, m_vertexNormal.end());
+
     return validSize;
 }
 void Buffer::combineVertexData()
@@ -187,10 +202,13 @@ void Buffer::combineVertexData()
     int strid = 3;
     bool hasColorData = !m_vertexColor.empty();
     bool hasTexCoordData = !m_texCoord.empty();
+    bool hasNormalData = !m_vertexNormal.empty();
     if (hasColorData)
         strid += 3;
     if (hasTexCoordData)
         strid += 2;
+    if (hasNormalData)
+        strid += 3;
     newSize = vertexNum * strid;
 
     if (newSize > m_finalDataCapacity)
@@ -216,6 +234,13 @@ void Buffer::combineVertexData()
         {
             for (int i = 0; i < 2; i++)
                 m_finalData[row * strid + i + tmpIdx] = m_texCoord[row][i];
+            tmpIdx += 2;
+        }
+        if (hasNormalData)
+        {
+            for (int i = 0; i < 3; i++)
+                m_finalData[row * strid + i + tmpIdx] = m_vertexNormal[row][i];
+            tmpIdx += 3;
         }
     }
 
@@ -265,26 +290,42 @@ void Buffer::prepare()
     int strid = 3;
     bool hasColorAttrib = !m_vertexColor.empty();
     bool hasTexCoordAttrib = !m_texCoord.empty();
+    bool hasNormalAttrib = !m_vertexNormal.empty();
     if (hasColorAttrib)
         strid += 3;
     if (hasTexCoordAttrib)
         strid += 2;
+    if (hasNormalAttrib)
+        strid += 3;
+    
+    int idx = 0;
     //位置属性
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, strid * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, strid * sizeof(float), (void*)idx);
     glEnableVertexAttribArray(attribIndex++);
+    idx += 3;
 
     if (hasColorAttrib)
     {
         //颜色属性
-        glVertexAttribPointer(attribIndex,3,GL_FLOAT, GL_FALSE, strid*sizeof(float), (void*)(3*sizeof(float)));
+        glVertexAttribPointer(attribIndex,3,GL_FLOAT, GL_FALSE, strid*sizeof(float), (void*)(idx*sizeof(float)));
         glEnableVertexAttribArray(attribIndex++);
+        idx += 3;
     }
 
     if (hasTexCoordAttrib)
     {
         //uv属性
-        glVertexAttribPointer(attribIndex,2,GL_FLOAT,GL_FALSE, strid*sizeof(float), (void*)(3*attribIndex*sizeof(float)));
+        glVertexAttribPointer(attribIndex,2,GL_FLOAT,GL_FALSE, strid*sizeof(float), (void*)(idx*sizeof(float)));
         glEnableVertexAttribArray(attribIndex++);
+        idx += 2;
+    }
+
+    if (hasNormalAttrib)
+    {
+        //normal属性
+        glVertexAttribPointer(attribIndex,3,GL_FLOAT,GL_FALSE, strid*sizeof(float), (void*)(idx*sizeof(float)));
+        glEnableVertexAttribArray(attribIndex++);
+        idx += 3;
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);

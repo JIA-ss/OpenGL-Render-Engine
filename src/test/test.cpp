@@ -1126,16 +1126,6 @@ void test::color(Window* window)
         Camera& cam = window->getCamera();
         glm::vec3 lightPos(1.2f, 1.0f, -2.0f);
 
-        //cam.setCameraFront(lightPos - cam.getCameraPos());
-        static glm::vec3 camPos = glm::vec3(0,0,0);
-        if (camPos != cam.getCameraPos())
-        {
-            camPos = cam.getCameraPos();
-            glm::vec3 ft = cam.getCameraFront();
-            std::cout << "camPos: " << camPos.x << '\t' << camPos.y << '\t' << camPos.z << '\t';
-            std::cout << "camFront: " << ft.x << '\t' << ft.y << '\t' << ft.z << std::endl;
-        }
-
         lightBuffer.use();
         lightShader.use();
         lightShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
@@ -1153,8 +1143,148 @@ void test::color(Window* window)
         cubeShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
         cubeShader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
         model = glm::mat4(1.0f);
-        lightShader.setMat4f("model", glm::value_ptr(model));
+        cubeShader.setMat4f("model", glm::value_ptr(model));
         cubeBuffer.draw();
     });
 
+}
+
+void test::reflect(Window* window)
+{
+    float pos[] = {
+        -0.5f, -0.5f, -0.5f, 
+         0.5f, -0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+        -0.5f,  0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+
+        -0.5f, -0.5f,  0.5f, 
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f, -0.5f,  0.5f, 
+
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f,  0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f,  0.5f, 
+        -0.5f,  0.5f,  0.5f, 
+
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+
+        -0.5f, -0.5f, -0.5f, 
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+
+        -0.5f,  0.5f, -0.5f, 
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f,  0.5f, -0.5f, 
+    };
+    float normal[] = 
+    {
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
+
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f
+    };
+    Buffer cubeBuffer, lightBuffer;
+    Shader cubeShader("color_cube.vs", "color_cube.fs");
+    Shader lightShader("color_light.vs", "color_light.fs");
+    cubeBuffer.setVertexPos(pos, sizeof(pos));
+    lightBuffer.setVertexPos(pos, sizeof(pos));
+
+    cubeBuffer.setVertexNormal(normal, sizeof(normal));
+    cubeShader.use();
+    cubeShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+    cubeShader.setVec3("lightColor",  1.0f, 1.0f, 1.0f);
+    glm::vec3 lightPos(1.2f, 1.0f, -2.0f);
+    glm::mat3 normalTransport = glm::transpose(glm::inverse(glm::mat4(1.0f)));
+    cubeShader.setMat3f("normalTranspos", glm::value_ptr(normalTransport));
+
+    window->enableZTest(true);
+    Camera& cam = window->getCamera();
+    cam.enableControl(true);
+    cam.setSensitive(0.5f);
+    //cam.setCameraFront(Vector3{0,0,-5});
+    cam.setCameraPos(Vector3{1.2f, 1.0f, 2.f });
+
+    lightBuffer.prepare();
+    cubeBuffer.prepare();
+
+    window->AddUpdateCallback([cubeBuffer, lightBuffer, cubeShader, lightShader, window, lightPos]()
+    {
+        Camera& cam = window->getCamera();
+        glm::vec3 camPos = cam.getCameraPos();
+        lightBuffer.use();
+        lightShader.use();
+        lightShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
+        lightShader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+        lightShader.setMat4f("model", glm::value_ptr(model));
+
+        lightBuffer.draw();
+
+        cubeBuffer.use();
+        cubeShader.use();
+        cubeShader.setVec3("viewPos", camPos.x, camPos.y, camPos.z);
+        cubeShader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
+        cubeShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
+        cubeShader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+        model = glm::mat4(1.0f);
+        cubeShader.setMat4f("model", glm::value_ptr(model));
+        cubeBuffer.draw();
+    });
 }

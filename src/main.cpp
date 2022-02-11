@@ -62,7 +62,9 @@ int main()
 
     //test::camera(window);
     //test::cameraControl(window);
-    test::color(window);
+
+    //test::color(window);
+    test::reflect(window);
     window->doUpdate();
     return 1;
 }

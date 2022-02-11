@@ -22,4 +22,5 @@ namespace test{
     void cameraControl(Window* window);
 
     void color(Window* window);
+    void reflect(Window* window);
 }
