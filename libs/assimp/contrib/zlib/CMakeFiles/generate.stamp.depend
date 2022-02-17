@@ -1,0 +1,13 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.16/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-3.16/Modules/CheckFunctionExists.c
+C:/Program Files/CMake/share/cmake-3.16/Modules/CheckFunctionExists.cmake
+C:/Program Files/CMake/share/cmake-3.16/Modules/CheckIncludeFile.c.in
+C:/Program Files/CMake/share/cmake-3.16/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-3.16/Modules/CheckIncludeFileCXX.cmake
+C:/Program Files/CMake/share/cmake-3.16/Modules/CheckTypeSize.c.in
+C:/Program Files/CMake/share/cmake-3.16/Modules/CheckTypeSize.cmake
+F:/StudyProj/openGLStudy/review/libs/assimp-master/CMakeFiles/CheckTypeSize/OFF64_T.c
+F:/StudyProj/openGLStudy/review/libs/assimp-master/contrib/zlib/CMakeLists.txt
+F:/StudyProj/openGLStudy/review/libs/assimp-master/contrib/zlib/zconf.h.cmakein
+F:/StudyProj/openGLStudy/review/libs/assimp-master/contrib/zlib/zlib.pc.cmakein

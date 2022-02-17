@@ -64,7 +64,9 @@ int main()
     //test::cameraControl(window);
 
     //test::color(window);
-    test::reflect(window);
+    //test::reflect(window);
+
+    test::AssimpLinkTest(window);
     window->doUpdate();
     return 1;
 }

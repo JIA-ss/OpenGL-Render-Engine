@@ -125,7 +125,8 @@ void ResourceManager::Init()
     //m_rootResourcePath = std::filesystem::path("C:\\Users\\62772\\Desktop\\git\\OpenGl_study\\resources");
     if (!std::filesystem::exists(m_rootResourcePath))
     {
-        std::cout << "Get Paht of Root Resource Failed: " << m_rootResourcePath << std::endl;
+        std::cout << "Get Path of Root Resource Failed: " << m_rootResourcePath << std::endl;
+        assert(false);
         return;
     }
     for (int i = ResourceTypeBegin + 1; i < ResourceTypeEnd; i++)

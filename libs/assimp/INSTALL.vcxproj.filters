@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="F:\StudyProj\openGLStudy\review\libs\assimp-master\CMakeFiles\d773c248912bb8c4ebf237c874809436\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{642E0D84-8FFD-3DF8-BEC1-1363952AA48C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

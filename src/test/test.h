@@ -23,4 +23,6 @@ namespace test{
 
     void color(Window* window);
     void reflect(Window* window);
+
+    void AssimpLinkTest(Window* window);
 }

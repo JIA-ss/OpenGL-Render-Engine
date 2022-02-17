@@ -12,6 +12,7 @@
                 "${workspaceFolder}/libs/glm",
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/libs/libuv/include",
+                "${workspaceFolder}/libs/assimp/include",
             ],
             "defines": [
                 "_DEBUG",

@@ -13,6 +13,10 @@
 #include <glm/gtc/type_precision.hpp>
 
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 void test::drawTriangle(Window* window)
 {
     float vertex[] = 
@@ -1249,8 +1253,6 @@ void test::reflect(Window* window)
     cubeShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
     cubeShader.setVec3("lightColor",  1.0f, 1.0f, 1.0f);
     glm::vec3 lightPos(1.2f, 1.0f, -2.0f);
-    glm::mat3 normalTransport = glm::transpose(glm::inverse(glm::mat4(1.0f)));
-    cubeShader.setMat3f("normalTranspos", glm::value_ptr(normalTransport));
 
     window->enableZTest(true);
     Camera& cam = window->getCamera();
@@ -1266,16 +1268,6 @@ void test::reflect(Window* window)
     {
         Camera& cam = window->getCamera();
         glm::vec3 camPos = cam.getCameraPos();
-        lightBuffer.use();
-        lightShader.use();
-        lightShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
-        lightShader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-        lightShader.setMat4f("model", glm::value_ptr(model));
-
-        lightBuffer.draw();
 
         cubeBuffer.use();
         cubeShader.use();
@@ -1283,8 +1275,27 @@ void test::reflect(Window* window)
         cubeShader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
         cubeShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
         cubeShader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
-        model = glm::mat4(1.0f);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
         cubeShader.setMat4f("model", glm::value_ptr(model));
+
         cubeBuffer.draw();
+
+        lightBuffer.use();
+        lightShader.use();
+        lightShader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
+        lightShader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+        lightShader.setMat4f("model", glm::value_ptr(model));
+
+        lightBuffer.draw();
     });
+}
+
+void test::AssimpLinkTest(Window* window)
+{
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile("", aiProcess_Triangulate | aiProcess_FlipUVs);
 }

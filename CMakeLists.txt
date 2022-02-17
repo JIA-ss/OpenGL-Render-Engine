@@ -44,9 +44,11 @@ add_subdirectory(${LIBUV_PATH})
 add_library(GLAD ${GLAD_DIR}/src/glad.c)
 add_executable(OpenGL_Study ${MAIN_SRC_FILES})
 
-target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib uv uv_a)
+target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib uv uv_a assimp-vc142-mtd.dll)
 target_link_directories(OpenGL_Study
     PUBLIC ${GLFW_DIR}/lib-vc2019/
+    PUBLIC ${LIB_DIR}/assimp/lib/
+    PUBLIC ${LIB_DIR}/assimp/lib/Debug/
 )
 
 
@@ -60,6 +62,7 @@ target_include_directories(OpenGL_Study
     PUBLIC ${LIB_DIR}/glm
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
     PUBLIC ${LIBUV_PATH}/include
+    PUBLIC ${LIB_DIR}/assimp/include
 )
 
 target_compile_definitions(OpenGL_Study PRIVATE STB_IMAGE_IMPLEMENTATION)
