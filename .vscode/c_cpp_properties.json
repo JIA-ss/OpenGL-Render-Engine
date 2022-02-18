@@ -13,6 +13,7 @@
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/libs/libuv/include",
                 "${workspaceFolder}/libs/assimp/include",
+                "${workspaceFolder}/libs/json/include",
             ],
             "defines": [
                 "_DEBUG",

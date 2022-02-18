@@ -1,5 +1,6 @@
 #include "ioUtil.h"
 #include "stdlib.h"
+#include <nlohmann/json.hpp>
 
 #if defined(_MSC_VER)
     #include <direct.h>
@@ -12,6 +13,10 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#ifndef _RESOURCE_PATH_
+    #define _RESOURCE_PATH_ "[CMAKE ERROR] [PLEASE SET _RESOURCE_PATH_ MACRO]"
+#endif
 
 std::string Util::readFile(const char* filePath)
 {
@@ -173,6 +178,11 @@ std::filesystem::path Util::getSrcPath()
     return curPath.parent_path();
 }
 
+std::filesystem::path Util::getResourcePath()
+{
+    return std::filesystem::path(_RESOURCE_PATH_);
+}
+
 unsigned char* Util::loadTextureFromFile(const char* path, int* width, int* height, int* channels, int other_param)
 {
     return stbi_load(path, width, height, channels, other_param);
@@ -186,4 +196,25 @@ unsigned char* Util::loadTextureFromMemory(unsigned char* buffer, size_t bufferS
 void Util::freeTextureBuffer(void* buffer)
 {
     stbi_image_free(buffer);
+}
+
+void Util::testJson()
+{
+    char* content = nullptr;
+    size_t size = 0;
+    content = readFile_Native((std::string(_RESOURCE_PATH_) + "/configs/test.config").c_str(), size);
+    if (content == nullptr)
+    {
+        std::cout << "testJson Failed (test.config not exist)" << std::endl;
+        return;
+    }
+    nlohmann::json configArgs;
+    configArgs = nlohmann::json::parse(content);
+    for (auto itor = configArgs.items().begin(); itor != configArgs.items().end(); ++itor)
+    {
+        std::string curKey = itor.key();
+        std::string value = itor.value().get<std::string>();
+        std::cout << curKey << " " << value << std::endl;
+    }
+    //std::cout << content << std::endl;
 }

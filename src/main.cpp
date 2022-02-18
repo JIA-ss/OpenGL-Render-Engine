@@ -68,6 +68,7 @@ int main()
 
     //test::AssimpLinkTest(window);
     std::cout << "main start" << std::endl;
+    Util::testJson();
     test::ModelTest(window);
     window->doUpdate();
     return 1;

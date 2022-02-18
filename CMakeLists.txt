@@ -8,11 +8,13 @@ set(GLAD_DIR ${LIB_DIR}/GLAD)
 set(GLFW_DIR ${LIB_DIR}/GLFW)
 set(LIBUV_PATH ${LIB_DIR}/libuv)
 set(ASSIMP_PATH ${LIB_DIR}/assimp)
+set(JSON_PATH ${LIB_DIR}/json)
 
 set(ALL_LIBS 
     GLAD
     uv
     uv_a
+    #nlohmann_json
     OpenGL_Study
 )
 
@@ -40,13 +42,15 @@ FILE(
 createSrcGroups(MAIN_SRC_FILES)
 
 add_subdirectory(${LIBUV_PATH})
-
+add_subdirectory(${JSON_PATH})
 
 add_library(GLAD ${GLAD_DIR}/src/glad.c)
 
+add_definitions(-D_RESOURCE_PATH_=\"${CMAKE_CURRENT_SOURCE_DIR}/resources\")
+
 add_executable(OpenGL_Study ${MAIN_SRC_FILES})
 
-target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib uv uv_a assimp-vc142-mtd)
+target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib uv uv_a assimp-vc142-mtd nlohmann_json)
 target_link_directories(OpenGL_Study
     PUBLIC ${GLFW_DIR}/lib-vc2019/
     PUBLIC ${ASSIMP_PATH}/lib/
@@ -64,6 +68,7 @@ target_include_directories(OpenGL_Study
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
     PUBLIC ${LIBUV_PATH}/include
     PUBLIC ${ASSIMP_PATH}/include
+    PRIVATE ${JSON_PATH}/include
 )
 
 target_compile_definitions(OpenGL_Study PRIVATE STB_IMAGE_IMPLEMENTATION)

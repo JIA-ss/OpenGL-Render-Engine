@@ -121,8 +121,9 @@ void ResourceManager::InitResource(eResourceType type)
 
 void ResourceManager::Init()
 {
-    m_rootResourcePath = Util::getSrcPath().parent_path() / "resources";
-    m_rootResourcePath = std::filesystem::path("F:\\StudyProj\\openGLStudy\\review\\resources");
+    //m_rootResourcePath = Util::getSrcPath().parent_path() / "resources";
+    //m_rootResourcePath = std::filesystem::path("F:\\StudyProj\\openGLStudy\\review\\resources");
+    m_rootResourcePath = Util::getResourcePath();
     if (!std::filesystem::exists(m_rootResourcePath))
     {
         std::cout << "Get Path of Root Resource Failed: " << m_rootResourcePath << std::endl;

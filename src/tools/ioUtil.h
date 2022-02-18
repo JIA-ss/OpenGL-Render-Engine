@@ -24,6 +24,7 @@ bool writeFile_Native(const char* path, const char* src, int sz);
 
 std::filesystem::path getSrcPath();
 
+std::filesystem::path getResourcePath();
 
 unsigned char* loadTextureFromFile(const char* path, int* width, int* height, int* channels, int other_param);
 
@@ -31,6 +32,9 @@ unsigned char* loadTextureFromMemory(unsigned char* buffer, size_t bufferSize, i
 
 void freeTextureBuffer(void* buffer);
 
+
+
+void testJson();
 
 
 }
