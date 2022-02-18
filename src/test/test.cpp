@@ -17,6 +17,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "pipline/Model_test.h"
+
 void test::drawTriangle(Window* window)
 {
     float vertex[] = 
@@ -1298,4 +1300,35 @@ void test::AssimpLinkTest(Window* window)
 {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("", aiProcess_Triangulate | aiProcess_FlipUVs);
+}
+
+void test::ModelTest(Window* window)
+{
+    window->enableZTest(true);
+    std::cout << "model test" << std::endl;
+    Shader ourShader("1.model_loading.vs", "1.model_loading.fs");
+    Camera& cam = window->getCamera();
+    cam.enableControl(true);
+    cam.setCameraPos(Vector3{0,10,20});
+    // load models
+    // -----------
+    Model ourModel("F:/StudyProj/openGLStudy/review/resources/models/nanosuit/nanosuit.obj");
+    window->AddUpdateCallback([ourShader, ourModel, window](){
+        // don't forget to enable shader before setting uniforms
+        ourShader.use();
+
+        Camera& camera = window->getCamera();
+
+        // view/projection transformations
+        ourShader.setMat4f("projection", glm::value_ptr(camera.getProjectionMat4()));
+        ourShader.setMat4f("view", glm::value_ptr(camera.getViewMat4()));
+
+        // render the loaded model
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0,1,0));
+        ourShader.setMat4f("model", glm::value_ptr(model));
+        ourModel.Draw(ourShader);
+    });
 }

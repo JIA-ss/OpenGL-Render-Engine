@@ -1,4 +1,5 @@
 #include "ioUtil.h"
+#include "stdlib.h"
 
 #if defined(_MSC_VER)
     #include <direct.h>
@@ -168,6 +169,7 @@ std::filesystem::path Util::getSrcPath()
     char buf[500];
     GetCurrentDir(buf, 500);
     std::filesystem::path curPath(buf);
+    std::cout << _pgmptr << std::endl;
     return curPath.parent_path();
 }
 

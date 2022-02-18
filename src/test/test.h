@@ -25,4 +25,5 @@ namespace test{
     void reflect(Window* window);
 
     void AssimpLinkTest(Window* window);
+    void ModelTest(Window* window);
 }

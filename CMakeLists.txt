@@ -7,6 +7,7 @@ set(OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/output)
 set(GLAD_DIR ${LIB_DIR}/GLAD)
 set(GLFW_DIR ${LIB_DIR}/GLFW)
 set(LIBUV_PATH ${LIB_DIR}/libuv)
+set(ASSIMP_PATH ${LIB_DIR}/assimp)
 
 set(ALL_LIBS 
     GLAD
@@ -42,13 +43,13 @@ add_subdirectory(${LIBUV_PATH})
 
 
 add_library(GLAD ${GLAD_DIR}/src/glad.c)
+
 add_executable(OpenGL_Study ${MAIN_SRC_FILES})
 
-target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib uv uv_a assimp-vc142-mtd.dll)
+target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib uv uv_a assimp-vc142-mtd)
 target_link_directories(OpenGL_Study
     PUBLIC ${GLFW_DIR}/lib-vc2019/
-    PUBLIC ${LIB_DIR}/assimp/lib/
-    PUBLIC ${LIB_DIR}/assimp/lib/Debug/
+    PUBLIC ${ASSIMP_PATH}/lib/
 )
 
 
@@ -62,7 +63,7 @@ target_include_directories(OpenGL_Study
     PUBLIC ${LIB_DIR}/glm
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
     PUBLIC ${LIBUV_PATH}/include
-    PUBLIC ${LIB_DIR}/assimp/include
+    PUBLIC ${ASSIMP_PATH}/include
 )
 
 target_compile_definitions(OpenGL_Study PRIVATE STB_IMAGE_IMPLEMENTATION)
@@ -74,3 +75,9 @@ set_target_properties(${EACH_LIB} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_D
 set_target_properties(${EACH_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/library)
 set_target_properties(${EACH_LIB} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}/archive)
 endforeach(EACH_LIB ${ALL_LIBS})
+
+
+add_custom_command(TARGET OpenGL_Study POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${ASSIMP_PATH}/lib"
+        $<TARGET_FILE_DIR:OpenGL_Study>)

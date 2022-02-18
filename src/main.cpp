@@ -66,7 +66,9 @@ int main()
     //test::color(window);
     //test::reflect(window);
 
-    test::AssimpLinkTest(window);
+    //test::AssimpLinkTest(window);
+    std::cout << "main start" << std::endl;
+    test::ModelTest(window);
     window->doUpdate();
     return 1;
 }
