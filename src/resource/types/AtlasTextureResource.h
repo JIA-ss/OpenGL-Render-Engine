@@ -23,50 +23,20 @@ struct sAtlasCell
 	unsigned int y;
 	unsigned int w;
 	unsigned int h;
+    unsigned int packed = 0;
 };
 
-struct sAtlasCellCtx
+
+class AtlasTextureResource : private TextureResource
 {
-    sAtlasCell cell;
-    TextureRef texture;
-    bool packed;
-};
-
-class AtlasTextureResource
-{
-public:
-
-    eAtlasSize getSize() const { return m_size; }
-    unsigned int getRawSize() const { return static_cast<unsigned int>(m_size); }
-    const unsigned char* getImageData() const { return m_buffer.get(); }
-
-public:
-    void setSize(eAtlasSize size);
-    sAtlasCell addTexture(std::string_view name, TextureRef texture);
-    bool pack();
-    sAtlasCell getCell(std::string name)
-    {
-        for (int i = 0; i < m_cellCtxs.size(); ++i)
-        {
-            if (m_cellCtxs[i].cell.name == name)
-            {
-                return m_cellCtxs[i].cell;
-            }
-        }
-    }
-    ~AtlasTextureResource();
-
 private:
-    bool updateBuffer();
-
-private:
-    eAtlasSize m_size = eAtlasSize::kSize_1024x1024;
-
-    std::unique_ptr<unsigned char[]> m_buffer;
+    std::vector<sAtlasCell> m_metas;
+    unsigned int m_border = 5;
 public:
-    std::vector<sAtlasCellCtx> m_cellCtxs;
+    int tryPackTextures(const std::vector<TextureRef>& texs);
+    int getCellNums() { return m_metas.size(); }
+    int getSize() { return m_width; }
 };
-
 
 typedef tResourceRef<AtlasTextureResource> AtlasTextureRef;
 

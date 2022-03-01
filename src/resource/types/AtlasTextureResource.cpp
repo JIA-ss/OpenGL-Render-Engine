@@ -1,65 +1,59 @@
 #include "AtlasTextureResource.h"
 #include "tools/ioUtil.h"
-
+#include <string>
 
 using namespace Resource;
 
-sAtlasCell AtlasTextureResource::addTexture(std::string_view name, TextureRef texture)
+int AtlasTextureResource::tryPackTextures(const std::vector<TextureRef>& texs)
 {
-    unsigned int width = texture->getWidth(), height = texture->getHeight();
-    unsigned int index = m_cellCtxs.size() + 1;
-    m_cellCtxs.push_back(sAtlasCellCtx{ { name.data(), texture->getName(), index, 0, 0, width, height }, texture, false });
-    return {};
-}
-
-void AtlasTextureResource::setSize(eAtlasSize size)
-{
-    m_size = size;
-    auto bufferSize = getRawSize() * getRawSize() * 4;
-    m_buffer.reset(new unsigned char[bufferSize]);
-    memset(m_buffer.get(), 0, bufferSize);
-}
-
-bool AtlasTextureResource::pack()
-{
-    bool result = Util::atlasPack(*this);
-    return updateBuffer() && result > 0;
-}
-
-bool AtlasTextureResource::updateBuffer()
-{
-    int SizeOfRGBA = 4;
-    unsigned int rawSize = getRawSize();
-    memset(m_buffer.get(), 0, rawSize * rawSize * 4);
-    unsigned int size = rawSize;
-
-    for (const auto& ctx : m_cellCtxs)
+    static std::vector<eAtlasSize> trySizes = 
+    { 
+        Resource::eAtlasSize::kSize_256x256,  
+        Resource::eAtlasSize::kSize_512x512,
+        Resource::eAtlasSize::kSize_1024x1024,
+        Resource::eAtlasSize::kSize_2048x2048,
+    };
+    static int atlasNum = 0;
+    std::vector<sAtlasCell> outMeta;
+    int packTexNum = texs.size();
+    while (packTexNum > 0)
     {
-        if (!ctx.packed) continue;
-
-        int x = ctx.cell.x, y = ctx.cell.y, w = ctx.cell.w, h = ctx.cell.h;
-
-        auto textureRowSize = w * SizeOfRGBA;
-        auto atlasRowSize = size * SizeOfRGBA;
-
-        TextureRef texture = ctx.texture;
-        const unsigned char* textureOriginalBuffer = nullptr;
-        int originBufferSize = 0;
-        if (texture->getTextureData())
+        std::vector<sAtlasCell> meta;
+        meta.resize(packTexNum);
+        for (unsigned int i = 0; i < packTexNum; i++)
         {
-            textureOriginalBuffer = texture->getTextureData();
-            originBufferSize = texture->getSize();
+            meta[i] = {"", "",i,0,0,(unsigned int)texs[i].get()->getWidth() + m_border * 2, (unsigned int)texs[i].get()->getHeight() + m_border * 2};
         }
-        
-        int channels;
-        w = texture->getWidth();
-        h = texture->getHeight();
+        for (eAtlasSize size_: trySizes)
+        {
+            unsigned int size = static_cast<unsigned int>(size_);
+            bool canpack =  Util::atlasCanPack(meta, size, outMeta);
+            if (canpack)
+            {
+                std::vector<const unsigned char*> texData;
+                for (int i = 0; i < packTexNum; i++)
+                {
+                    unsigned char* borderData = Util::addBorderForTexture(texs[i].get()->getTextureData(), texs[i].get()->getWidth(), texs[i].get()->getHeight(), m_border);
+                    texData.push_back(borderData);
+                }
+                unsigned char* data = Util::packAtlasWithMeta(outMeta, size, texData);
+                m_rawData.append(data, size * size * 4);
+                m_width = size;
+                m_height = size;
+                m_channels = 4;
+                m_metas = meta;
 
+                std::string curIdx = std::to_string(atlasNum++);
+                std::string size__ = std::to_string(size);
+                std::string outputPath = std::string(_RESOURCE_PATH_) + "/atlasTexture/atlasUnpack" + curIdx + "(" + size__ + ").png";
+                // 写入图片
+                Util::writeTextureToPng(outputPath, size, size, data);
 
-        for (auto row = 0; row < h; ++row)
-            memcpy(m_buffer.get() + (row + y) * atlasRowSize + x * SizeOfRGBA, textureOriginalBuffer + row * textureRowSize, textureRowSize);
-
+                return packTexNum;
+            }
+        }
+        packTexNum /= 2;
     }
 
-    return true;
+    return 0;
 }

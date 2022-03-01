@@ -25,6 +25,7 @@ private:
     void InitResource(eResourceType type);
     void InitShaderResource();
     void InitTextureResource();
+    void InitAtlasTextureResource();
 private:
     std::filesystem::path m_rootResourcePath;
     std::unordered_map<eResourceType, std::unordered_map<std::string, sResourceRef>> m_resourceMap;

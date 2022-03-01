@@ -6,7 +6,7 @@ namespace Resource
 
 class TextureResource : public BaseResource
 {
-private:
+protected:
     std::string m_name;
     std::string m_path;
     int m_width = 0, m_height = 0, m_channels = 0;

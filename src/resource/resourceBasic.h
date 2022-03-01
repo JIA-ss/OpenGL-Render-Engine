@@ -12,7 +12,8 @@ enum eResourceType
     ResourceTypeBegin = 0,
     shader = 1,
     texture = 2,
-    ResourceTypeEnd = 3
+    atlasTexture = 3,
+    ResourceTypeEnd = 4
 };
 
 class ByteBuffer

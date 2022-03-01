@@ -224,55 +224,57 @@ void Util::testJson()
     //std::cout << content << std::endl;
 }
 
-
-
-unsigned char* Util::atlasPackData(std::vector<unsigned char*>& data, std::vector<std::vector<int>>& meta, unsigned int& size, std::vector<V4>& atlasMeta)
+bool Util::atlasCanPack(std::vector<Resource::sAtlasCell>& meta, unsigned int size, std::vector<Resource::sAtlasCell>& rects)
 {
-    auto start = std::chrono::system_clock::now();
 
     stbrp_context context;
     memset(&context, 0, sizeof(stbrp_context));
 
+    std::unique_ptr<stbrp_node[]> nodes(new stbrp_node[size]);
+    std::unique_ptr<stbrp_rect[]> stb_rects(new stbrp_rect[meta.size()]);
 
+
+    rects.resize(meta.size());
+    for (std::size_t i = 0; i < meta.size(); ++i)
+    {
+        auto& rect = stb_rects[i];
+        rect.id = i;
+        rect.w = meta[i].w;
+        rect.h = meta[i].h;
+    }
+
+
+
+    stbrp_init_target(&context, size, size, nodes.get(), size);
+
+
+    int result = stbrp_pack_rects(&context, stb_rects.get(), meta.size());
+
+    if (result <= 0)
+        return false;
+
+    for (std::size_t i = 0; i < meta.size(); ++i)
+    {
+        auto textureRowSize = stb_rects[i].w * 4;
+        auto atlasRowSize = size * 4;
+        unsigned int x = stb_rects[i].x;
+        unsigned int y = stb_rects[i].y;
+        unsigned int w = stb_rects[i].w;
+        unsigned int h = stb_rects[i].h;
+        rects[i] = {"", "", (unsigned int)i,x,y,w,h,(unsigned int)stb_rects[i].was_packed};
+    }
+
+    return true;
+}
+
+unsigned char* Util::packAtlasWithMeta(const std::vector<Resource::sAtlasCell>& rects, unsigned int size, std::vector<const unsigned char*>& data)
+{
+    
     unsigned int bufferSize = size * size * 4;
     unsigned char* buffer = new unsigned char[bufferSize];
     memset(buffer, 0, bufferSize);
 
-    std::unique_ptr<stbrp_node[]> nodes(new stbrp_node[size]);
-    std::unique_ptr<stbrp_rect[]> rects(new stbrp_rect[data.size()]);
-
-
-    atlasMeta.resize(data.size());
-    for (std::size_t i = 0; i < data.size(); ++i)
-    {
-        auto& rect = rects[i];
-        rect.id = i;
-        rect.w = meta[i][0];
-        rect.h = meta[i][1];
-    }
-
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    std::cout << "pack memset time: " << elapsed.count() * 1000 << " ms" << std::endl;
-
-    start = std::chrono::system_clock::now();
-    stbrp_init_target(&context, size, size, nodes.get(), size);
-    end = std::chrono::system_clock::now();
-    elapsed = end - start;
-    std::cout << "pack init_target time: " << elapsed.count() * 1000 << " ms" << std::endl;
-
-    start = std::chrono::system_clock::now();
-    int result = stbrp_pack_rects(&context, rects.get(), data.size());
-    end = std::chrono::system_clock::now();
-    elapsed = end - start;
-    std::cout << "pack pack_rects time: " << elapsed.count() * 1000 << " ms" << std::endl;
-
-
-    if (result == 0)
-        return buffer;
-
-    start = std::chrono::system_clock::now();
-
+    
     for (std::size_t i = 0; i < data.size(); ++i)
     {
         auto textureRowSize = rects[i].w * 4;
@@ -281,30 +283,22 @@ unsigned char* Util::atlasPackData(std::vector<unsigned char*>& data, std::vecto
         int y = rects[i].y;
         int w = rects[i].w;
         int h = rects[i].h;
-        atlasMeta[i] = {x,y,w,h};
         for (auto row = 0; row < h; ++row)
             memcpy(buffer + (row + y) * atlasRowSize + x * 4, data[i] + row * textureRowSize, textureRowSize);
-
     }
 
-    end = std::chrono::system_clock::now();
-    elapsed = end - start;
-    std::cout << "pack fill buffer time: " << elapsed.count() * 1000 << " ms" << std::endl;
-
-
-    start = std::chrono::system_clock::now();
-    std::string outputPath = std::string(_RESOURCE_PATH_) + "/atlasTexture/atlas.png";
-    // 写入图片
-    //stbi_write_png(outputPath.c_str(), size, size, 4, buffer, 0);
-
-    end = std::chrono::system_clock::now();
-    elapsed = end - start;
-    std::cout << "pack write image time: " << elapsed.count() * 1000 << " ms" << std::endl;
     return buffer;
 }
 
+unsigned char* Util::atlasPackData(std::vector<const unsigned char*>& data, std::vector<Resource::sAtlasCell>& meta, unsigned int size, std::vector<Resource::sAtlasCell>& atlasMeta)
+{
+    if (atlasCanPack(meta,size, atlasMeta))
+        return packAtlasWithMeta(atlasMeta, size, data);
+    return nullptr;
+}
 
-unsigned char** Util::atlasUnpackData(unsigned char* atlasData, std::vector<V4>& meta, unsigned int& size)
+
+unsigned char** Util::atlasUnpackData(unsigned char* atlasData, std::vector<Resource::sAtlasCell>& meta, unsigned int& size)
 {
     unsigned char** res = new unsigned char*[meta.size()];
     for (int i = 0; i < meta.size(); i++)
@@ -325,36 +319,22 @@ unsigned char** Util::atlasUnpackData(unsigned char* atlasData, std::vector<V4>&
     return res;
 }
 
-bool Util::atlasPack(Resource::AtlasTextureResource& atlas)
+unsigned char* Util::addBorderForTexture(const unsigned char* data, int width, int height, int border)
 {
-    stbrp_context context;
-    memset(&context, 0, sizeof(stbrp_context));
+    int newHeight = height + border * 2;
+    int newWidth = width + border * 2;
+    unsigned char* newTexData = new unsigned char[newWidth * newHeight * 4];
+    memset(newTexData, 255, newHeight * newWidth * 4);
 
-    auto nodeCount = atlas.getRawSize();
-    auto width = nodeCount, height = nodeCount;
-    std::unique_ptr<stbrp_node[]> nodes(new stbrp_node[nodeCount]);
-    std::unique_ptr<stbrp_rect[]> rects(new stbrp_rect[atlas.m_cellCtxs.size()]);
-
-    for (std::size_t i = 0; i < atlas.m_cellCtxs.size(); ++i)
+    for (auto row = border; row < height + border; row++)
     {
-        auto& rect = rects[i];
-        auto& ctx = atlas.m_cellCtxs[i];
-        rect.id = i;
-        rect.w = ctx.cell.w;
-        rect.h = ctx.cell.h;
+        memcpy(newTexData + row * newWidth * 4 + border * 4, data + (row - border) * width * 4, width * 4);
     }
 
-    stbrp_init_target(&context, width, height, nodes.get(), nodeCount);
-    int result = stbrp_pack_rects(&context, rects.get(), atlas.m_cellCtxs.size());
+    return newTexData;
+}
 
-    for (std::size_t i = 0; i < atlas.m_cellCtxs.size(); ++i)
-    {
-        auto& rect = rects[i];
-        auto& ctx = atlas.m_cellCtxs[i];
-
-        ctx.packed = rect.was_packed > 0;
-        ctx.cell.x = rect.x;
-        ctx.cell.y = rect.y;
-    }
-    return result > 0;
+void Util::writeTextureToPng(const std::string& path, int width, int height, const unsigned char* data)
+{
+    stbi_write_png(path.c_str(), width, height, 4, data, 0);
 }

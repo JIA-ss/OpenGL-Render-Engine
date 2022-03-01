@@ -1534,10 +1534,12 @@ void test::atlasTest(Window* window)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    unsigned int atlasSize = 1624;
-    std::vector<unsigned char*> data;
-    std::vector<std::vector<int>> meta;
-    std::vector<Util::V4> atlasSplitData;
+    unsigned int atlasSize = 2048 + 256;
+    std::vector<const unsigned char*> data;
+    std::vector<Resource::sAtlasCell> meta;
+    std::vector<Resource::sAtlasCell> atlasSplitData;
+
+    int num = 30;
 
     for (auto it : std::filesystem::directory_iterator(std::string(_RESOURCE_PATH_) + "/textures"))
     {
@@ -1550,25 +1552,14 @@ void test::atlasTest(Window* window)
 
         // add border
         int border = 5;
-
-        int newHeight = height1 + border * 2;
-        int newWidth = width1 + border * 2;
-        unsigned char* newTexData = new unsigned char[newWidth * newHeight * 4];
-        auto start = std::chrono::system_clock::now();
-        memset(newTexData, 0, newHeight * newWidth * 4);
-
-        for (auto row = border; row < height1 + border; row++)
-        {
-            memcpy(newTexData + row * newWidth * 4 + border * 4, texData1 + (row - border) * width1 * 4, width1 * 4);
-        }
-
-        auto end = std::chrono::system_clock::now();
-
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        std::cout << "add border time: " << elapsed_seconds.count() * 1000 << " ms" << std::endl;
+        unsigned char* newTexData = Util::addBorderForTexture(texData1, width1, height1, border);
+        Util::freeTextureBuffer(texData1);
 
         data.push_back(newTexData);
-        meta.push_back({newWidth, newHeight});
+        meta.push_back({"","",0,0,0, (unsigned int)width1 + 2*border, (unsigned int)height1 + 2*border, 0});
+
+        if (num-- < 0)
+            break;
     }
 
     auto start = std::chrono::system_clock::now();

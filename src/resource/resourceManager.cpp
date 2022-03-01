@@ -15,6 +15,8 @@ std::string ResourceManager::getResourceRootPath(eResourceType type)
         return (m_rootResourcePath / "shaders").string();
     case texture:
         return (m_rootResourcePath / "textures").string();
+    case atlasTexture:
+        return (m_rootResourcePath / "textures").string();
     default:
         assert(false);
     }
@@ -74,6 +76,41 @@ void ResourceManager::InitTextureResource()
     }
 }
 
+void ResourceManager::InitAtlasTextureResource()
+{
+
+    auto start = std::chrono::system_clock::now();
+
+    int texNums = m_resourceMap[texture].size();
+    int curTex = 0;
+    std::vector<TextureRef> texs;
+    for (auto[filename, ref] : m_resourceMap[texture])
+    {
+        texs.push_back(ref);
+    }
+
+
+
+    std::shared_ptr<AtlasTextureResource> res = std::make_shared<AtlasTextureResource>();
+
+    int packNum = res->tryPackTextures(texs);
+    while( packNum > 0)
+    {
+        std::cout << "atlas size: " << res->getSize() << "\t cell num: " << res->getCellNums() << std::endl;
+        curTex += packNum;
+        m_resourceMap[atlasTexture][std::to_string(m_resourceMap[atlasTexture].size())] = std::dynamic_pointer_cast<BaseResource>(res);
+        res = std::make_shared<AtlasTextureResource>();
+        packNum = res->tryPackTextures(std::vector<TextureRef>(texs.begin() + curTex, texs.end()));
+    }
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+
+    std::cout << "total " << texNums << " textures" << std::endl;
+    std::cout << "pack " << m_resourceMap[atlasTexture].size() << " atlas" << std::endl;
+    std::cout << "total Pack Time: " << elapsed_seconds.count() * 1000 << " ms" << std::endl;
+}
+
 void ResourceManager::InitResource(eResourceType type)
 {
     std::filesystem::path path = getResourceRootPath(type);
@@ -85,6 +122,9 @@ void ResourceManager::InitResource(eResourceType type)
         break;
     case texture:
         InitTextureResource();
+        break;
+    case atlasTexture:
+        InitAtlasTextureResource();
         break;
     default:
         break;

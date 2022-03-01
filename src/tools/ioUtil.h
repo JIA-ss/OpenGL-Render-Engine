@@ -9,10 +9,6 @@
 #include "resource/types/AtlasTextureResource.h"
 namespace Util
 {
-struct V4 
-{
-    int x,y,w,h;
-};
 
 std::string readFile(const char* filePath);
 
@@ -36,10 +32,14 @@ unsigned char* loadTextureFromMemory(const unsigned char* buffer, size_t bufferS
 
 void freeTextureBuffer(void* buffer);
 
-unsigned char* atlasPackData(std::vector<unsigned char*>& data, std::vector<std::vector<int>>& meta, unsigned int& size, std::vector<V4>& rects);
-unsigned char** atlasUnpackData(unsigned char* atlasData, std::vector<V4>& meta, unsigned int& size);
-bool atlasPack(Resource::AtlasTextureResource& atlas);
+unsigned char* atlasPackData(std::vector<const unsigned char*>& data, std::vector<Resource::sAtlasCell>& meta, unsigned int size, std::vector<Resource::sAtlasCell>& rects);
+unsigned char** atlasUnpackData(unsigned char* atlasData, std::vector<Resource::sAtlasCell>& meta, unsigned int& size);
 
+bool atlasCanPack(std::vector<Resource::sAtlasCell>& meta, unsigned int size, std::vector<Resource::sAtlasCell>& rects);
+unsigned char* packAtlasWithMeta(const std::vector<Resource::sAtlasCell>& rects, unsigned int size, std::vector<const unsigned char*>& data);
+unsigned char* addBorderForTexture(const unsigned char* data, int width, int height, int border);
+
+void writeTextureToPng(const std::string& path, int width, int height, const unsigned char* data);
 
 void testJson();
 

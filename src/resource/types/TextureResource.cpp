@@ -39,9 +39,10 @@ void TextureResource::loadFromPath(const char *path)
         return;
     }
 
-    unsigned char *idata = Util::loadTextureFromMemory(fileContent, size, &m_width, &m_height, &m_channels, 0);
+    unsigned char *idata = Util::loadTextureFromMemory(fileContent, size, &m_width, &m_height, &m_channels, 4);
     delete[] fileContent;
-    int imgSize = m_width * m_height * m_channels;
+
+    int imgSize = m_width * m_height * 4;
     m_rawData.append(idata, imgSize);
 
     Util::freeTextureBuffer(idata);
