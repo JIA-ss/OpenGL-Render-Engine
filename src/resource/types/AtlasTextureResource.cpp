@@ -11,7 +11,7 @@ int AtlasTextureResource::tryPackTextures(const std::vector<TextureRef>& texs)
         Resource::eAtlasSize::kSize_256x256,  
         Resource::eAtlasSize::kSize_512x512,
         Resource::eAtlasSize::kSize_1024x1024,
-        Resource::eAtlasSize::kSize_2048x2048,
+        //Resource::eAtlasSize::kSize_2048x2048,
     };
     static int atlasNum = 0;
     std::vector<sAtlasCell> outMeta;

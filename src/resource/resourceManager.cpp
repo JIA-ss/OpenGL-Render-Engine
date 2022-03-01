@@ -94,11 +94,14 @@ void ResourceManager::InitAtlasTextureResource()
     std::shared_ptr<AtlasTextureResource> res = std::make_shared<AtlasTextureResource>();
 
     int packNum = res->tryPackTextures(texs);
-    while( packNum > 0)
+    while( curTex < texNums)
     {
         std::cout << "atlas size: " << res->getSize() << "\t cell num: " << res->getCellNums() << std::endl;
         curTex += packNum;
-        m_resourceMap[atlasTexture][std::to_string(m_resourceMap[atlasTexture].size())] = std::dynamic_pointer_cast<BaseResource>(res);
+        if (packNum > 0)
+            m_resourceMap[atlasTexture][std::to_string(m_resourceMap[atlasTexture].size())] = std::dynamic_pointer_cast<BaseResource>(res);
+        else
+            curTex++;
         res = std::make_shared<AtlasTextureResource>();
         packNum = res->tryPackTextures(std::vector<TextureRef>(texs.begin() + curTex, texs.end()));
     }
