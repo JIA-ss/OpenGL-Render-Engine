@@ -1534,7 +1534,7 @@ void test::atlasTest(Window* window)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    unsigned int atlasSize = 2048;
+    unsigned int atlasSize = 1624;
     std::vector<unsigned char*> data;
     std::vector<std::vector<int>> meta;
     std::vector<Util::V4> atlasSplitData;
@@ -1554,6 +1554,7 @@ void test::atlasTest(Window* window)
         int newHeight = height1 + border * 2;
         int newWidth = width1 + border * 2;
         unsigned char* newTexData = new unsigned char[newWidth * newHeight * 4];
+        auto start = std::chrono::system_clock::now();
         memset(newTexData, 0, newHeight * newWidth * 4);
 
         for (auto row = border; row < height1 + border; row++)
@@ -1561,53 +1562,29 @@ void test::atlasTest(Window* window)
             memcpy(newTexData + row * newWidth * 4 + border * 4, texData1 + (row - border) * width1 * 4, width1 * 4);
         }
 
-        /*
-        int newWidth = width1 + 2 * border;
-        int newHeight = height1 + 2 * border;
+        auto end = std::chrono::system_clock::now();
 
-        unsigned char* newTexData = new unsigned char[newWidth * newHeight * 4];
-        int newRowLength = newWidth * 4;
-        int oriRowLength = width1 * 4;
-        
-        for (auto row = 0; row < border; row++)
-        {
-            for (int i = 0; i < newWidth; i += 4)
-            {
-                memcpy(newTexData + row * newRowLength + i, borderPixel, 4);
-            }
-        }
-
-        for (auto row = border; row < border + height1; row++)
-        {
-            for (int i = 0; i < border; i += 4)
-            {
-                memcpy(newTexData + row * newRowLength + i, borderPixel, 4);
-            }
-
-            memcpy(newTexData + row * newRowLength + border, texData1 + (row - border) * oriRowLength, oriRowLength);
-
-            for (int i = border + width1; i < newWidth; i++)
-            {
-                memcpy(newTexData + row * newRowLength + i, borderPixel, 4);
-            }
-        }
-
-        for (auto row = border + height1; row < newHeight; row++)
-        {
-            for (int i = 0; i < newWidth; i += 4)
-            {
-                memcpy(newTexData + row * newRowLength + i, borderPixel, 4);
-            }
-        }
-        */
+        std::chrono::duration<double> elapsed_seconds = end-start;
+        std::cout << "add border time: " << elapsed_seconds.count() * 1000 << " ms" << std::endl;
 
         data.push_back(newTexData);
         meta.push_back({newWidth, newHeight});
     }
 
+    auto start = std::chrono::system_clock::now();
 
     unsigned char* atlasData = Util::atlasPackData(data, meta, atlasSize, atlasSplitData);
+    
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::cout << "pack time: " << elapsed_seconds.count() * 1000 << " ms" << std::endl;
+
+    start = std::chrono::system_clock::now();
     Util::atlasUnpackData(atlasData, atlasSplitData, atlasSize);
+    end = std::chrono::system_clock::now();
+    elapsed_seconds = end-start;
+    std::cout << "unpack time: " << elapsed_seconds.count() * 1000 << " ms" << std::endl;
+
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, atlasSize, atlasSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, atlasData);
     glGenerateMipmap(GL_TEXTURE_2D);
 

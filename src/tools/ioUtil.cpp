@@ -228,6 +228,8 @@ void Util::testJson()
 
 unsigned char* Util::atlasPackData(std::vector<unsigned char*>& data, std::vector<std::vector<int>>& meta, unsigned int& size, std::vector<V4>& atlasMeta)
 {
+    auto start = std::chrono::system_clock::now();
+
     stbrp_context context;
     memset(&context, 0, sizeof(stbrp_context));
 
@@ -249,13 +251,27 @@ unsigned char* Util::atlasPackData(std::vector<unsigned char*>& data, std::vecto
         rect.h = meta[i][1];
     }
 
-    stbrp_init_target(&context, size, size, nodes.get(), size);
-    int result = stbrp_pack_rects(&context, rects.get(), data.size());
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "pack memset time: " << elapsed.count() * 1000 << " ms" << std::endl;
 
-    std::cout << "pack result: " << result << std::endl;
+    start = std::chrono::system_clock::now();
+    stbrp_init_target(&context, size, size, nodes.get(), size);
+    end = std::chrono::system_clock::now();
+    elapsed = end - start;
+    std::cout << "pack init_target time: " << elapsed.count() * 1000 << " ms" << std::endl;
+
+    start = std::chrono::system_clock::now();
+    int result = stbrp_pack_rects(&context, rects.get(), data.size());
+    end = std::chrono::system_clock::now();
+    elapsed = end - start;
+    std::cout << "pack pack_rects time: " << elapsed.count() * 1000 << " ms" << std::endl;
+
 
     if (result == 0)
         return buffer;
+
+    start = std::chrono::system_clock::now();
 
     for (std::size_t i = 0; i < data.size(); ++i)
     {
@@ -271,10 +287,19 @@ unsigned char* Util::atlasPackData(std::vector<unsigned char*>& data, std::vecto
 
     }
 
+    end = std::chrono::system_clock::now();
+    elapsed = end - start;
+    std::cout << "pack fill buffer time: " << elapsed.count() * 1000 << " ms" << std::endl;
+
+
+    start = std::chrono::system_clock::now();
     std::string outputPath = std::string(_RESOURCE_PATH_) + "/atlasTexture/atlas.png";
     // 写入图片
-    stbi_write_png(outputPath.c_str(), size, size, 4, buffer, 0);
+    //stbi_write_png(outputPath.c_str(), size, size, 4, buffer, 0);
 
+    end = std::chrono::system_clock::now();
+    elapsed = end - start;
+    std::cout << "pack write image time: " << elapsed.count() * 1000 << " ms" << std::endl;
     return buffer;
 }
 
@@ -290,10 +315,12 @@ unsigned char** Util::atlasUnpackData(unsigned char* atlasData, std::vector<V4>&
 
         for (auto row = 0; row < meta[i].h; ++row)
             memcpy(res[i] + row * textureRowSize, atlasData + (row + meta[i].y) * atlasRowSize + meta[i].x * 4, textureRowSize);
+        
+        
         char curIdx = '0' + i;
         std::string outputPath = std::string(_RESOURCE_PATH_) + "/atlasTexture/atlasUnpack" + curIdx + ".png";
         // 写入图片
-        stbi_write_png(outputPath.c_str(), meta[i].w, meta[i].h, 4, res[i], 0);
+        //stbi_write_png(outputPath.c_str(), meta[i].w, meta[i].h, 4, res[i], 0);
     }
     return res;
 }
