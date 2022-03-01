@@ -26,4 +26,8 @@ namespace test{
 
     void AssimpLinkTest(Window* window);
     void ModelTest(Window* window);
+
+    void transformModify(Window* window);
+
+    void atlasTest(Window* window);
 }

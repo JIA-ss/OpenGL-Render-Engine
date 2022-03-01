@@ -18,7 +18,7 @@
 #include <assimp/postprocess.h>
 
 #include "pipline/Model_test.h"
-
+#include "tools/ioUtil.h"
 void test::drawTriangle(Window* window)
 {
     float vertex[] = 
@@ -1330,5 +1330,293 @@ void test::ModelTest(Window* window)
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0,1,0));
         ourShader.setMat4f("model", glm::value_ptr(model));
         ourModel.Draw(ourShader);
+    });
+}
+
+void test::transformModify(Window* window)
+{
+    Shader shader("3D.vs", "3D.fs");
+    Buffer buffer;
+    Texture2DInfo tex1("blockes.png");
+    Texture2DInfo tex2("smile.jpg");
+    tex1.setDefaultAttrib();
+    tex2.setDefaultAttrib();
+    
+    buffer.addTexture(tex1);
+    buffer.addTexture(tex2);
+
+    float pos[] = {
+        -0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+        -0.5f,  0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+
+        -0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+
+        -0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f, -0.5f,  
+
+        -0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f, -0.5f  
+    };
+
+    float uv[] = 
+    {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f
+    };
+
+    // world space positions of our cubes
+    glm::vec3 cubePositions = glm::vec3( 0.0f,  0.0f,  0.0f);
+    glm::vec3 camPosition = glm::vec3(0, 10, 1);
+    buffer.setVertexPos(pos, sizeof(pos));
+    buffer.setTexCoord(uv, sizeof(uv));
+
+    buffer.prepare();
+    shader.use();
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
+    Camera& cam = window->getCamera();
+    cam.setNearDistance(0.01f);
+    cam.setFarDistance(1000.0f);
+
+    cam.setCameraPos(camPosition);
+    cam.setCameraFront(cubePositions - camPosition);
+    cam.enableControl(true);
+    window->enableZTest(true);
+
+
+
+    window->AddUpdateCallback([shader, buffer, window, cubePositions](){
+        buffer.use();
+        shader.use();
+        Camera& cam = window->getCamera();
+        glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        float radius = 10.0f;
+        float camX = static_cast<float>(sin(glfwGetTime()) * radius);
+        float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
+        view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        shader.setMat4f("view", glm::value_ptr(cam.getViewMat4()));
+        shader.setMat4f("projection", glm::value_ptr(cam.getProjectionMat4()));
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, cubePositions);
+        model = glm::scale(model, glm::vec3(100, 1, 100));
+        shader.setMat4f("model", glm::value_ptr(model));
+        buffer.draw();
+    });
+}
+
+void test::atlasTest(Window* window)
+{
+    float vertex[] = 
+    {
+        // 位置              // 颜色             // uv
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,   // 左下
+        -0.5f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 1.0f,   // 左上
+        0.5f,  -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,   // 右下
+        0.5f,  0.5f, 0.0f, 0.5f, 0.5f, 0.5f,    1.0f, 1.0f   // 右上
+    };
+
+    unsigned int indices[] = 
+    {
+        0,1,2,
+        1,3,2
+    };
+    Pipline::Shader shader = Pipline::Shader("simpleTexture.vs", "simpleTexture.fs");
+
+    unsigned int vao, vbo, ebo;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex), vertex, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    /*index：第几个属性，从0开始取，0，1，2，顺序自己定义，例如顶点位置，纹理，法线
+    这里只有顶点位置，也只能讨论顶点位置，所以为0
+    size：一个顶点所有数据的个数，这里每个顶点又两个浮点数属性值，所以是2
+    type：顶点描述数据的类型，这里position数组中的数据全部为float，所以是GL_FLOAT
+    normalized：是否需要显卡帮忙把数据归一化到-1到+1区间，这里不需要，所以设置GL_FALSE
+    stride：一个顶点占有的总的字节数，这里为两个float，所以是sizeof(float)*2
+    pointer：当前指针指向的vertex内部的偏离字节数，可以唯一的标识顶点某个属性的偏移量
+    */
+    //位置属性
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    //颜色属性
+    glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    //uv属性
+    glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE, 8*sizeof(float), (void*)(6*sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    unsigned int atlasSize = 2048;
+    std::vector<unsigned char*> data;
+    std::vector<std::vector<int>> meta;
+    std::vector<Util::V4> atlasSplitData;
+
+    for (auto it : std::filesystem::directory_iterator(std::string(_RESOURCE_PATH_) + "/textures"))
+    {
+        if (!it.exists())
+            continue;
+        std::filesystem::path it_path = it.path();
+        std::string path_str = it_path.string();
+        int width1, height1, channel1;
+        unsigned char* texData1 = Util::loadTextureFromFile(path_str.c_str(), &width1, &height1, &channel1, 4);
+
+        // add border
+        int border = 5;
+
+        int newHeight = height1 + border * 2;
+        int newWidth = width1 + border * 2;
+        unsigned char* newTexData = new unsigned char[newWidth * newHeight * 4];
+        memset(newTexData, 0, newHeight * newWidth * 4);
+
+        for (auto row = border; row < height1 + border; row++)
+        {
+            memcpy(newTexData + row * newWidth * 4 + border * 4, texData1 + (row - border) * width1 * 4, width1 * 4);
+        }
+
+        /*
+        int newWidth = width1 + 2 * border;
+        int newHeight = height1 + 2 * border;
+
+        unsigned char* newTexData = new unsigned char[newWidth * newHeight * 4];
+        int newRowLength = newWidth * 4;
+        int oriRowLength = width1 * 4;
+        
+        for (auto row = 0; row < border; row++)
+        {
+            for (int i = 0; i < newWidth; i += 4)
+            {
+                memcpy(newTexData + row * newRowLength + i, borderPixel, 4);
+            }
+        }
+
+        for (auto row = border; row < border + height1; row++)
+        {
+            for (int i = 0; i < border; i += 4)
+            {
+                memcpy(newTexData + row * newRowLength + i, borderPixel, 4);
+            }
+
+            memcpy(newTexData + row * newRowLength + border, texData1 + (row - border) * oriRowLength, oriRowLength);
+
+            for (int i = border + width1; i < newWidth; i++)
+            {
+                memcpy(newTexData + row * newRowLength + i, borderPixel, 4);
+            }
+        }
+
+        for (auto row = border + height1; row < newHeight; row++)
+        {
+            for (int i = 0; i < newWidth; i += 4)
+            {
+                memcpy(newTexData + row * newRowLength + i, borderPixel, 4);
+            }
+        }
+        */
+
+        data.push_back(newTexData);
+        meta.push_back({newWidth, newHeight});
+    }
+
+
+    unsigned char* atlasData = Util::atlasPackData(data, meta, atlasSize, atlasSplitData);
+    Util::atlasUnpackData(atlasData, atlasSplitData, atlasSize);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, atlasSize, atlasSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, atlasData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    window->AddPreUpdateCallback([shader, vao, indices, texture]()
+    {
+        glBindTexture(GL_TEXTURE_2D,texture);
+
+        shader.use();
+        glBindVertexArray(vao);
+        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
     });
 }

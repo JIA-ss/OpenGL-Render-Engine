@@ -69,7 +69,10 @@ int main()
     //test::AssimpLinkTest(window);
     std::cout << "main start" << std::endl;
     Util::testJson();
-    test::ModelTest(window);
+    //test::ModelTest(window);
+    //test::transformModify(window);
+    
+    test::atlasTest(window);
     window->doUpdate();
     return 1;
 }

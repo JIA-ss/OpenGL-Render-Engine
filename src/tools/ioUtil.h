@@ -6,9 +6,13 @@
 #include <sstream>
 #include <vector>
 #include <filesystem>
-
+#include "resource/types/AtlasTextureResource.h"
 namespace Util
 {
+struct V4 
+{
+    int x,y,w,h;
+};
 
 std::string readFile(const char* filePath);
 
@@ -28,10 +32,13 @@ std::filesystem::path getResourcePath();
 
 unsigned char* loadTextureFromFile(const char* path, int* width, int* height, int* channels, int other_param);
 
-unsigned char* loadTextureFromMemory(unsigned char* buffer, size_t bufferSize, int*width, int* height, int* channels, int other_param);
+unsigned char* loadTextureFromMemory(const unsigned char* buffer, size_t bufferSize, int*width, int* height, int* channels, int other_param);
 
 void freeTextureBuffer(void* buffer);
 
+unsigned char* atlasPackData(std::vector<unsigned char*>& data, std::vector<std::vector<int>>& meta, unsigned int& size, std::vector<V4>& rects);
+unsigned char** atlasUnpackData(unsigned char* atlasData, std::vector<V4>& meta, unsigned int& size);
+bool atlasPack(Resource::AtlasTextureResource& atlas);
 
 
 void testJson();

@@ -11,8 +11,13 @@
 #else
 #endif
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+
+#define STBRP_STATIC
+#define STB_RECT_PACK_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_rect_pack.h>
+#include <stb_image.h>
+#include <stb_image_write.h>
 
 #ifndef _RESOURCE_PATH_
     #define _RESOURCE_PATH_ "[CMAKE ERROR] [PLEASE SET _RESOURCE_PATH_ MACRO]"
@@ -188,7 +193,7 @@ unsigned char* Util::loadTextureFromFile(const char* path, int* width, int* heig
     return stbi_load(path, width, height, channels, other_param);
 }
 
-unsigned char* Util::loadTextureFromMemory(unsigned char* buffer, size_t bufferSize, int*width, int* height, int* channels, int other_param)
+unsigned char* Util::loadTextureFromMemory(const unsigned char* buffer, size_t bufferSize, int*width, int* height, int* channels, int other_param)
 {
     return stbi_load_from_memory(buffer, bufferSize, width, height, channels, other_param);
 }
@@ -217,4 +222,112 @@ void Util::testJson()
         std::cout << curKey << " " << value << std::endl;
     }
     //std::cout << content << std::endl;
+}
+
+
+
+unsigned char* Util::atlasPackData(std::vector<unsigned char*>& data, std::vector<std::vector<int>>& meta, unsigned int& size, std::vector<V4>& atlasMeta)
+{
+    stbrp_context context;
+    memset(&context, 0, sizeof(stbrp_context));
+
+
+    unsigned int bufferSize = size * size * 4;
+    unsigned char* buffer = new unsigned char[bufferSize];
+    memset(buffer, 0, bufferSize);
+
+    std::unique_ptr<stbrp_node[]> nodes(new stbrp_node[size]);
+    std::unique_ptr<stbrp_rect[]> rects(new stbrp_rect[data.size()]);
+
+
+    atlasMeta.resize(data.size());
+    for (std::size_t i = 0; i < data.size(); ++i)
+    {
+        auto& rect = rects[i];
+        rect.id = i;
+        rect.w = meta[i][0];
+        rect.h = meta[i][1];
+    }
+
+    stbrp_init_target(&context, size, size, nodes.get(), size);
+    int result = stbrp_pack_rects(&context, rects.get(), data.size());
+
+    std::cout << "pack result: " << result << std::endl;
+
+    if (result == 0)
+        return buffer;
+
+    for (std::size_t i = 0; i < data.size(); ++i)
+    {
+        auto textureRowSize = rects[i].w * 4;
+        auto atlasRowSize = size * 4;
+        int x = rects[i].x;
+        int y = rects[i].y;
+        int w = rects[i].w;
+        int h = rects[i].h;
+        atlasMeta[i] = {x,y,w,h};
+        for (auto row = 0; row < h; ++row)
+            memcpy(buffer + (row + y) * atlasRowSize + x * 4, data[i] + row * textureRowSize, textureRowSize);
+
+    }
+
+    std::string outputPath = std::string(_RESOURCE_PATH_) + "/atlasTexture/atlas.png";
+    // 写入图片
+    stbi_write_png(outputPath.c_str(), size, size, 4, buffer, 0);
+
+    return buffer;
+}
+
+
+unsigned char** Util::atlasUnpackData(unsigned char* atlasData, std::vector<V4>& meta, unsigned int& size)
+{
+    unsigned char** res = new unsigned char*[meta.size()];
+    for (int i = 0; i < meta.size(); i++)
+    {
+        auto textureRowSize = meta[i].w * 4;
+        auto atlasRowSize = size * 4;
+        res[i] = new unsigned char[meta[i].w * meta[i].h * 4];
+
+        for (auto row = 0; row < meta[i].h; ++row)
+            memcpy(res[i] + row * textureRowSize, atlasData + (row + meta[i].y) * atlasRowSize + meta[i].x * 4, textureRowSize);
+        char curIdx = '0' + i;
+        std::string outputPath = std::string(_RESOURCE_PATH_) + "/atlasTexture/atlasUnpack" + curIdx + ".png";
+        // 写入图片
+        stbi_write_png(outputPath.c_str(), meta[i].w, meta[i].h, 4, res[i], 0);
+    }
+    return res;
+}
+
+bool Util::atlasPack(Resource::AtlasTextureResource& atlas)
+{
+    stbrp_context context;
+    memset(&context, 0, sizeof(stbrp_context));
+
+    auto nodeCount = atlas.getRawSize();
+    auto width = nodeCount, height = nodeCount;
+    std::unique_ptr<stbrp_node[]> nodes(new stbrp_node[nodeCount]);
+    std::unique_ptr<stbrp_rect[]> rects(new stbrp_rect[atlas.m_cellCtxs.size()]);
+
+    for (std::size_t i = 0; i < atlas.m_cellCtxs.size(); ++i)
+    {
+        auto& rect = rects[i];
+        auto& ctx = atlas.m_cellCtxs[i];
+        rect.id = i;
+        rect.w = ctx.cell.w;
+        rect.h = ctx.cell.h;
+    }
+
+    stbrp_init_target(&context, width, height, nodes.get(), nodeCount);
+    int result = stbrp_pack_rects(&context, rects.get(), atlas.m_cellCtxs.size());
+
+    for (std::size_t i = 0; i < atlas.m_cellCtxs.size(); ++i)
+    {
+        auto& rect = rects[i];
+        auto& ctx = atlas.m_cellCtxs[i];
+
+        ctx.packed = rect.was_packed > 0;
+        ctx.cell.x = rect.x;
+        ctx.cell.y = rect.y;
+    }
+    return result > 0;
 }
