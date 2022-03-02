@@ -89,27 +89,64 @@ void ResourceManager::InitAtlasTextureResource()
         texs.push_back(ref);
     }
 
+    std::vector<TextureRef> failedPackTexs;
+    std::vector<TextureRef> finalFailedPackedTexs;
 
 
     std::shared_ptr<AtlasTextureResource> res = std::make_shared<AtlasTextureResource>();
 
+    int packedTexNums = 0;
+    
     int packNum = res->tryPackTextures(texs);
+    curTex += packNum;
+
+    packedTexNums += packNum;
     while( curTex < texNums)
     {
-        std::cout << "atlas size: " << res->getSize() << "\t cell num: " << res->getCellNums() << std::endl;
-        curTex += packNum;
-        if (packNum > 0)
-            m_resourceMap[atlasTexture][std::to_string(m_resourceMap[atlasTexture].size())] = std::dynamic_pointer_cast<BaseResource>(res);
-        else
-            curTex++;
         res = std::make_shared<AtlasTextureResource>();
-        packNum = res->tryPackTextures(std::vector<TextureRef>(texs.begin() + curTex, texs.end()));
+        packNum = res->tryPackTextures(std::vector<TextureRef>(texs.begin() + curTex, texs.end()), true, 10);
+        if (packNum > 0)
+        {
+            m_resourceMap[atlasTexture][std::to_string(m_resourceMap[atlasTexture].size())] = std::dynamic_pointer_cast<BaseResource>(res);
+            curTex += packNum;
+            packedTexNums += packNum;
+        }
+        else
+        {
+            failedPackTexs.push_back(texs[curTex++]);
+        }
+    }
+
+    curTex = 0;
+    while (curTex < failedPackTexs.size())
+    {
+        res = std::make_shared<AtlasTextureResource>();
+        packNum = res->tryPackTextures(std::vector<TextureRef>(failedPackTexs.begin() + curTex, failedPackTexs.end()), true);
+        std::cout << "atlas size: " << res->getSize() << "\t cell num: " << res->getCellNums() << std::endl;
+        if (packNum > 0)
+        {
+            m_resourceMap[atlasTexture][std::to_string(m_resourceMap[atlasTexture].size())] = std::dynamic_pointer_cast<BaseResource>(res);
+            curTex += packNum;
+            packedTexNums += packNum;
+        }
+        else
+        {
+            finalFailedPackedTexs.push_back(failedPackTexs[curTex++]);
+        }
+    }
+
+    for (int i = 0; i < finalFailedPackedTexs.size(); i++)
+    {
+        std::cout << "Failed packed Texture: " ;
+        std::cout << finalFailedPackedTexs[i]->getName();
+        std::cout << " (" << finalFailedPackedTexs[i]->getWidth() << ", " << finalFailedPackedTexs[i]->getHeight() << ")";
+        std::cout << std::endl;
     }
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
 
-    std::cout << "total " << texNums << " textures" << std::endl;
+    std::cout << "total texture num: " << texNums << "\tpacked texture num: " << packedTexNums << std::endl;
     std::cout << "pack " << m_resourceMap[atlasTexture].size() << " atlas" << std::endl;
     std::cout << "total Pack Time: " << elapsed_seconds.count() * 1000 << " ms" << std::endl;
 }
