@@ -28,6 +28,9 @@ enum class ShaderParamType
     Sampler2D
 };
 
+class Texture;
+
+
 class ShaderSetting
 {
 public:
@@ -43,6 +46,14 @@ public:
     void UpdateParameters(Shader *shader);
 
     void Use();
+
+public:
+    struct TextureParamValue
+    {
+        GLint texUnit;
+        const Texture *texture;
+        TextureParamValue(const GLint& id, const Texture* tex) : texUnit(id), texture(tex) { }
+    };
 
 protected:
     class ShaderParamBase

@@ -1,5 +1,5 @@
 #include "ShaderSetting.h"
-
+#include <iostream>
 GRAPHIC_NAMESPACE_USING
 
 
@@ -21,11 +21,6 @@ void ShaderSetting::Use()
 
 
 
-
-/*
-
-
-
 #define MAKE_CASE(glType, storeType, enumType, glFunc)                                                                \
     case glType:                                                                                                      \
         for (int s = 0; s < size; s++)                                                                                \
@@ -40,7 +35,7 @@ void ShaderSetting::Use()
             {                                                                                                         \
                 storeType val;                                                                                        \
                 glFunc(program, loc, &val);                                                                           \
-                m_parameters.emplace(nameStr, new ShaderParam<storeType>(val, loc, ShaderParamType::enumType)); \
+                m_params.emplace(nameStr, new ShaderParam<storeType>(val, loc, ShaderParamType::enumType)); \
             }                                                                                                         \
         }                                                                                                             \
         break;
@@ -59,7 +54,7 @@ void ShaderSetting::Use()
             {                                                                                                         \
                 storeType val;                                                                                        \
                 glFunc(program, loc, glm::value_ptr(val));                                                            \
-                m_parameters.emplace(nameStr, new ShaderParam<storeType>(val, loc, ShaderParamType::enumType)); \
+                m_params.emplace(nameStr, new ShaderParam<storeType>(val, loc, ShaderParamType::enumType)); \
             }                                                                                                         \
         }                                                                                                             \
         break;
@@ -107,8 +102,8 @@ void ShaderSetting::UpdateParameters(Shader* shader)
                     {
                         GLint val;
                         glGetUniformiv(program, loc, &val);
-                        TextureUnitBinding actualVal(val, nullptr);
-                        m_parameters.emplace(nameStr, new ShaderParameterType<TextureUnitBinding>(actualVal, loc, ParameterType::Sampler2D));
+                        TextureParamValue actualVal(val, nullptr);
+                        m_params.emplace(nameStr, new ShaderParam<TextureParamValue>(actualVal, loc, ShaderParamType::Sampler2D));
                     }
                 }
                 break;
@@ -120,4 +115,3 @@ void ShaderSetting::UpdateParameters(Shader* shader)
 }
 
 
-*/
