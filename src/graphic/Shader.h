@@ -10,6 +10,7 @@ GRAPHIC_NAMESPACE_BEGIN
 class Shader
 {
 public:
+    Shader(const std::string& name);
     Shader(const char* vsName, const char* fsName);
     Shader(const Shader& other) 
     {
@@ -28,6 +29,11 @@ public:
     template<typename T>
     static void setUniform(const GLuint &location, const T& val);
 
+public:
+    static Shader* Get(const std::string& name);
+    static Shader* Add(const std::string& name);
+private:
+    static std::unordered_map<std::string, Shader*> collection;
 };
 
 

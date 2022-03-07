@@ -7,9 +7,9 @@
 GRAPHIC_NAMESPACE_USING
 
 
-static unsigned int compileShader(const char* vShaderCode, const char* fShaderCode)
+static unsigned int compileShader(const char* vShaderCode, const char* fShaderCode, const char* gShaderCode = nullptr)
 {
-    unsigned int shaderProgram, vertex, fragment;
+    unsigned int shaderProgram, vertex, fragment, geometry;
     int success;
     char infoLog[512];
 
@@ -18,6 +18,12 @@ static unsigned int compileShader(const char* vShaderCode, const char* fShaderCo
 
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, nullptr);
+
+    if (gShaderCode)
+    {
+        geometry = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geometry, 1, &gShaderCode, nullptr);
+    }
 
     glCompileShader(vertex);
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
@@ -35,9 +41,26 @@ static unsigned int compileShader(const char* vShaderCode, const char* fShaderCo
         std::cout << "Error::Shader::Fragment::Compile Faild\n" << infoLog << std::endl;
     }
 
+    if (gShaderCode)
+    {
+        glCompileShader(geometry);
+        glGetShaderiv(geometry, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            glGetShaderInfoLog(geometry, 512, nullptr, infoLog);
+            std::cout << "Error::Shader::Geometry::Compile Faild\n" << infoLog << std::endl;
+        }
+    }
+
     shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertex);
     glAttachShader(shaderProgram, fragment);
+
+    if (gShaderCode)
+    {
+        glAttachShader(shaderProgram, geometry);
+    }
+
     glLinkProgram(shaderProgram);
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
@@ -50,7 +73,49 @@ static unsigned int compileShader(const char* vShaderCode, const char* fShaderCo
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
+    if (gShaderCode)
+    {
+        glDeleteShader(geometry);
+    }
     return shaderProgram;
+}
+std::unordered_map<std::string, Shader*> Shader::collection = std::unordered_map<std::string, Shader*>();
+Shader* Shader::Get(const std::string& name)
+{
+    auto it = collection.find(name);
+    if (it == collection.end())
+        return nullptr;
+    return it->second;
+}
+
+Shader* Shader::Add(const std::string& name)
+{
+    auto it = collection.find(name);
+    if (it != collection.end())
+        return it->second;
+    Shader* shader = new Shader(name);
+    collection[name] = shader;
+    return shader;
+}
+
+Shader::Shader(const std::string& name)
+{
+    Resource::ShaderRef vRef = Resource::ResourceManager::Instance()->GetResource((name + ".vs").c_str(), Resource::shader);
+    Resource::ShaderRef fRef = Resource::ResourceManager::Instance()->GetResource((name + ".fs").c_str(), Resource::shader);
+    Resource::ShaderRef gRef = Resource::ResourceManager::Instance()->GetResource((name + ".gs").c_str(), Resource::shader);
+
+    if (vRef.isNull() || fRef.isNull())
+    {
+        std::string t = "false";
+        assert(false);
+    }
+
+    const char* vertexCode = vRef->getContent();
+    const char* fragmentCode = fRef->getContent();
+    const char* geometryCode = gRef.isNull() ? nullptr : gRef->getContent();
+
+    ID = compileShader(vertexCode, fragmentCode, geometryCode);
+    GlobalShaderParam::Get()->ConfigureShaderParameterBlock(ID);
 }
 
 Shader::Shader(const char* vsName, const char* fsName)

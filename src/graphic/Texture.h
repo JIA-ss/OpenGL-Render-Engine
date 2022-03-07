@@ -125,10 +125,10 @@ Texture* Texture::Add(const std::string& id, Args &&... args)
     auto it = collection.find(id);
     if (it == collection.end())
     {
-        auto pair = collection.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(args...));
+        auto pair = collection.emplace(id, Texture(args...));
         return &pair.first->second;
     }
-    return it->second;
+    return &it->second;
 }
 
 GRAPHIC_NAMESPACE_END

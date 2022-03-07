@@ -2,20 +2,116 @@
 #include <iostream>
 GRAPHIC_NAMESPACE_USING
 
-
-
-
 unsigned int ShaderSetting::GenerateLocation()
 {
     static unsigned int location = 0;
     return location++;
 }
 
-void ShaderSetting::Use()
+void ShaderSetting::Use() const
 {
     for (auto&& [name, param] : m_params)
     {
         param->Use();
+    }
+}
+
+ShaderSetting::ShaderParamBase::ShaderParamBase(const unsigned int &loc, const ShaderParamType &type)
+    : m_loc(loc), m_type(type) { }
+
+void ShaderSetting::ShaderParamBase::updateLocation(const unsigned int& loc)
+{
+    m_loc = loc;
+}
+
+ShaderParamType ShaderSetting::ShaderParamBase::GetType() const 
+{
+    return m_type;
+}
+
+
+void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
+{
+    static const std::string DiffuseTex = "diffuseTex";
+    static const std::string SpecularTex = "specularTex";
+    static const std::string AmbientTex = "ambientTex";
+    static const std::string EmissiveTex = "emissiveTex";
+    static const std::string HeightTex = "heightTex";
+    static const std::string NormalsTex = "normalsTex";
+    static const std::string ShininessTex = "shininessTex";
+    static const std::string OpacityTex = "opacityTex";
+    static const std::string DisplacementTex = "displacementTex";
+    static const std::string LightmapTex = "lightmapTex";
+    static const std::string ReflectionTex = "reflectionTex";
+
+    int diffuseCount = 0;
+    int specularCount = 0;
+    int ambientCount = 0;
+    int emissiveCount = 0;
+    int heightCount = 0;
+    int normalsCount = 0;
+    int shininessCount = 0;
+    int opacityCount = 0;
+    int displacementCount = 0;
+    int lightmapCount = 0;
+    int reflectionCount = 0;
+
+    for (size_t texUnit = 0; texUnit < newTextures.size(); texUnit++)
+    {
+        const std::string *textureName;
+        int count;
+        switch (newTextures[texUnit]->GetType())
+        {
+        case Diffuse:
+            count = diffuseCount++;
+            textureName = &DiffuseTex;
+            break;
+        case Specular:
+            count = specularCount++;
+            textureName = &SpecularTex;
+            break;
+        case Ambient:
+            count = ambientCount++;
+            textureName = &AmbientTex;
+            break;
+        case Emissive:
+            count = emissiveCount++;
+            textureName = &EmissiveTex;
+            break;
+        case Height:
+            count = heightCount++;
+            textureName = &HeightTex;
+            break;
+        case Normals:
+            count = normalsCount++;
+            textureName = &NormalsTex;
+            break;
+        case Shininess:
+            count = shininessCount++;
+            textureName = &ShininessTex;
+            break;
+        case Opacity:
+            count = opacityCount++;
+            textureName = &OpacityTex;
+            break;
+        case Displacement:
+            count = displacementCount++;
+            textureName = &DisplacementTex;
+            break;
+        case Lightmap:
+            count = lightmapCount++;
+            textureName = &LightmapTex;
+            break;
+        case Reflection:
+            count = reflectionCount++;
+            textureName = &ReflectionTex;
+            break;
+        default:
+            std::cerr << "UNSUPPORTED texture type:" << newTextures[texUnit]->GetName();
+            return;
+        }
+        SetParameter(*textureName + std::to_string(count),
+                     TextureParamValue(texUnit, newTextures[texUnit]));
     }
 }
 

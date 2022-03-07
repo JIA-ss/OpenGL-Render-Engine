@@ -46,8 +46,9 @@ public:
 
     void UpdateParameters(Shader *shader);
 
-    void Use();
+    void Use() const;
 
+    void SetTextures(const std::vector<Texture* >& texs);
 public:
     struct TextureParamValue
     {
@@ -127,19 +128,6 @@ T* ShaderSetting::GetParameter(const std::string& name)
     if (it == m_params.end())
         return nullptr;
     return static_cast<T*>(it->second->Get());
-}
-
-ShaderSetting::ShaderParamBase::ShaderParamBase(const unsigned int &loc, const ShaderParamType &type)
-    : m_loc(loc), m_type(type) { }
-
-void ShaderSetting::ShaderParamBase::updateLocation(const unsigned int& loc)
-{
-    m_loc = loc;
-}
-
-ShaderParamType ShaderSetting::ShaderParamBase::GetType() const 
-{
-    return m_type;
 }
 
 template<typename T>
