@@ -3,6 +3,7 @@
 #include "resource/types/TextureResource.h"
 #include "resource/types/ShaderResource.h"
 #include <filesystem>
+#include <algorithm>
 using namespace Resource;
 
 IMPLEMENT_SINGLETON(ResourceManager)
@@ -89,6 +90,11 @@ void ResourceManager::InitAtlasTextureResource()
         texs.push_back(ref);
     }
 
+    sort(texs.begin(), texs.end(), [](const TextureRef& v1, const TextureRef& v2)
+    {
+        return v1.get()->getWidth() * v1.get()->getHeight() > v2.get()->getWidth() * v2.get()->getHeight();
+    });
+
     std::vector<TextureRef> failedPackTexs;
     std::vector<TextureRef> finalFailedPackedTexs;
 
@@ -104,7 +110,7 @@ void ResourceManager::InitAtlasTextureResource()
     while( curTex < texNums)
     {
         res = std::make_shared<AtlasTextureResource>();
-        packNum = res->tryPackTextures(std::vector<TextureRef>(texs.begin() + curTex, texs.end()), true, 10);
+        packNum = res->tryPackTextures(std::vector<TextureRef>(texs.begin() + curTex, texs.end()), true, 10, 0.7f);
         if (packNum > 0)
         {
             m_resourceMap[atlasTexture][std::to_string(m_resourceMap[atlasTexture].size())] = std::dynamic_pointer_cast<BaseResource>(res);

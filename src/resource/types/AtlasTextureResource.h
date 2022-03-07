@@ -33,9 +33,11 @@ private:
     std::vector<sAtlasCell> m_metas;
     unsigned int m_border = 5;
 public:
-    int tryPackTextures(const std::vector<TextureRef>& texs, bool useBigAtlas = false, int minmumTexNum = 2);
+    int tryPackTextures(const std::vector<TextureRef>& texs, bool useBigAtlas = false, int minmumTexNum = 2, float minimumUsage = 0.3f);
     int getCellNums() { return m_metas.size(); }
     int getSize() { return m_width; }
+
+	void addedToPacked(const std::vector<TextureRef>& tex);
 };
 
 typedef tResourceRef<AtlasTextureResource> AtlasTextureRef;

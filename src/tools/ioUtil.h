@@ -42,6 +42,7 @@ unsigned char* addBorderForTexture(const unsigned char* data, int width, int hei
 void writeTextureToPng(const std::string& path, int width, int height, const unsigned char* data);
 
 void testJson();
-
+void JsonWrite();
+void JsonRead();
 
 }

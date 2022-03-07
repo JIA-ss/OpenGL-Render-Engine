@@ -4,7 +4,7 @@
 
 using namespace Resource;
 
-int AtlasTextureResource::tryPackTextures(const std::vector<TextureRef>& texs, bool useBigAtlas, int minmumTexNum)
+int AtlasTextureResource::tryPackTextures(const std::vector<TextureRef>& texs, bool useBigAtlas, int minmumTexNum, float minimumUsage)
 {
     std::vector<eAtlasSize> trySizes = 
     { 
@@ -33,7 +33,7 @@ int AtlasTextureResource::tryPackTextures(const std::vector<TextureRef>& texs, b
         {
             unsigned int size = static_cast<unsigned int>(size_);
             float usage = float(validArea) / float(size * size);
-            bool canpack = usage <= 1 && usage >= 0.5f && Util::atlasCanPack(meta, size, outMeta);
+            bool canpack = usage <= 1 && usage >= minimumUsage && Util::atlasCanPack(meta, size, outMeta);
             if (canpack && meta.size() >= minmumTexNum)
             {
                 std::vector<const unsigned char*> texData;
@@ -62,4 +62,47 @@ int AtlasTextureResource::tryPackTextures(const std::vector<TextureRef>& texs, b
     }
 
     return 0;
+}
+
+void AtlasTextureResource::addedToPacked(const std::vector<TextureRef>& texs)
+{
+    std::vector<sAtlasCell> meta;
+    meta.clear();
+    unsigned int validArea = 0;
+
+    for (unsigned int i = 0; i < texs.size(); i++)
+    {
+        meta.push_back({});
+        m_rawData.clear();
+        meta[i] = {"", "",i,0,0,(unsigned int)texs[i].get()->getWidth() + m_border * 2, (unsigned int)texs[i].get()->getHeight() + m_border * 2};
+        validArea += meta[i].w * meta[i].h;
+
+
+        unsigned int size = 2048;
+        float usage = float(validArea) / float(size * size);
+        std::vector<Resource::sAtlasCell> outMeta;
+        bool canpack = Util::atlasCanPack(meta, size, outMeta);
+        if (canpack)
+        {
+            std::vector<const unsigned char*> texData;
+            for (int j = 0; j < meta.size(); j++)
+            {
+                unsigned char* borderData = Util::addBorderForTexture(texs[j].get()->getTextureData(), texs[j].get()->getWidth(), texs[j].get()->getHeight(), m_border);
+                texData.push_back(borderData);
+            }
+            unsigned char* data = Util::packAtlasWithMeta(outMeta, size, texData);
+            m_rawData.append(data, size * size * 4);
+            m_width = size;
+            m_height = size;
+            m_channels = 4;
+            m_metas = outMeta;
+
+            std::string curIdx = std::to_string(i);
+            std::string size__ = std::to_string(size);
+            std::string outputPath = std::string(_RESOURCE_PATH_) + "/atlasTexture/atlasUnpack" + curIdx + "(" + size__ + ").png";
+            // 写入图片
+            Util::writeTextureToPng(outputPath, size, size, data);
+            std::cout << "[" << "atlasUnpack" + curIdx + "(" + size__ + ")" << "] atlas size: " << size << "\tcell num: " << meta.size() << "\tarea usage: " << usage << std::endl;
+        }
+    }
 }

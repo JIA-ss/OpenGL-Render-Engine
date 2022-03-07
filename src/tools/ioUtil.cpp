@@ -154,7 +154,10 @@ bool Util::writeFile_Native(const char* path, const char* src, int sz)
     }
     else
     {
-        file = fopen(path, "ab");
+        //file = fopen(path, "ab");
+
+        // cover original content
+        file = fopen(path, "w+b");
     }
 
     if (file == nullptr)
@@ -221,7 +224,38 @@ void Util::testJson()
         std::string value = itor.value().get<std::string>();
         std::cout << curKey << " " << value << std::endl;
     }
+
     //std::cout << content << std::endl;
+    JsonWrite();
+    JsonRead();
+}
+
+void Util::JsonWrite()
+{
+    nlohmann::json j;
+    nlohmann::json container;
+    for (int i = 0; i < 5; i++)
+    {
+        nlohmann::json element;
+        std::string idx = "element" + std::to_string(i);
+        element[idx] = i;
+        container.push_back(element);
+    }
+    j["container"] = container;
+
+    j["raw_key"] = "raw_value";
+
+    std::string content = j.dump();
+    writeFile_Native((std::string(_RESOURCE_PATH_) + "/configs/jsonRW.config").c_str(), content.data(), content.size());
+}
+void Util::JsonRead()
+{
+    size_t size;
+    char* content = readFile_Native((std::string(_RESOURCE_PATH_) + "/configs/jsonRW.config").c_str(), size, true);
+    std::cout << content << std::endl;
+    nlohmann::json j = nlohmann::json::parse(content);
+    std::string raw_value = j["raw_key"].get<std::string>();
+    std::cout << raw_value;
 }
 
 bool Util::atlasCanPack(std::vector<Resource::sAtlasCell>& meta, unsigned int size, std::vector<Resource::sAtlasCell>& rects)
