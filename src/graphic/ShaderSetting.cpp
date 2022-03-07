@@ -19,44 +19,55 @@ void ShaderSetting::Use()
     }
 }
 
+template <>
+void ShaderSetting::ShaderParam<ShaderSetting::TextureParamValue>::Use()
+{
+    glActiveTexture(GL_TEXTURE0 + m_val.texUnit); 
+    if(m_val.texture)
+        glBindTexture(GL_TEXTURE_2D, m_val.texture->GetId());
+    else 
+        glBindTexture(GL_TEXTURE_2D, 0);
+	Shader::setUniform(m_loc, m_val.texUnit);
+}
 
 
-#define MAKE_CASE(glType, storeType, enumType, glFunc)                                                                \
-    case glType:                                                                                                      \
-        for (int s = 0; s < size; s++)                                                                                \
-        {                                                                                                             \
-            if (s > 0)                                                                                                \
-            {                                                                                                         \
-                nameStr = nameStr.substr(0, nameStr.find_last_of("["));                                               \
-                nameStr += "[" + std::to_string(s) + "]";                                                             \
-            }                                                                                                         \
-            auto loc = glGetUniformLocation(program, nameStr.data());                                                 \
-            if (loc != GL_INVALID_INDEX)                                                                              \
-            {                                                                                                         \
-                storeType val;                                                                                        \
-                glFunc(program, loc, &val);                                                                           \
-                m_params.emplace(nameStr, new ShaderParam<storeType>(val, loc, ShaderParamType::enumType)); \
-            }                                                                                                         \
-        }                                                                                                             \
-        break;
 
-#define MAKE_CASE_VM(glType, storeType, enumType, glFunc)                                                             \
-    case glType:                                                                                                      \
-        for (int s = 0; s < size; s++)                                                                                \
-        {                                                                                                             \
-            if (s > 0)                                                                                                \
-            {                                                                                                         \
-                nameStr = nameStr.substr(0, nameStr.find_last_of("["));                                               \
-                nameStr += "[" + std::to_string(s) + "]";                                                             \
-            }                                                                                                         \
-            auto loc = glGetUniformLocation(program, nameStr.data());                                                 \
-            if (loc != GL_INVALID_INDEX)                                                                              \
-            {                                                                                                         \
-                storeType val;                                                                                        \
-                glFunc(program, loc, glm::value_ptr(val));                                                            \
-                m_params.emplace(nameStr, new ShaderParam<storeType>(val, loc, ShaderParamType::enumType)); \
-            }                                                                                                         \
-        }                                                                                                             \
+#define MAKE_CASE(glType, storeType, enumType, glFunc)                                                                  \
+    case glType:                                                                                                        \
+        for (int s = 0; s < size; s++)                                                                                  \
+        {                                                                                                               \
+            if (s > 0)                                                                                                  \
+            {                                                                                                           \
+                nameStr = nameStr.substr(0, nameStr.find_last_of("["));                                                 \
+                nameStr += "[" + std::to_string(s) + "]";                                                               \
+            }                                                                                                           \
+            auto loc = glGetUniformLocation(program, nameStr.data());                                                   \
+            if (loc != GL_INVALID_INDEX)                                                                                \
+            {                                                                                                           \
+                storeType val;                                                                                          \
+                glFunc(program, loc, &val);                                                                             \
+                m_params.emplace(nameStr, new ShaderParam<storeType>(val, loc, ShaderParamType::enumType));             \
+            }                                                                                                           \
+        }                                                                                                               \
+        break;  
+    
+#define MAKE_CASE_VM(glType, storeType, enumType, glFunc)                                                               \
+    case glType:                                                                                                        \
+        for (int s = 0; s < size; s++)                                                                                  \
+        {                                                                                                               \
+            if (s > 0)                                                                                                  \
+            {                                                                                                           \
+                nameStr = nameStr.substr(0, nameStr.find_last_of("["));                                                 \
+                nameStr += "[" + std::to_string(s) + "]";                                                               \
+            }                                                                                                           \
+            auto loc = glGetUniformLocation(program, nameStr.data());                                                   \
+            if (loc != GL_INVALID_INDEX)                                                                                \
+            {                                                                                                           \
+                storeType val;                                                                                          \
+                glFunc(program, loc, glm::value_ptr(val));                                                              \
+                m_params.emplace(nameStr, new ShaderParam<storeType>(val, loc, ShaderParamType::enumType));             \
+            }                                                                                                           \
+        }                                                                                                               \
         break;
 
 

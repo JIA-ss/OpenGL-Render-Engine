@@ -1,6 +1,7 @@
 #pragma once
 #include "GraphicCommonHeader.h"
 #include "Shader.h"
+#include "Texture.h"
 #include <memory>
 #include <unordered_map>
 GRAPHIC_NAMESPACE_BEGIN

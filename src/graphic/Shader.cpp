@@ -114,3 +114,43 @@ void Shader::setMat4f(const std::string& name, const float* value) const
 {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value);
 }
+
+
+template<typename T>
+void Shader::setUniform(const GLuint &location, const T& val)
+{
+
+}
+
+#define SET_UNIFORM_BASE_TYPE_SPECIALIZE(_CLASS_, _GL_FUNC_)                                    \
+template<> void Shader::setUniform<_CLASS_>(const GLuint& location, const _CLASS_& val)         \
+{                                                                                               \
+    _GL_FUNC_(location, val);                                                                   \
+}
+
+#define SET_UNIFORM_VEC_TYPE_SPECIALIZE(_CLASS_, _GL_FUNC_)                                     \
+template<> void Shader::setUniform<_CLASS_>(const GLuint& location, const _CLASS_& val)         \
+{                                                                                               \
+    _GL_FUNC_(location, 1, &val[0]);                                                            \
+}
+
+#define SET_UNIFORM_MAT_TYPE_SPECIALIZE(_CLASS_, _GL_FUNC_)                                     \
+template<> void Shader::setUniform<_CLASS_>(const GLuint& location, const _CLASS_& val)         \
+{                                                                                               \
+    _GL_FUNC_(location, 1, GL_FALSE, &val[0][0]);                                                            \
+}
+
+
+SET_UNIFORM_BASE_TYPE_SPECIALIZE(float, glUniform1f)
+SET_UNIFORM_BASE_TYPE_SPECIALIZE(int, glUniform1i)
+SET_UNIFORM_BASE_TYPE_SPECIALIZE(unsigned int, glUniform1ui)
+SET_UNIFORM_BASE_TYPE_SPECIALIZE(bool, glUniform1i)
+SET_UNIFORM_BASE_TYPE_SPECIALIZE(double, glUniform1d)
+
+SET_UNIFORM_VEC_TYPE_SPECIALIZE(glm::vec2, glUniform2fv)
+SET_UNIFORM_VEC_TYPE_SPECIALIZE(glm::vec3, glUniform3fv)
+SET_UNIFORM_VEC_TYPE_SPECIALIZE(glm::vec4, glUniform4fv)
+
+SET_UNIFORM_MAT_TYPE_SPECIALIZE(glm::mat2, glUniformMatrix2fv)
+SET_UNIFORM_MAT_TYPE_SPECIALIZE(glm::mat3, glUniformMatrix3fv)
+SET_UNIFORM_MAT_TYPE_SPECIALIZE(glm::mat4, glUniformMatrix4fv)
