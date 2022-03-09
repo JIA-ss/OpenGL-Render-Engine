@@ -6,7 +6,7 @@ void ShaderSetting::Use() const
 {
     for (auto&& [name, param] : m_params)
     {
-        //std::cout << name << "use" << std::endl;
+        //std::cout << name << "\tuse" << std::endl;
         param->Use();
     }
 }

@@ -7,4 +7,5 @@ namespace GraphicTest
 
 void simpleImage(Window* window);
 
+void cube(Window* window);
 }
