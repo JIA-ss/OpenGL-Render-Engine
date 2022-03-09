@@ -27,6 +27,7 @@ ShaderParamType ShaderSetting::ShaderParamBase::GetType() const
 
 void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
 {
+    static const std::string NoneTex = "texture";
     static const std::string DiffuseTex = "diffuseTex";
     static const std::string SpecularTex = "specularTex";
     static const std::string AmbientTex = "ambientTex";
@@ -39,6 +40,7 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
     static const std::string LightmapTex = "lightmapTex";
     static const std::string ReflectionTex = "reflectionTex";
 
+    int noneCount = 0;
     int diffuseCount = 0;
     int specularCount = 0;
     int ambientCount = 0;
@@ -57,6 +59,10 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
         int count;
         switch (newTextures[texUnit]->GetType())
         {
+        case None:
+            count = noneCount++;
+            textureName = &NoneTex;
+            break;
         case Diffuse:
             count = diffuseCount++;
             textureName = &DiffuseTex;
