@@ -80,17 +80,17 @@ public:
 public:
     Texture() = default;
     Texture(const std::string& texName,            
-            const InternalFormat &internalFormat,
-            const DataFormat &format,
-            const DataType &type);
+            const InternalFormat &internalFormat = InternalFormat::RGBAInternal,
+            const DataFormat &format = DataFormat::RGBA,
+            const DataType &type = DataType::UnsignedByte);
 
     Texture(const TextureRef& tex,            
-            const InternalFormat &internalFormat,
-            const DataFormat &format,
-            const DataType &type);
+            const InternalFormat &internalFormat = InternalFormat::RGBAInternal,
+            const DataFormat &format = DataFormat::RGBA,
+            const DataType &type = DataType::UnsignedByte);
 
-    Texture(const std::string& texName, const TextureType& textureType = TextureType::Diffuse);
-    Texture(const TextureRef& tex, const TextureType& textureType = TextureType::Diffuse);
+    Texture(const std::string& texName, const TextureType& textureType);
+    Texture(const TextureRef& tex, const TextureType& textureType);
     
     //todo: freeType Texture
     //Texture(FT_GlyphSlot glyph);
