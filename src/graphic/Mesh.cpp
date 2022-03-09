@@ -7,6 +7,7 @@ Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<Vertex> &vertic
     EBO = 0;
     VAO = 0;
     VBO = 0;
+    m_material = mat;
     SetUpMesh();
 }
 
@@ -15,6 +16,7 @@ Mesh::Mesh(aiMesh *mesh, Material *m, const std::string &name) : m_material(m), 
     EBO = 0;
     VAO = 0;
     VBO = 0;
+    m_material = m;
     loadFromAssimp(mesh);
     SetUpMesh();
 }
@@ -133,4 +135,12 @@ void Mesh::SetVertices(std::vector<Vertex>&& vertices, std::vector<GLuint>&& ind
 void Mesh::SetRenderingIndex(const unsigned int& newIndex)
 {
     m_renderIndex = newIndex;
+}
+
+void Mesh::draw() const
+{
+    m_material->UseMaterial();
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }

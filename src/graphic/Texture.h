@@ -106,7 +106,7 @@ public:
 private:
     unsigned int m_textureId = 0;
     TextureRef m_textureRef;
-    TextureType m_type;
+    TextureType m_type = TextureType::Diffuse;
 
 public:
     static Texture* Get(const std::string& id);

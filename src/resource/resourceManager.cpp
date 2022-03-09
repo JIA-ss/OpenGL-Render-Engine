@@ -79,7 +79,8 @@ void ResourceManager::InitTextureResource()
 
 void ResourceManager::InitAtlasTextureResource()
 {
-
+    return;
+    
     auto start = std::chrono::system_clock::now();
 
     int texNums = m_resourceMap[texture].size();

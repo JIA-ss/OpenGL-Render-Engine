@@ -31,6 +31,9 @@ public:
     void SetRenderIndex(const unsigned int& idx);
     void SetName(const std::string& name) { m_name = name; }
     const char* GetName() const { return m_name.c_str(); }
+
+    template<typename T>
+    bool SetShaderParam(const std::string& name, const T& val);
 protected:
     std::string m_name;
     Shader* m_shader;
@@ -57,6 +60,13 @@ Material *Material::Add(const std::string &id, Args &&... args)
     auto pair = collection.emplace(id, Material(args...));
     pair.first->second.SetName(id);
     return &pair.first->second;
+}
+
+template<typename T>
+bool Material::SetShaderParam(const std::string& name, const T& val)
+{
+    //unsigned int location = glGetUniformLocation(m_shader->ID, name.c_str());
+    return m_params.SetParameter(name, val);
 }
 
 GRAPHIC_NAMESPACE_END

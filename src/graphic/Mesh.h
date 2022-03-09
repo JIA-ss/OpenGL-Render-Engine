@@ -29,6 +29,8 @@ public:
     const std::vector<GLuint>& GetIndices() const;
     const std::vector<Vertex>& GetVertices() const;
     const Material* GetMaterial() const;
+
+    void draw() const;
 private:
     void SetUpMesh();
 private:

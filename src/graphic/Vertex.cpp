@@ -11,8 +11,9 @@ const std::vector<Vertex> Vertex::quad = {
 };
 
 const std::vector<unsigned int> Vertex::quadElement = {
-    0, 1, 3,
-    1, 2, 3};
+    2,3,0,
+    0,1,2
+};
 
 #define oneThird (1 / 3.0)
 const std::vector<Vertex> Vertex::boxQuad = {

@@ -36,7 +36,7 @@ class ShaderSetting
 {
 public:
     template <typename T>
-    void AddParameter(const std::string &name, const T &val);
+    void AddParameter(const std::string &name, const T &val, const unsigned int& location);
 
     template <typename T>
     bool SetParameter(const std::string &name, const T &val);
@@ -98,16 +98,13 @@ protected:
     };
 
 private:
-    unsigned int GenerateLocation();
-private:
     std::unordered_map<std::string, std::unique_ptr<ShaderParamBase>> m_params;
 };
 
 
 template<typename T>
-void ShaderSetting::AddParameter(const std::string &name, const T &val)
+void ShaderSetting::AddParameter(const std::string &name, const T &val, const unsigned int& location)
 {
-    unsigned int location = GenerateLocation();
     m_params.emplace(name, new ShaderParam<T>(val, location));
 }
 
@@ -135,17 +132,17 @@ ShaderSetting::ShaderParam<T>::ShaderParam(const T& val, const unsigned int& loc
 {
     m_val = val;
     m_loc = loc;
-    GENERATE_PARAM_TYPE(int, ShaderParamType::Int);
-    GENERATE_PARAM_TYPE(bool, ShaderParamType::Bool);
-    GENERATE_PARAM_TYPE(glm::mat2, ShaderParamType::Mat2);
-    GENERATE_PARAM_TYPE(glm::mat3, ShaderParamType::Mat3);
-    GENERATE_PARAM_TYPE(glm::mat4, ShaderParamType::Mat4);
-    GENERATE_PARAM_TYPE(unsigned int, ShaderParamType::UInt);
-    GENERATE_PARAM_TYPE(float, ShaderParamType::Float);
-    GENERATE_PARAM_TYPE(double, ShaderParamType::Double);
-    GENERATE_PARAM_TYPE(glm::vec2, ShaderParamType::Vec2);
-    GENERATE_PARAM_TYPE(glm::vec3, ShaderParamType::Vec3);
-    GENERATE_PARAM_TYPE(glm::vec4, ShaderParamType::Vec4);
+    //GENERATE_PARAM_TYPE(int, ShaderParamType::Int);
+    //GENERATE_PARAM_TYPE(bool, ShaderParamType::Bool);
+    //GENERATE_PARAM_TYPE(glm::mat2, ShaderParamType::Mat2);
+    //GENERATE_PARAM_TYPE(glm::mat3, ShaderParamType::Mat3);
+    //GENERATE_PARAM_TYPE(glm::mat4, ShaderParamType::Mat4);
+    //GENERATE_PARAM_TYPE(unsigned int, ShaderParamType::UInt);
+    //GENERATE_PARAM_TYPE(float, ShaderParamType::Float);
+    //GENERATE_PARAM_TYPE(double, ShaderParamType::Double);
+    //GENERATE_PARAM_TYPE(glm::vec2, ShaderParamType::Vec2);
+    //GENERATE_PARAM_TYPE(glm::vec3, ShaderParamType::Vec3);
+    //GENERATE_PARAM_TYPE(glm::vec4, ShaderParamType::Vec4);
     // todo: Sample2D
 
 }

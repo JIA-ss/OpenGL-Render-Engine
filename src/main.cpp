@@ -7,6 +7,7 @@
 #include "test/test.h"
 #include "tools/ioUtil.h"
 #include "input/InputManager.h"
+#include "test/graphicTest.h"
 using namespace Pipline;
 
 void InitSingleTons()
@@ -72,7 +73,8 @@ int main()
     //test::ModelTest(window);
     //test::transformModify(window);
     
-    test::atlasTest(window);
+    //test::atlasTest(window);
+    GraphicTest::simpleImage(window);
     window->doUpdate();
     return 1;
 }

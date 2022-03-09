@@ -2,16 +2,11 @@
 #include <iostream>
 GRAPHIC_NAMESPACE_USING
 
-unsigned int ShaderSetting::GenerateLocation()
-{
-    static unsigned int location = 0;
-    return location++;
-}
-
 void ShaderSetting::Use() const
 {
     for (auto&& [name, param] : m_params)
     {
+        //std::cout << name << "use" << std::endl;
         param->Use();
     }
 }
@@ -107,7 +102,7 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
             textureName = &ReflectionTex;
             break;
         default:
-            std::cerr << "UNSUPPORTED texture type:" << newTextures[texUnit]->GetName();
+            std::cerr << "\nUNSUPPORTED texture type:" << newTextures[texUnit]->GetName();
             return;
         }
         SetParameter(*textureName + std::to_string(count),
@@ -123,7 +118,7 @@ void ShaderSetting::ShaderParam<ShaderSetting::TextureParamValue>::Use()
         glBindTexture(GL_TEXTURE_2D, m_val.texture->GetId());
     else 
         glBindTexture(GL_TEXTURE_2D, 0);
-	Shader::setUniform(m_loc, m_val.texUnit);
+    Shader::setUniform(m_loc, m_val.texUnit);
 }
 
 
