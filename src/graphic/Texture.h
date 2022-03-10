@@ -112,6 +112,8 @@ public:
     static Texture* Get(const std::string& id);
     static void Remove(const std::string& id);
     
+    static std::string ToString(TextureType type);
+
     template<typename... Args>
     static Texture* Add(const std::string& id, Args &&... args);
 

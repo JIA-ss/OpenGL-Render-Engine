@@ -31,6 +31,8 @@ public:
     const Material* GetMaterial() const;
 
     void draw() const;
+    template<typename T>
+    void SetShaderParam(const std::string& name, const T& val);
 private:
     void SetUpMesh();
 private:
@@ -48,5 +50,10 @@ private:
     unsigned int m_renderIndex = 0;
 };
 
+template<typename T>
+void Mesh::SetShaderParam(const std::string& name, const T& val)
+{
+    m_material->SetShaderParam(name,val);
+}
 
 GRAPHIC_NAMESPACE_END

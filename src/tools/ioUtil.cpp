@@ -193,11 +193,13 @@ std::filesystem::path Util::getResourcePath()
 
 unsigned char* Util::loadTextureFromFile(const char* path, int* width, int* height, int* channels, int other_param)
 {
+    //stbi_set_flip_vertically_on_load(true);
     return stbi_load(path, width, height, channels, other_param);
 }
 
 unsigned char* Util::loadTextureFromMemory(const unsigned char* buffer, size_t bufferSize, int*width, int* height, int* channels, int other_param)
 {
+    //stbi_set_flip_vertically_on_load(true);
     return stbi_load_from_memory(buffer, bufferSize, width, height, channels, other_param);
 }
 

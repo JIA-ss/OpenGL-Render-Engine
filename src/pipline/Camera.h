@@ -8,9 +8,10 @@
 namespace Pipline
 {
 
-const glm::vec3 DEFAULT_CAMERA_POS    = glm::vec3(0.0f, 0.0f, -3.0f);
+const glm::vec3 DEFAULT_CAMERA_POS    = glm::vec3(0.0f, 0.0f, 3.0f);
 const glm::vec3 DEFAULT_CAMERA_UP     = glm::vec3(0.0f, 1.0f, 0.0f);
 const glm::vec3 DEFAULT_CAMERA_FRONT  = glm::vec3(0.0f, 0.0f, -1.0f);
+const glm::vec3 DEFAULT_CAMERA_TARGET = glm::vec3(0.0f, 0.0f, 0.0f);
 const float     DEFAULT_FOV           = 45.0f;
 const float     DEFAULT_NEAR_DIS      = 0.1f;
 const float     DEFAULT_FAR_DIS       = 100.f;
@@ -85,6 +86,7 @@ private:
     glm::vec3 m_cameraPos   = DEFAULT_CAMERA_POS;
     glm::vec3 m_up          = DEFAULT_CAMERA_UP;
     glm::vec3 m_front       = DEFAULT_CAMERA_FRONT;
+    glm::vec3 m_target      = DEFAULT_CAMERA_TARGET;
 
     float m_yaw             = 0.0f;
     float m_pitch           = 0.0f;
@@ -96,6 +98,7 @@ private:
     float m_cameraDistance  = DEFAULT_CAMERA_DIS;
     bool m_ProjectionMatChanged= true;
 
+    bool m_useTarget        = false;
     float m_sensitive       = 1.0f;
 private:
     glm::mat4 m_projectionMat4 = glm::mat4(1.0f);
@@ -104,6 +107,7 @@ private:
     void updateViewMat4();
 public:
     void enableControl(bool v) { m_control.enableControl(v); if (v) m_control.setCamera(this); }
+    void enableTarget(bool v) { m_useTarget = v; m_ViwMatChanged = true;}
     bool isControlEnable() const { return m_control.isEnable(); }
     void processControl() { m_control.processActions(); }
 

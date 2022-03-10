@@ -29,9 +29,12 @@ void Camera::updateViewMat4()
     front.z = -cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
 
     m_front = glm::normalize(front);
+    glm::vec3 target = m_cameraPos + m_front;
+    if (m_useTarget)
+        target = m_target;
 
     //std::cout << m_cameraPos.x << " " << m_cameraPos.y << " " << m_cameraPos.z << std::endl;
-    m_viewMat4 = glm::lookAt(m_cameraPos, m_cameraPos + m_front, getCameraFinalUp());
+    m_viewMat4 = glm::lookAt(m_cameraPos, target, getCameraFinalUp());
 }
 
 void Camera::fovFilter()

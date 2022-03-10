@@ -8,4 +8,8 @@ namespace GraphicTest
 void simpleImage(Window* window);
 
 void cube(Window* window);
+
+void _3d(Window* window);
+
+void _model(Window* window);
 }

@@ -23,9 +23,9 @@ public:
 private:
     std::string getResourceRootPath(eResourceType type);
     void InitResource(eResourceType type);
-    void InitShaderResource();
-    void InitTextureResource();
-    void InitAtlasTextureResource();
+    void InitShaderResource(const std::string& path = "",const std::string& relative_path = "");
+    void InitTextureResource(const std::string& path = "",const std::string& relative_path = "");
+    void InitAtlasTextureResource(const std::string& path = "",const std::string& relative_path = "");
 private:
     std::filesystem::path m_rootResourcePath;
     std::unordered_map<eResourceType, std::unordered_map<std::string, sResourceRef>> m_resourceMap;

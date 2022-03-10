@@ -60,15 +60,12 @@ void Model::processNode(aiNode *node, const aiScene *scene)
         }
 
 		std::string matName = name.C_Str();
-		auto pos = matName.find_last_of("_");
-		if (pos == matName.npos)
-			pos = matName.find_last_of("-");
-		if (pos == matName.npos)
-			pos = matName.find_last_of(" ");
-		if (pos == matName.npos) pos = matName.size();
+		auto pos = matName.find_first_of("_");
+		if (pos == matName.npos) 
+            pos = matName.size();
 		matName = matName.substr(0, pos);
 
-		auto mat = Material::Add(m_id + "-" + matName , "Model", textures);
+		auto mat = Material::Add(m_id + "-" + matName , m_directory + "/" + matName, textures);
         mat->SetName(m_id + "-" + matName);
 
         m_meshes.emplace_back(mesh, mat, std::to_string(mesh->mMaterialIndex));
@@ -76,5 +73,13 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
         processNode(node->mChildren[i], scene);
+    }
+}
+
+void Model::draw() const
+{
+    for (auto&& mesh : m_meshes)
+    {
+        mesh.draw();
     }
 }

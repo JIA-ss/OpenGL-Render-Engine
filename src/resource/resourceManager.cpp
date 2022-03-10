@@ -47,37 +47,51 @@ void ResourceManager::ImportResource(const char* path, eResourceType type)
     }
 }
 
-void ResourceManager::InitShaderResource()
+void ResourceManager::InitShaderResource(const std::string& full_path,const std::string& relative_path)
 {
     std::filesystem::path path = getResourceRootPath(shader);
+    if (!full_path.empty())
+        path = full_path;
     for (auto it : std::filesystem::directory_iterator(path))
     {
         if (!it.exists())
             continue;
         std::filesystem::path it_path = it.path();
+        if (std::filesystem::is_directory(it_path))
+        {
+            InitShaderResource(it_path.string(), relative_path + it_path.filename().string() + "/");
+            continue;
+        }
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<ShaderResource>(path_str.c_str());
-        m_resourceMap[shader][it_path.filename().string()] = res;
+        m_resourceMap[shader][relative_path + it_path.filename().string()] = res;
         //std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
     }
 }
 
-void ResourceManager::InitTextureResource()
+void ResourceManager::InitTextureResource(const std::string& full_path,const std::string& relative_path)
 {
     std::filesystem::path path = getResourceRootPath(texture);
+    if (!full_path.empty())
+        path = full_path;
     for (auto it : std::filesystem::directory_iterator(path))
     {
         if (!it.exists())
             continue;
         std::filesystem::path it_path = it.path();
+        if (std::filesystem::is_directory(it_path))
+        {
+            InitTextureResource(it_path.string(), relative_path + it_path.filename().string() + "/");
+            continue;
+        }
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<TextureResource>(path_str.c_str());
-        m_resourceMap[texture][it_path.filename().string()] = res;
+        m_resourceMap[texture][relative_path + it_path.filename().string()] = res;
         //std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
     }
 }
 
-void ResourceManager::InitAtlasTextureResource()
+void ResourceManager::InitAtlasTextureResource(const std::string& path,const std::string& relative_path)
 {
     return;
     
