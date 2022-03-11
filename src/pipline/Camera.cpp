@@ -198,7 +198,7 @@ void CameraControl::processMouseActions() const
 
     if (mouseMove)
     {
-        std::cout << "mouse Pos: " << curMousePos.x << '\t' << curMousePos.y << std::endl;
+        //std::cout << "mouse Pos: " << curMousePos.x << '\t' << curMousePos.y << std::endl;
         float v = proxZero(posOffset.y);
         if (v != 0.0f)
             resolveResponse(CameraActions::TurnUp, v);
@@ -210,7 +210,7 @@ void CameraControl::processMouseActions() const
     Vector2 curScrollValue = window.getInputMgr()->getScrollValue();
     if (proxZero(curScrollValue.y) != 0.0f)
     {
-        std::cout << "scroll: " << curScrollValue.x << '\t' << curScrollValue.y << std::endl;
+        //std::cout << "scroll: " << curScrollValue.x << '\t' << curScrollValue.y << std::endl;
         if (glfwGetKey(window.getGLFWwindow(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         {
             glm::vec3 camCurPos = m_cam->getCameraPos();

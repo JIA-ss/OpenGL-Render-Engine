@@ -62,6 +62,11 @@ void ResourceManager::InitShaderResource(const std::string& full_path,const std:
             InitShaderResource(it_path.string(), relative_path + it_path.filename().string() + "/");
             continue;
         }
+
+        std::string fileType = it_path.extension().string();
+        if (fileType != ".vs" && fileType != ".fs" && fileType != ".gs")
+            continue;
+
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<ShaderResource>(path_str.c_str());
         m_resourceMap[shader][relative_path + it_path.filename().string()] = res;
@@ -84,6 +89,9 @@ void ResourceManager::InitTextureResource(const std::string& full_path,const std
             InitTextureResource(it_path.string(), relative_path + it_path.filename().string() + "/");
             continue;
         }
+        std::string fileType = it_path.extension().string();
+        if (fileType != ".png" && fileType != ".jpg")
+            continue;
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<TextureResource>(path_str.c_str());
         m_resourceMap[texture][relative_path + it_path.filename().string()] = res;
@@ -180,9 +188,11 @@ void ResourceManager::InitResource(eResourceType type)
     {
     case shader:
         InitShaderResource();
+        InitShaderResource((m_rootResourcePath / "models").string());
         break;
     case texture:
         InitTextureResource();
+        InitTextureResource((m_rootResourcePath / "models").string());
         break;
     case atlasTexture:
         InitAtlasTextureResource();
