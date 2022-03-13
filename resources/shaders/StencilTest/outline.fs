@@ -18,7 +18,7 @@ in color
 
 in outline
 {
-    int use;
+    float use;
     float width;
     vec3 color;
 }i_outline;

@@ -201,6 +201,8 @@ void Window::doUpdate()
 {
     m_stencilTest.Init();
     m_depthTest.Init();
+    m_blend.Init();
+    
 
     while(!glfwWindowShouldClose(m_window))
     {

@@ -16,4 +16,6 @@ void _model(Window* window);
 void _depthTest(Window* window);
 
 void _stencilTest(Window* window);
+
+void _blend(Window* window);
 }

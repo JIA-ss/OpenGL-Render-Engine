@@ -378,3 +378,97 @@ void GraphicTest::_stencilTest(Window* window)
         glEnable(GL_DEPTH_TEST);
     });
 }
+
+void GraphicTest::_blend(Window* window)
+{
+    window->enableZTest(true);
+    window->enableStencil(false);
+    //auto& blend = window->getBlend();
+    //blend.SetActive(false);
+
+    Camera& cam = window->getCamera();
+    cam.enableControl(true);
+    cam.setSensitive(0.01f);
+
+    GlobalShaderParam* gsp = GlobalShaderParam::Get();
+    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+
+    gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
+    gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
+
+    glm::vec3 planePos = glm::vec3(0,-0.5,0);
+    glm::vec3 planeSize = glm::vec3(100,0.1,100);
+
+    std::vector<glm::vec3> cubePoses = {
+        glm::vec3(2,0,0),
+        glm::vec3(-1,0,-1)
+    };
+
+    Texture* cubeTex = new Texture("Blend/cube.jpg", Diffuse);
+    Material* cubeMaterial = new Material("Blend/blendTest", {cubeTex});
+
+    Texture* planeTex = new Texture("Blend/plane.png", Diffuse);
+    Material* planeMaterial = new Material("Blend/blendTest", {planeTex});
+    glm::mat4 planeModel(1.0f);
+    planeModel = glm::translate(planeModel, planePos);
+    planeModel = glm::scale(planeModel, planeSize);
+    planeMaterial->SetShaderParam("model", planeModel);
+
+    Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
+
+    Mesh* cube = new Mesh(Vertex::boxElement, Vertex::box, cubeMaterial, "cube");
+
+
+
+    Texture* windowTex = new Texture("Blend/window.png", Diffuse);
+    Material* windowMaterial = new Material("Blend/blendTest", {windowTex});
+    std::vector<glm::vec3> windowPoses
+    {
+        glm::vec3(-1.5f, 0.0f, -0.48f * 2),
+        glm::vec3( 1.5f, 0.0f, 0.51f * 2),
+        glm::vec3( 0.0f, 0.0f, 0.7f * 2),
+        glm::vec3(-0.3f, 0.0f, -2.3f * 2),
+        glm::vec3( 0.5f, 0.0f, -0.6f * 2)
+    };  
+    Mesh* windowPlane = new Mesh(Vertex::quadElement, Vertex::quad, windowMaterial, "window");
+
+
+    window->AddUpdateCallback([window, windowPlane, windowPoses, cube, cubePoses, plane](){
+        GlobalShaderParam* gsp = GlobalShaderParam::Get();
+        Camera& cam = window->getCamera();
+        auto& st = window->getStencilTest();
+        glm::mat4 view = cam.getViewMat4();
+        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
+        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
+
+        plane->draw();
+
+        for (int i = 0; i < cubePoses.size(); i++)
+        {
+            glm::mat4 model(1.0f);
+            model = glm::translate(model, cubePoses[i]);
+            cube->SetShaderParam("model", model);
+            cube->draw();
+        }
+
+        std::map<float, glm::vec3> sorted;
+
+
+        for (int i = 0; i < windowPoses.size(); i++)
+        {
+            float dis = glm::length(cam.getCameraPos() - windowPoses[i]);
+            sorted[dis] = windowPoses[i];
+        }
+
+        for (auto it = sorted.rbegin(); it != sorted.rend(); it++)
+        {
+            glm::mat4 model(1.0f);
+            model = glm::translate(model, it->second);
+            windowPlane->SetShaderParam("model", model);
+            windowPlane->draw();
+        }
+    });
+}

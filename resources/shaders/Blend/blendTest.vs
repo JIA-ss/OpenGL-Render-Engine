@@ -1,3 +1,4 @@
+
 #version 330 core
 
 
@@ -26,10 +27,6 @@ layout(std140) uniform GlobalColors
     vec3 lightColor;
 };
 
-uniform int drawOutline;
-uniform float outlineWidth;
-uniform vec3 outlineColor;
-
 uniform mat4 model;
 
 out pos
@@ -47,39 +44,16 @@ out color
     vec3 light;
 }o_color;
 
-out outline
-{
-    float use;
-    float width;
-    vec3 color;
-}o_outline;
-
-out float useOutline;
-
 void main()
 {
-    o_pos.normal = normalize( mat3(transpose(inverse(model))) * normal );
+    o_pos.frag = vec3(model * vec4(position, 1.0));
+    gl_Position = projection * view * vec4(o_pos.frag, 1.0);
+
+    o_pos.normal = mat3(transpose(inverse(model))) * o_pos.frag;
     o_pos.camera = camPos;
     o_pos.light = lightPos;
     o_pos.uv = texCoord;
 
     o_color.ambient = ambientColor;
     o_color.light = lightColor;
-    
-    o_pos.frag = vec3(model * vec4(position, 1.0));
-    if (drawOutline == 1)
-    {
-        o_pos.frag = o_pos.frag + o_pos.normal * outlineWidth;
-        o_outline.use = 1;
-        useOutline = 1;
-    }
-    else
-    {
-        o_outline.use = 0;
-        useOutline = 0;
-    }
-
-    o_outline.width = outlineWidth;
-    o_outline.color = outlineColor;
-    gl_Position = projection * view * vec4(o_pos.frag, 1.0);
 }

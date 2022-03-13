@@ -78,7 +78,8 @@ int main()
     //GraphicTest::cube(window);
     //GraphicTest::_model(window);
     //GraphicTest::_depthTest(window);
-    GraphicTest::_stencilTest(window);
+    //GraphicTest::_stencilTest(window);
+    GraphicTest::_blend(window);
     window->doUpdate();
     return 1;
 }
