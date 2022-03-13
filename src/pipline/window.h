@@ -10,6 +10,7 @@
 #include "render/DepthTest.h"
 #include "render/StencilTest.h"
 #include "render/Blend.h"
+#include "render/FaceCulling.h"
 namespace Pipline
 {
     class Window;
@@ -57,6 +58,7 @@ namespace Pipline
         Render::DepthTest m_depthTest;
         Render::StencilTest m_stencilTest;
         Render::Blend m_blend;
+        Render::FaceCulling m_faceCulling;
     private:
         Camera m_camera;
     private:
@@ -88,6 +90,7 @@ namespace Pipline
         inline void setDepthTestFunc(Render::DepthTest::DepthFunc func) { m_depthTest.SetFunc(func); }
         inline Render::StencilTest& getStencilTest() { return m_stencilTest; }
         inline Render::Blend& getBlend() { return m_blend; }
+        inline Render::FaceCulling& getFaceCulling() { return m_faceCulling; }
     public:
         int AddFramebufferSizeCallback(std::function<void(int,int)> func);
         void DeleteFramebufferSizeCallback(int id);

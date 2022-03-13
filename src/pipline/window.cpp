@@ -202,7 +202,7 @@ void Window::doUpdate()
     m_stencilTest.Init();
     m_depthTest.Init();
     m_blend.Init();
-    
+    m_faceCulling.Init();
 
     while(!glfwWindowShouldClose(m_window))
     {
