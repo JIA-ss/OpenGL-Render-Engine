@@ -199,17 +199,15 @@ void Window::InvokeResizeCallbacks(GLFWwindow* window, int width, int height)
 
 void Window::doUpdate()
 {
-    if (m_enableZTest)
-        glEnable(GL_DEPTH_TEST);
-    else
-        glDisable(GL_DEPTH_TEST);
+    m_stencilTest.Init();
+    m_depthTest.Init();
 
     while(!glfwWindowShouldClose(m_window))
     {
         glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, m_bgColor.a);
         GLbitfield mask = GL_COLOR_BUFFER_BIT;
-        if (m_enableZTest)
-            mask |= GL_DEPTH_BUFFER_BIT;
+        mask |= m_stencilTest.ClearMask();
+        mask |= m_depthTest.ClearMask();
         glClear(mask);
         
         m_inputMgr->update();

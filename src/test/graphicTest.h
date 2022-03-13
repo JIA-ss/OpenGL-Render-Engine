@@ -12,4 +12,8 @@ void cube(Window* window);
 void _3d(Window* window);
 
 void _model(Window* window);
+
+void _depthTest(Window* window);
+
+void _stencilTest(Window* window);
 }

@@ -11,7 +11,7 @@ GRAPHIC_NAMESPACE_BEGIN
 class Model
 {
 public:
-    Model(const std::string &path);
+    Model(const std::string &path, const std::string& shader = "");
     Model(std::vector<Mesh>&& meshes);
 	Model(const std::vector<Mesh>& meshes);
 
@@ -22,6 +22,7 @@ private:
     std::vector<Mesh> m_meshes;
     bool m_gammaCorrection;
     std::string m_id;
+    std::string m_shaderPath;
 
     Model *loadModel(const std::string &path);
     void processNode(aiNode *node, const aiScene *scene);

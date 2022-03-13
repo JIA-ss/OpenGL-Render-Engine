@@ -16,15 +16,23 @@ in color
     vec3 light;
 }i_color;
 
+in outline
+{
+    int use;
+    float width;
+    vec3 color;
+}i_outline;
+
+in float useOutline;
 
 uniform sampler2D diffuseTex0;
-uniform sampler2D heightTex0;
+uniform sampler2D specularTex0;
 
 void main()
 {
     vec3 objectColor = vec3(1,1,1);
     vec3 diffuseTex = vec3(texture(diffuseTex0, i_pos.uv));
-    vec3 specularTex = vec3(texture(heightTex0, i_pos.uv));
+    vec3 specularTex = vec3(texture(specularTex0, i_pos.uv));
     // ambient
     vec3 ambient = 0.8 * i_color.light * diffuseTex;
 
@@ -43,6 +51,13 @@ void main()
 
     vec3 result = (ambient + diffuse + specular) * objectColor;
     //result = diffuseTex;
-    FragColor = vec4(result, 1);
-    //FragColor = vec4(result, 1.0);
+    if (useOutline == 1)
+    {
+        //FragColor = vec4(1,1,1,1);
+        FragColor = vec4(i_outline.color, 1);
+    }
+    else
+    {
+        FragColor = vec4(result, 1);
+    }
 }

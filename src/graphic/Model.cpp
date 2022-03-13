@@ -1,6 +1,9 @@
 #include "Model.h"
-
+#include "resource/resourceManager.h"
+#include "resource/types/ShaderResource.h"
 GRAPHIC_NAMESPACE_USING
+
+
 
 Model::Model(std::vector<Mesh> &&meshes)
 {
@@ -12,8 +15,9 @@ Model::Model(const std::vector<Mesh> &meshes)
     m_meshes = meshes;
 }
 
-Model::Model(const std::string &path) : m_id(path)
+Model::Model(const std::string &path, const std::string& shader) : m_id(path)
 {
+    m_shaderPath = shader;
     loadModel(path);
 }
 
@@ -54,6 +58,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
             {
                 material->GetTexture((aiTextureType)aiType, i, &name);
                 auto path = m_directory + "/" + name.C_Str();
+                
                 Texture *texture = Texture::Add(path, path, (TextureType)aiType);
                 textures.push_back(texture);
             }
@@ -65,7 +70,15 @@ void Model::processNode(aiNode *node, const aiScene *scene)
             pos = matName.size();
 		matName = matName.substr(0, pos);
 
-		auto mat = Material::Add(m_id + "-" + matName , m_directory + "/" + matName, textures);
+        std::string shaderPath = m_shaderPath;
+        if (shaderPath.empty())
+        {
+            shaderPath = m_directory + "/" + matName;
+            Resource::ShaderRef vRef = Resource::ResourceManager::Instance()->GetResource((shaderPath + ".vs").c_str(), Resource::shader);
+            if (vRef.isNull())
+                shaderPath = "DefaultModel";
+        }
+		auto mat = Material::Add(m_id + "-" + matName , shaderPath, textures);
         mat->SetName(m_id + "-" + matName);
 
         m_meshes.emplace_back(mesh, mat, std::to_string(mesh->mMaterialIndex));

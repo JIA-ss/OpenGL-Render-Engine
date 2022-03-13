@@ -7,7 +7,8 @@
 #include <map>
 #include "basicTypes.h"
 #include "pipline/Camera.h"
-
+#include "render/DepthTest.h"
+#include "render/StencilTest.h"
 namespace Pipline
 {
     class Window;
@@ -52,7 +53,8 @@ namespace Pipline
         std::vector<std::function<void()> > m_postUpdateCallbacks;
         InputManager* m_inputMgr;
     private:
-        bool m_enableZTest = false;
+        Render::DepthTest m_depthTest;
+        Render::StencilTest m_stencilTest;
     private:
         Camera m_camera;
     private:
@@ -77,8 +79,12 @@ namespace Pipline
         inline int getWindowID() const { return m_id; }
         inline GLFWwindow* getGLFWwindow() const { return m_window; }
 
-        inline void enableZTest(bool v) { m_enableZTest = v; }
-        inline bool isEnableZTest() const { return m_enableZTest;}
+        inline void enableZTest(bool v) { m_depthTest.SetActive(v); }
+        inline bool isEnableZTest() const { return m_depthTest.isActive(); }
+        inline void enableStencil(bool v) { m_stencilTest.SetActive(v); }
+        inline bool isEnableStencil() const { return m_stencilTest.isActive(); }
+        inline void setDepthTestFunc(Render::DepthTest::DepthFunc func) { m_depthTest.SetFunc(func); }
+        inline Render::StencilTest& getStencilTest() { return m_stencilTest; }
     public:
         int AddFramebufferSizeCallback(std::function<void(int,int)> func);
         void DeleteFramebufferSizeCallback(int id);

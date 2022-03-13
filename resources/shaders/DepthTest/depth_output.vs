@@ -1,3 +1,4 @@
+
 #version 330 core
 
 
@@ -48,7 +49,7 @@ void main()
     o_pos.frag = vec3(model * vec4(position, 1.0));
     gl_Position = projection * view * vec4(o_pos.frag, 1.0);
 
-    o_pos.normal = mat3(transpose(inverse(model))) * normal;
+    o_pos.normal = mat3(transpose(inverse(model))) * o_pos.frag;
     o_pos.camera = camPos;
     o_pos.light = lightPos;
     o_pos.uv = texCoord;

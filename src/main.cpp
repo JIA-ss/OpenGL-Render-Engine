@@ -76,7 +76,9 @@ int main()
     //test::atlasTest(window);
     //GraphicTest::simpleImage(window);
     //GraphicTest::cube(window);
-    GraphicTest::_model(window);
+    //GraphicTest::_model(window);
+    //GraphicTest::_depthTest(window);
+    GraphicTest::_stencilTest(window);
     window->doUpdate();
     return 1;
 }
