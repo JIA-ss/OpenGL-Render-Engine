@@ -519,4 +519,41 @@ void GraphicTest::_faceCulling(Window* window)
         {{-0.5f,  0.5f, -0.5f},  {0.0f, 1.0f},{},{},{}}, // top-left
         {{-0.5f,  0.5f,  0.5f},  {0.0f, 0.0f},{},{},{}} // bottom-left        
     };
+
+    window->enableZTest(true);
+    window->enableStencil(false);
+    //auto& blend = window->getBlend();
+    //blend.SetActive(false);
+
+    Camera& cam = window->getCamera();
+    cam.enableControl(true);
+    cam.setSensitive(0.01f);
+
+    GlobalShaderParam* gsp = GlobalShaderParam::Get();
+    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+
+    gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
+    gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
+
+    Texture* cubeTex = new Texture("Blend/cube.jpg", Diffuse);
+    Material* cubeMaterial = new Material("Blend/blendTest", {cubeTex});
+    cubeMaterial->SetShaderParam("model", glm::mat4(1.0f));
+    Mesh* cube = new Mesh({}, vertexes, cubeMaterial, "cube");
+
+    auto& faceCulling = window->getFaceCulling();
+    faceCulling.SetActive(true);
+    faceCulling.SetCullingFace(Render::FaceCulling::Front);
+    faceCulling.SetWindingOrder(Render::FaceCulling::CounterClockWise);
+
+    window->AddUpdateCallback([cube, window](){
+        Camera& cam = window->getCamera();
+        GlobalShaderParam* gsp = GlobalShaderParam::Get();
+        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+
+        cube->draw();
+    });
+
 }

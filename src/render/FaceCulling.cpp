@@ -21,7 +21,7 @@ void FaceCulling::SetUp() const
 } 
 GLbitfield FaceCulling::ClearMask() const
 {
-
+    return 0;
 }
 void FaceCulling::Update() const
 {

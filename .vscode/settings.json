@@ -87,5 +87,6 @@
         "span": "cpp",
         "*.idl": "cpp",
         "*.def": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": true
 }

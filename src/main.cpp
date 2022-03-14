@@ -79,7 +79,8 @@ int main()
     //GraphicTest::_model(window);
     //GraphicTest::_depthTest(window);
     //GraphicTest::_stencilTest(window);
-    GraphicTest::_blend(window);
+    //GraphicTest::_blend(window);
+    GraphicTest::_faceCulling(window);
     window->doUpdate();
     return 1;
 }
