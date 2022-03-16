@@ -2,7 +2,7 @@
 
 RENDER_NAMESPACE_USING
 
-void StencilTest::Init() const
+void StencilTest::Init()
 {
     if (m_enable)
     {

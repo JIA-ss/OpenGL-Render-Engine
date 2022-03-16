@@ -557,3 +557,64 @@ void GraphicTest::_faceCulling(Window* window)
     });
 
 }
+
+void GraphicTest::_frameBuffer(Window* window)
+{
+    Camera& cam = window->getCamera();
+    cam.enableControl(true);
+    cam.setSensitive(0.02f);
+    GlobalShaderParam* gsp = GlobalShaderParam::Get();
+    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+
+    gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
+    gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
+
+    glm::vec3 planePos = glm::vec3(0,-0.5,0);
+    glm::vec3 planeSize = glm::vec3(100,0.1,100);
+
+    std::vector<glm::vec3> cubePoses = {
+        glm::vec3(2,0,0),
+        glm::vec3(-1,0,-1)
+    };
+
+    Texture* cubeTex = new Texture("Blend/cube.jpg", Diffuse);
+    Material* cubeMaterial = new Material("Blend/blendTest", {cubeTex});
+
+    Texture* planeTex = new Texture("Blend/plane.png", Diffuse);
+    Material* planeMaterial = new Material("Blend/blendTest", {planeTex});
+    glm::mat4 planeModel(1.0f);
+    planeModel = glm::translate(planeModel, planePos);
+    planeModel = glm::scale(planeModel, planeSize);
+    planeMaterial->SetShaderParam("model", planeModel);
+
+    Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
+
+    Mesh* cube = new Mesh(Vertex::boxElement, Vertex::box, cubeMaterial, "cube");
+
+    auto& frameBuffer = window->getFrameBuffer();
+    frameBuffer.SetActive(true);
+    frameBuffer.AddTextureAttachment(Render::FrameBuffer::AttachmentType::Color0);
+    frameBuffer.AddRenderBuffer(Render::FrameBuffer::AttachmentType::Depth);
+
+    window->AddUpdateCallback([window, cube, plane, cubePoses](){
+        GlobalShaderParam* gsp = GlobalShaderParam::Get();
+        Camera& cam = window->getCamera();
+        glm::mat4 view = cam.getViewMat4();
+        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
+        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
+
+        plane->draw();
+
+        for (int i = 0; i < cubePoses.size(); i++)
+        {
+            glm::mat4 model(1.0f);
+            model = glm::translate(model, cubePoses[i]);
+            cube->SetShaderParam("model", model);
+            cube->draw();
+        }
+    });
+
+}

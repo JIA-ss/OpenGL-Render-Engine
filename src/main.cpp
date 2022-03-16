@@ -70,6 +70,7 @@ int main()
     //test::AssimpLinkTest(window);
     std::cout << "main start" << std::endl;
     Util::testJson();
+    std::cout << std::endl;
     //test::ModelTest(window);
     //test::transformModify(window);
     
@@ -80,7 +81,8 @@ int main()
     //GraphicTest::_depthTest(window);
     //GraphicTest::_stencilTest(window);
     //GraphicTest::_blend(window);
-    GraphicTest::_faceCulling(window);
+    //GraphicTest::_faceCulling(window);
+    GraphicTest::_frameBuffer(window);
     window->doUpdate();
     return 1;
 }

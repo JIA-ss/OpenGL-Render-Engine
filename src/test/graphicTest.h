@@ -20,4 +20,6 @@ void _stencilTest(Window* window);
 void _blend(Window* window);
 
 void _faceCulling(Window* window);
+
+void _frameBuffer(Window* window);
 }

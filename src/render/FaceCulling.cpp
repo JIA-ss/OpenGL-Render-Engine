@@ -2,7 +2,7 @@
 
 RENDER_NAMESPACE_USING
 
-void FaceCulling::Init() const
+void FaceCulling::Init()
 {
     if (m_enable)
     {

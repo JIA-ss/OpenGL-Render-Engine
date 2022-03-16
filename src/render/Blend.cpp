@@ -2,7 +2,7 @@
 
 RENDER_NAMESPACE_USING
 
-void Blend::Init() const
+void Blend::Init()
 {
     if (m_enable)
     {

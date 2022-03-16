@@ -11,6 +11,7 @@
 #include "render/StencilTest.h"
 #include "render/Blend.h"
 #include "render/FaceCulling.h"
+#include "render/FrameBuffer.h"
 namespace Pipline
 {
     class Window;
@@ -59,6 +60,7 @@ namespace Pipline
         Render::StencilTest m_stencilTest;
         Render::Blend m_blend;
         Render::FaceCulling m_faceCulling;
+        Render::FrameBuffer m_frameBuffer;
     private:
         Camera m_camera;
     private:
@@ -91,6 +93,7 @@ namespace Pipline
         inline Render::StencilTest& getStencilTest() { return m_stencilTest; }
         inline Render::Blend& getBlend() { return m_blend; }
         inline Render::FaceCulling& getFaceCulling() { return m_faceCulling; }
+        inline Render::FrameBuffer& getFrameBuffer() { return m_frameBuffer; }
     public:
         int AddFramebufferSizeCallback(std::function<void(int,int)> func);
         void DeleteFramebufferSizeCallback(int id);

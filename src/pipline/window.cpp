@@ -56,6 +56,7 @@ Window::Window(int width, int height, const char* title)
     m_title = title;
     m_bgColor = Color{0,0,0,0};
     m_camera.setWindow(this);
+    m_frameBuffer.SetSize(width, height);
     init();
 }
 
@@ -199,6 +200,7 @@ void Window::InvokeResizeCallbacks(GLFWwindow* window, int width, int height)
 
 void Window::doUpdate()
 {
+    m_frameBuffer.Init();
     m_stencilTest.Init();
     m_depthTest.Init();
     m_blend.Init();
@@ -206,18 +208,29 @@ void Window::doUpdate()
 
     while(!glfwWindowShouldClose(m_window))
     {
+        m_inputMgr->update();
+
+        // 1st pass
+        m_frameBuffer.Bind();
         glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, m_bgColor.a);
         GLbitfield mask = GL_COLOR_BUFFER_BIT;
         mask |= m_stencilTest.ClearMask();
         mask |= m_depthTest.ClearMask();
         glClear(mask);
         
-        m_inputMgr->update();
         m_camera.processControl();
-
         InvokePreUpdateCallback();
         InvokeUpdateCallback();
         InvokePostUpdateCallback();
+
+        //2st pass
+        if (m_frameBuffer.IsValid())
+        {
+            m_frameBuffer.UnBind();
+            glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, m_bgColor.a);
+            glClear(GL_COLOR_BUFFER_BIT);
+            m_frameBuffer.Draw();
+        }
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();

@@ -6,7 +6,7 @@ RENDER_NAMESPACE_BEGIN
 class RenderControllerBase
 {
 public:
-    virtual void Init() const = 0;
+    virtual void Init() = 0;
     virtual void SetUp() const = 0; 
     virtual GLbitfield ClearMask() const = 0;
     virtual void Update() const = 0;

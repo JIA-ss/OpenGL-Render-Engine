@@ -39,6 +39,9 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
     static const std::string DisplacementTex = "displacementTex";
     static const std::string LightmapTex = "lightmapTex";
     static const std::string ReflectionTex = "reflectionTex";
+    static const std::string ColorAttachTex = "colorAttachmentTex";
+    static const std::string DepthAttachTex = "depthAttachmentTex";
+    static const std::string StencilAttachTex = "stencilAttachmentTex";
 
     int noneCount = 0;
     int diffuseCount = 0;
@@ -52,6 +55,7 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
     int displacementCount = 0;
     int lightmapCount = 0;
     int reflectionCount = 0;
+    int colorAttachCount = 0;
 
     for (size_t texUnit = 0; texUnit < newTextures.size(); texUnit++)
     {
@@ -106,6 +110,18 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
         case Reflection:
             count = reflectionCount++;
             textureName = &ReflectionTex;
+            break;
+        case ColorAttachment:
+            count = colorAttachCount++;
+            textureName = &ColorAttachTex;
+            break;
+        case DepthAttachment:
+            count = 0;
+            textureName = &DepthAttachTex;
+            break;
+        case StencilAttachment:
+            count = 0;
+            textureName = &StencilAttachTex;
             break;
         default:
             std::cerr << "\nUNSUPPORTED texture type:" << newTextures[texUnit]->GetName();

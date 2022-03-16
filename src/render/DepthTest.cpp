@@ -2,7 +2,7 @@
 
 RENDER_NAMESPACE_USING
 
-void DepthTest::Init() const
+void DepthTest::Init()
 {
     if (m_enable)
     {

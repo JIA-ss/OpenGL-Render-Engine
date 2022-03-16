@@ -19,6 +19,7 @@ Texture::Texture(const std::string& texName,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    std::cout << "gen tex: " << GetName() << "\ttype: " << Texture::ToString(m_type) << std::endl;
 }
 
 Texture::Texture(const TextureRef& tex,            
@@ -35,6 +36,7 @@ Texture::Texture(const TextureRef& tex,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    std::cout << "gen tex: " << GetName() << "\ttype: " << Texture::ToString(m_type) << std::endl;
 
 }
 
@@ -64,6 +66,25 @@ Texture::Texture(const TextureRef& tex, const TextureType& textureType)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    std::cout << "gen tex: " << GetName() << "\ttype: " << Texture::ToString(textureType) << std::endl;
+}
+
+Texture::Texture(const TextureType& textureType,             
+            const int& width, const int& height,
+            const InternalFormat &internalFormat,
+            const DataFormat &format,
+            const DataType &type)
+{
+    m_type = textureType;
+    m_height = height;
+    m_width = width;
+    glGenTextures(1, &m_textureId);
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, format, type, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    std::cout << "gen tex: " << GetName() << "\ttype: " << Texture::ToString(textureType) << std::endl;
 }
 
 void Texture::Free()
@@ -74,12 +95,12 @@ void Texture::Free()
 
 int Texture::GetWidth() const
 {
-    return m_textureRef.get()->getWidth();
+    return !m_textureRef.isNull() ? m_textureRef.get()->getWidth() : m_width;
 }
 
 int Texture::GetHeight() const 
 {
-    return m_textureRef.get()->getHeight();
+    return !m_textureRef.isNull() ? m_textureRef.get()->getHeight() : m_height;
 }
 
 const unsigned int& Texture::GetId() const
@@ -89,7 +110,7 @@ const unsigned int& Texture::GetId() const
 
 const std::string& Texture::GetName() const
 {
-    return m_textureRef.get()->getName();
+    return !m_textureRef.isNull() ? m_textureRef.get()->getName() : ToString(m_type);
 }
 
 int Texture::GetNRChannel() const
@@ -135,6 +156,9 @@ std::string Texture::ToString(TextureType type)
         TEXTURE_TYPE_TO_STRING(Lightmap)
         TEXTURE_TYPE_TO_STRING(Reflection)
         TEXTURE_TYPE_TO_STRING(Unknown)
+        TEXTURE_TYPE_TO_STRING(ColorAttachment)
+        TEXTURE_TYPE_TO_STRING(DepthAttachment)
+        TEXTURE_TYPE_TO_STRING(StencilAttachment)
     default:
         return "";
     }

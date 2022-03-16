@@ -22,6 +22,11 @@ enum TextureType
     Lightmap = aiTextureType_LIGHTMAP,
     Reflection = aiTextureType_REFLECTION,
     Unknown = aiTextureType_UNKNOWN,
+
+    ColorAttachment = 20,
+    DepthAttachment = 21,
+    StencilAttachment = 22,
+    DepthStencilAttachment = 23,
 };
 
 class Texture
@@ -29,8 +34,8 @@ class Texture
 public:
 	enum InternalFormat
     {
-        RGBAInternal = GL_RGBA,
         RGBInternal = GL_RGB,
+        RGBAInternal = GL_RGBA,
         RGB8 = GL_RGB8,
         RGBA8 = GL_RGBA8,
         RGBA16F = GL_RGBA16F,
@@ -91,6 +96,13 @@ public:
 
     Texture(const std::string& texName, const TextureType& textureType);
     Texture(const TextureRef& tex, const TextureType& textureType);
+
+    // for FrameBuffer
+    Texture(const TextureType& textureType,             
+            const int& width, const int& height,
+            const InternalFormat &internalFormat = InternalFormat::RGBAInternal,
+            const DataFormat &format = DataFormat::RGBA,
+            const DataType &type = DataType::UnsignedByte);
     
     //todo: freeType Texture
     //Texture(FT_GlyphSlot glyph);
@@ -107,6 +119,8 @@ private:
     unsigned int m_textureId = 0;
     TextureRef m_textureRef;
     TextureType m_type = TextureType::None;
+    int m_width = 0;
+    int m_height = 0;
 
 public:
     static Texture* Get(const std::string& id);

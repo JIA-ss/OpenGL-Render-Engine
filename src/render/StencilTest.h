@@ -32,7 +32,7 @@ public:
 public:
     StencilTest() = default;
 public:
-    void Init() const override;
+    void Init() override;
     void SetUp() const override; 
     GLbitfield ClearMask() const override;
     void Update() const override;
