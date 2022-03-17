@@ -5,12 +5,12 @@ GRAPHIC_NAMESPACE_USING
 
 
 
-Model::Model(std::vector<Mesh> &&meshes)
+Model::Model(std::vector<Mesh*> &&meshes)
 {
     m_meshes = std::move(meshes);
 }
 
-Model::Model(const std::vector<Mesh> &meshes)
+Model::Model(const std::vector<Mesh*> &meshes)
 {
     m_meshes = meshes;
 }
@@ -80,8 +80,8 @@ void Model::processNode(aiNode *node, const aiScene *scene)
         }
 		auto mat = Material::Add(m_id + "-" + matName , shaderPath, textures);
         mat->SetName(m_id + "-" + matName);
-
-        m_meshes.emplace_back(mesh, mat, std::to_string(mesh->mMaterialIndex));
+        Mesh* _mesh_ = new Mesh(mesh, mat, std::to_string(mesh->mMaterialIndex));
+        m_meshes.emplace_back(_mesh_);
     }
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
@@ -89,10 +89,42 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     }
 }
 
-void Model::draw() const
+std::vector<Mesh*>& Model::GetMeshes()
 {
-    for (auto&& mesh : m_meshes)
+    return m_meshes;
+}
+
+void Model::SetActive(bool v)
+{
+    m_enable = v;
+    for (auto& mesh : m_meshes)
     {
-        mesh.draw();
+        mesh->SetActive(v);
+    }
+}
+
+void Model::draw(Shader* shader) const
+{
+    for (auto& mesh : m_meshes)
+    {
+        mesh->draw(shader);
+    }
+}
+
+Model* Model::Clone() const
+{
+    std::vector<Mesh*> meshes;
+    for (auto& mesh : m_meshes)
+    {
+        meshes.push_back(mesh->Clone());
+    }
+    return new Model(meshes);
+}
+
+Model::~Model()
+{
+    for (auto& mesh : m_meshes)
+    {
+        delete mesh;
     }
 }

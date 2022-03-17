@@ -141,13 +141,31 @@ void Mesh::SetRenderingIndex(const unsigned int& newIndex)
     m_renderIndex = newIndex;
 }
 
-void Mesh::draw() const
+void Mesh::draw(Shader* shader) const
 {
-    m_material->UseMaterial();
+    m_material->UseMaterial(shader);
     glBindVertexArray(VAO);
     if (m_indices.empty())
         glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
     else
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+Mesh* Mesh::Clone() const
+{
+    Mesh* mesh = new Mesh();
+    mesh->VAO = VAO;
+    mesh->VBO = VBO;
+    mesh->EBO = EBO;
+    
+    mesh->m_indices = m_indices;
+    mesh->m_vertices = m_vertices;
+
+    mesh->m_name = m_name;
+    mesh->m_material = m_material->Clone();
+
+    mesh->m_renderIndex = m_renderIndex;
+    mesh->m_enable = m_enable;
+    return mesh;
 }

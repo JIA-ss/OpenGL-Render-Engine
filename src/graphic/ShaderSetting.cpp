@@ -238,4 +238,49 @@ void ShaderSetting::UpdateParameters(Shader* shader)
     }
 }
 
+void* ShaderSetting::GetRawValue(const std::string& name)
+{
+    auto it = m_params.find(name);
+    if (it == m_params.end())
+        return nullptr;
+    return it->second->Get();
+}
+    
+void ShaderSetting::SetRawValue(const std::string& name, void* value)
+{
+    auto it = m_params.find(name);
+    if (it == m_params.end())
+        return;
+    it->second->Set(value);
+}
 
+
+ShaderSetting::ShaderParamBase* ShaderSetting::GetRawParameter(const std::string& name)
+{
+    auto it = m_params.find(name);
+    if (it == m_params.end())
+        return nullptr;
+    return it->second.get();
+}
+
+void ShaderSetting::Assign(ShaderSetting* ss) const
+{
+    for (auto it = m_params.begin(); it != m_params.end(); it++)
+    {
+        ShaderParamBase* param = ss->GetRawParameter(it->first);
+        if (param != nullptr && param->GetType() == it->second->GetType())
+        {
+            ss->SetRawValue(it->first, it->second->Get());
+        }
+    }
+}
+
+ShaderSetting ShaderSetting::Clone() const
+{
+    ShaderSetting ss;
+    for (auto it = m_params.begin(); it != m_params.end(); it++)
+    {
+        ss.m_params[it->first] = it->second->Clone();
+    }
+    return ss;
+}

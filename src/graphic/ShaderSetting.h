@@ -44,11 +44,19 @@ public:
     template <typename T>
     T *GetParameter(const std::string &name);
 
+    void* GetRawValue(const std::string& name);
+
+    void SetRawValue(const std::string& name, void* value);
+
     void UpdateParameters(Shader *shader);
 
     void Use() const;
 
     void SetTextures(const std::vector<Texture* >& texs);
+
+    void Assign(ShaderSetting* ss) const;
+
+    ShaderSetting Clone() const;
 public:
     struct TextureParamValue
     {
@@ -77,11 +85,13 @@ protected:
         ShaderParamType m_type;
     };
 
+    ShaderParamBase* GetRawParameter(const std::string& name);
+
     template <typename T>
     class ShaderParam : public ShaderParamBase
     {
     public:
-        ShaderParam() = delete;
+        ShaderParam() = default;
         ShaderParam(const ShaderParam &) = default;
         ShaderParam &operator=(const ShaderParam &) = default;
         ShaderParam(const T &val, const unsigned int &loc, const ShaderParamType &type);

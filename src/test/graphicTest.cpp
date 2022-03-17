@@ -26,12 +26,12 @@ void GraphicTest::cube(Window* window)
 {
     window->enableZTest(true);
     GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
     Camera& cam = window->getCamera();
     cam.setCameraPos(glm::vec3(0,0,3));
     cam.enableControl(true);
-    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), &cam.getViewMat4()[0]);
-    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), &cam.getProjectionMat4()[0]);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), &cam.getViewMat4()[0]);
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), &cam.getProjectionMat4()[0]);
 
     Texture* tex1 = new Texture("container.jpg");
     Texture* tex2 = new Texture("G_Table_Wood_10.png");
@@ -43,8 +43,8 @@ void GraphicTest::cube(Window* window)
     window->AddUpdateCallback([window, gsp,mesh](){
         Camera& cam = window->getCamera();
         //std::cout << cam.getCameraPos().x << cam.getCameraPos().y<< cam.getCameraPos().z  << std::endl;
-        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), &cam.getViewMat4()[0]);
-        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), &cam.getProjectionMat4()[0]);
+        gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), &cam.getViewMat4()[0]);
+        gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), &cam.getProjectionMat4()[0]);
 
         mesh->draw();
     });
@@ -102,9 +102,9 @@ void GraphicTest::_3d(Window* window)
     glm::vec3 lightColor = glm::vec3(1.0f);
 
     GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
-    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
     gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
     gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
@@ -136,8 +136,8 @@ glm::mat4 view;
 view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0)); 
 
         //view = cam.getViewMat4();
-        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
-        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
+        gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
         gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
         //gsp->SubData("GlobalPositions", sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(lightPos));
@@ -161,9 +161,9 @@ void GraphicTest::_model(Window* window)
 
 
     GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
-    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
     gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
     gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
@@ -201,8 +201,8 @@ void GraphicTest::_model(Window* window)
         //view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0)); 
 
         glm::mat4 view = cam.getViewMat4();
-        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
-        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
+        gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
         gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
         //gsp->SubData("GlobalPositions", sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(lightPos));
@@ -231,9 +231,9 @@ void GraphicTest::_depthTest(Window* window)
     glm::vec3 lightColor = glm::vec3(1.0f);
 
     GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
-    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
     gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
     gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
@@ -266,8 +266,8 @@ void GraphicTest::_depthTest(Window* window)
         Camera& cam = window->getCamera();
         GlobalShaderParam* gsp = GlobalShaderParam::Get();
         glm::mat4 view = cam.getViewMat4();
-        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
-        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
+        gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
         gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
 
         light->draw();
@@ -298,9 +298,9 @@ void GraphicTest::_stencilTest(Window* window)
 
 
     GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
-    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
     gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
     gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
@@ -332,8 +332,8 @@ void GraphicTest::_stencilTest(Window* window)
         GlobalShaderParam* gsp = GlobalShaderParam::Get();
         auto& st = window->getStencilTest();
         glm::mat4 view = cam.getViewMat4();
-        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
-        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
+        gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
         gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
 
@@ -391,9 +391,9 @@ void GraphicTest::_blend(Window* window)
     cam.setSensitive(0.01f);
 
     GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
-    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
     gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
     gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
@@ -440,8 +440,8 @@ void GraphicTest::_blend(Window* window)
         Camera& cam = window->getCamera();
         auto& st = window->getStencilTest();
         glm::mat4 view = cam.getViewMat4();
-        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
-        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
+        gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
         gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
 
         plane->draw();
@@ -530,9 +530,9 @@ void GraphicTest::_faceCulling(Window* window)
     cam.setSensitive(0.01f);
 
     GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
-    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
     gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
     gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
@@ -550,8 +550,8 @@ void GraphicTest::_faceCulling(Window* window)
     window->AddUpdateCallback([cube, window](){
         Camera& cam = window->getCamera();
         GlobalShaderParam* gsp = GlobalShaderParam::Get();
-        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+        gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
         cube->draw();
     });
@@ -564,9 +564,9 @@ void GraphicTest::_frameBuffer(Window* window)
     cam.enableControl(true);
     cam.setSensitive(0.02f);
     GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalProjMatrices", 2 * sizeof(glm::mat4), nullptr);
-    gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-    gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
 
     gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
     gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
@@ -606,8 +606,8 @@ void GraphicTest::_frameBuffer(Window* window)
         GlobalShaderParam* gsp = GlobalShaderParam::Get();
         Camera& cam = window->getCamera();
         glm::mat4 view = cam.getViewMat4();
-        gsp->SubData("GlobalProjMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
-        gsp->SubData("GlobalProjMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+        gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(view));
+        gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
         gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
 
         plane->draw();
@@ -621,4 +621,47 @@ void GraphicTest::_frameBuffer(Window* window)
         }
     });
 
+}
+
+void GraphicTest::_renderQueue(Window* window)
+{
+    Camera& cam = window->getCamera();
+    cam.enableControl(true);
+    cam.setSensitive(0.02f);
+    GlobalShaderParam* gsp = GlobalShaderParam::Get();
+    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
+
+    gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
+    gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
+
+    glm::vec3 planePos = glm::vec3(0,-0.5,0);
+    glm::vec3 planeSize = glm::vec3(100,0.1,100);
+
+    std::vector<glm::vec3> cubePoses = {
+        glm::vec3(0,0,0),
+        glm::vec3(2,0,0),
+        glm::vec3(-1,0,-1)
+    };
+
+    Texture* cubeTex = new Texture("Blend/cube.jpg", Diffuse);
+    Material* cubeMaterial = new Material("Blend/blendTest", {cubeTex});
+    cubeMaterial->SetShaderParam("model", glm::mat4(1.0f));
+
+    Texture* planeTex = new Texture("Blend/plane.png", Diffuse);
+    Material* planeMaterial = new Material("Blend/blendTest", {planeTex});
+    glm::mat4 planeModel(1.0f);
+    planeModel = glm::translate(planeModel, planePos);
+    planeModel = glm::scale(planeModel, planeSize);
+    planeMaterial->SetShaderParam("model", planeModel);
+
+    auto& renderQueue = window->getRenderQueue();
+    Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
+
+    Mesh* cube = new Mesh(Vertex::boxElement, Vertex::box, cubeMaterial, "cube");
+
+    renderQueue.EnqueMesh(plane);
+    renderQueue.EnqueMesh(cube);
+    
 }

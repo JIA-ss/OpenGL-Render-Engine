@@ -48,7 +48,7 @@ void GlobalShaderParam::SubData(const std::string& name, const GLintptr& offset,
 
 void GlobalShaderParam::ConfigureShaderParameterBlock(const GLuint& program)
 {
-    for (auto&& [name, meta] : m_params)
+    for (auto& [name, meta] : m_params)
     {
         auto uniformBlockIndex = glGetUniformBlockIndex(program, name.data());
         if (uniformBlockIndex != GL_INVALID_INDEX)

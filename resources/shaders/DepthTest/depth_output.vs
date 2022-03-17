@@ -9,7 +9,7 @@ layout (location = 3) in vec3 tangent;
 layout (location = 4) in vec3 bitangent;
 
 
-layout(std140) uniform GlobalProjMatrices
+layout(std140) uniform GlobalMatrices
 {
     mat4 view;
     mat4 projection;

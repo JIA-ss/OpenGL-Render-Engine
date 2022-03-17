@@ -22,4 +22,6 @@ void _blend(Window* window);
 void _faceCulling(Window* window);
 
 void _frameBuffer(Window* window);
+
+void _renderQueue(Window* window);
 }

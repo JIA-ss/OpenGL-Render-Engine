@@ -11,22 +11,31 @@ GRAPHIC_NAMESPACE_BEGIN
 class Model
 {
 public:
+    Model() = default;
+    ~Model();
     Model(const std::string &path, const std::string& shader = "");
-    Model(std::vector<Mesh>&& meshes);
-	Model(const std::vector<Mesh>& meshes);
+    Model(std::vector<Mesh*>&& meshes);
+	Model(const std::vector<Mesh*>& meshes);
 
-    void draw() const;
+    std::vector<Mesh*>& GetMeshes();
+    
+    void draw(Shader* shader = nullptr) const;
+
+    Model* Clone() const;
+    bool IsActive() const { return m_enable; }
+    void SetActive(bool v);
+
     template<typename T>
     void SetShaderParam(const std::string& name, const T& val);
 private:
-    std::vector<Mesh> m_meshes;
+    std::vector<Mesh*> m_meshes;
     bool m_gammaCorrection;
     std::string m_id;
     std::string m_shaderPath;
+    bool m_enable = true;
 
     Model *loadModel(const std::string &path);
     void processNode(aiNode *node, const aiScene *scene);
-    
 public:
     static Model* Get(const std::string& id);
     template<typename ...Args>
@@ -41,7 +50,7 @@ void Model::SetShaderParam(const std::string& name, const T& val)
 {
     for (int i = 0; i < m_meshes.size(); ++i)
     {
-        m_meshes[i].SetShaderParam(name, val);
+        m_meshes[i]->SetShaderParam(name, val);
     }
 }
 

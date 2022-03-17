@@ -105,7 +105,7 @@ void FrameBuffer::SetSize(int width, int height)
 
 bool FrameBuffer::IsValid() const
 {
-    return m_valid && m_outputMesh != nullptr && m_enable;
+    return m_outputMesh != nullptr && m_enable;
 }
 
 static Graphic::TextureType Convert(const FrameBuffer::AttachmentType& type)

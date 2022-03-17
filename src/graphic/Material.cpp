@@ -5,17 +5,13 @@ GRAPHIC_NAMESPACE_USING
 
 std::unordered_map<std::string, Material> Material::collection;
 
-Material::Material() : m_shader(nullptr), m_attachedMeshes(){};
+Material::Material() : m_shader(nullptr){};
 
 Material::Material(const unsigned int&renderIndex):Material()
 {
     m_renderIndex = renderIndex;
 }
 
-void Material::SetRenderIndex(const unsigned int& index)
-{
-    m_renderIndex = index;
-}
 
 void Material::SetShader(const std::string &name)
 {
@@ -23,10 +19,30 @@ void Material::SetShader(const std::string &name)
     m_params.UpdateParameters(m_shader);
 }
 
-void Material::UseMaterial() const
+void Material::UseMaterial(Shader* shader) const
 {
-    m_shader->use();
-    m_params.Use();
+    if (shader != nullptr)
+    {
+        ShaderSetting param;
+        param.UpdateParameters(shader);
+        m_params.Assign(&param);
+        shader->use();
+        param.Use();
+    }
+    else
+    {
+        m_shader->use();
+        m_params.Use();
+    }
+}
+
+Material* Material::Clone() const
+{
+    Material* mat = new Material();
+    mat->m_name = m_name;
+    mat->m_shader = m_shader;
+    mat->m_params = m_params.Clone();
+    return mat;
 }
 
 Material *Material::Get(const std::string &id)
@@ -34,7 +50,7 @@ Material *Material::Get(const std::string &id)
     auto iter = collection.find(id);
     if (iter == collection.end())
         return nullptr;
-    return &iter->second;
+    return iter->second.Clone();
 }
 
 void Material::Remove(const std::string &id)

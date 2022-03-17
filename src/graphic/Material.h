@@ -12,11 +12,6 @@ class Material
 public:
     Material();
     Material(const unsigned int& renderIndex);
-    Material(const std::string &shader, std::vector<Texture *> &&textures) : Material(1)
-    {
-        SetShader(shader);
-        m_params.SetTextures(textures);
-    };
     
     Material(const std::string &shader, const std::vector<Texture *>& textures) : Material(1)
     {
@@ -25,7 +20,7 @@ public:
     };
 public:
     void SetShader(const std::string& name);
-    void UseMaterial() const;
+    void UseMaterial(Shader* shader = nullptr) const;
     const Shader* GetShader() const;
     ShaderSetting* GetShaderParams() const;
     void SetRenderIndex(const unsigned int& idx);
@@ -34,13 +29,13 @@ public:
 
     template<typename T>
     bool SetShaderParam(const std::string& name, const T& val);
+
+    Material* Clone() const;
 protected:
     std::string m_name;
     Shader* m_shader;
     ShaderSetting m_params;
     unsigned int m_renderIndex;
-    std::vector<const Mesh*> m_attachedMeshes;
-
 public:
     static Material *Get(const std::string &id);
     template <typename... Args>
@@ -56,10 +51,10 @@ Material *Material::Add(const std::string &id, Args &&... args)
 {
     auto has = collection.find(id);
     if (has != collection.end())
-        return &has->second;
+        return has->second.Clone();
     auto pair = collection.emplace(id, Material(args...));
     pair.first->second.SetName(id);
-    return &pair.first->second;
+    return pair.first->second.Clone();
 }
 
 template<typename T>

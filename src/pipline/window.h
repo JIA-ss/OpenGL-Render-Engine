@@ -12,6 +12,7 @@
 #include "render/Blend.h"
 #include "render/FaceCulling.h"
 #include "render/FrameBuffer.h"
+#include "render/RenderQueue.h"
 namespace Pipline
 {
     class Window;
@@ -61,6 +62,8 @@ namespace Pipline
         Render::Blend m_blend;
         Render::FaceCulling m_faceCulling;
         Render::FrameBuffer m_frameBuffer;
+        Render::RenderQueue m_renderQueue;
+
     private:
         Camera m_camera;
     private:
@@ -94,6 +97,7 @@ namespace Pipline
         inline Render::Blend& getBlend() { return m_blend; }
         inline Render::FaceCulling& getFaceCulling() { return m_faceCulling; }
         inline Render::FrameBuffer& getFrameBuffer() { return m_frameBuffer; }
+        inline Render::RenderQueue& getRenderQueue() { return m_renderQueue; }
     public:
         int AddFramebufferSizeCallback(std::function<void(int,int)> func);
         void DeleteFramebufferSizeCallback(int id);

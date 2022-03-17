@@ -219,6 +219,10 @@ void Window::doUpdate()
         glClear(mask);
         
         m_camera.processControl();
+
+        m_renderQueue.Render(Render::RenderQueue::Geometry);
+        m_renderQueue.Render(Render::RenderQueue::Transparent);
+        
         InvokePreUpdateCallback();
         InvokeUpdateCallback();
         InvokePostUpdateCallback();
@@ -232,6 +236,7 @@ void Window::doUpdate()
             m_frameBuffer.Draw();
         }
 
+        m_renderQueue.Render(Render::RenderQueue::Overlay);
         glfwSwapBuffers(m_window);
         glfwPollEvents();
     }
