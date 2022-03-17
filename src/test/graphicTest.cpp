@@ -596,7 +596,11 @@ void GraphicTest::_frameBuffer(Window* window)
     auto& frameBuffer = window->getFrameBuffer();
     frameBuffer.SetActive(true);
     frameBuffer.AddTextureAttachment(Render::FrameBuffer::AttachmentType::Color0);
+    //frameBuffer.AddTextureAttachment(Render::FrameBuffer::AttachmentType::Depth, Graphic::Texture::DepthComponent, Graphic::Texture::Depth);
+
     frameBuffer.AddRenderBuffer(Render::FrameBuffer::AttachmentType::Depth);
+
+    //frameBuffer.SetShader("FrameBuffer/Depth");
 
     window->AddUpdateCallback([window, cube, plane, cubePoses](){
         GlobalShaderParam* gsp = GlobalShaderParam::Get();
