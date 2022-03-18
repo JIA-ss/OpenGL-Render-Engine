@@ -13,6 +13,7 @@
 #include "render/FaceCulling.h"
 #include "render/FrameBuffer.h"
 #include "render/RenderQueue.h"
+#include "render/ShadowMapping.h"
 namespace Pipline
 {
     class Window;
@@ -63,6 +64,7 @@ namespace Pipline
         Render::FaceCulling m_faceCulling;
         Render::FrameBuffer m_frameBuffer;
         Render::RenderQueue m_renderQueue;
+        Render::ShadowMapping m_shadowMapping;
 
     private:
         Camera m_camera;

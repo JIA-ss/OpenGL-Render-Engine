@@ -57,6 +57,7 @@ Window::Window(int width, int height, const char* title)
     m_bgColor = Color{0,0,0,0};
     m_camera.setWindow(this);
     m_frameBuffer.SetSize(width, height);
+    m_shadowMapping.SetUp(width, height, &m_renderQueue);
     init();
 }
 
@@ -205,37 +206,48 @@ void Window::doUpdate()
     m_depthTest.Init();
     m_blend.Init();
     m_faceCulling.Init();
+    m_shadowMapping.Init();
 
     while(!glfwWindowShouldClose(m_window))
     {
         m_inputMgr->update();
+        m_camera.update();
 
-        // 1st pass
+
         m_frameBuffer.Bind();
         glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, m_bgColor.a);
         GLbitfield mask = GL_COLOR_BUFFER_BIT;
         mask |= m_stencilTest.ClearMask();
         mask |= m_depthTest.ClearMask();
         glClear(mask);
-        
-        m_camera.update();
 
-        m_renderQueue.Render(Render::RenderQueue::Geometry);
-        m_renderQueue.Render(Render::RenderQueue::Transparent);
+        // 1st pass
+        m_shadowMapping.DepthPass();
+        
+        // 2nd pass
+        {
+            m_shadowMapping.LightPass(m_frameBuffer.GetId());
+            m_renderQueue.Render(Render::RenderQueue::Geometry);
+            m_renderQueue.Render(Render::RenderQueue::Transparent);
+        }
         
         InvokePreUpdateCallback();
         InvokeUpdateCallback();
         InvokePostUpdateCallback();
 
-        //2st pass
+        //3rd pass
         if (m_frameBuffer.IsValid())
         {
             m_frameBuffer.UnBind();
+            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_STENCIL_TEST);
             glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, m_bgColor.a);
             glClear(GL_COLOR_BUFFER_BIT);
             m_frameBuffer.Draw();
         }
-
+        
+        
+        
         m_renderQueue.Render(Render::RenderQueue::Overlay);
         glfwSwapBuffers(m_window);
         glfwPollEvents();

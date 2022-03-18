@@ -10,7 +10,9 @@ void Blend::Init()
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
     else
-        glDisable(GL_BLEND);
+    {
+        //glDisable(GL_BLEND);
+    }
 }
 void Blend::SetUp() const
 {

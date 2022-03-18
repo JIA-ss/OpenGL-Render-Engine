@@ -12,7 +12,7 @@ void StencilTest::Init()
     }
     else
     {
-        glDisable(GL_STENCIL_TEST);
+        //glDisable(GL_STENCIL_TEST);
     }
 }
 

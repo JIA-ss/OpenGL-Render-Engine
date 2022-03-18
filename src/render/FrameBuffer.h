@@ -62,7 +62,7 @@ public:
     void SetSize(int width, int height);
     inline void SetShader(const std::string& shader) { m_shaderPath = shader; }
     bool IsValid() const;
-    GLuint GetId() const { return m_frameBufferId; }
+    GLuint GetId() const;
 
     Graphic::Texture* GetTextureAttachment(const AttachmentType& type);
     Graphic::Texture* AddTextureAttachment(
@@ -74,6 +74,7 @@ public:
     RenderBuffer* GetRenderBuffer(const AttachmentType& type);
     RenderBuffer* AddRenderBuffer(const AttachmentType& type, const RenderBuffer::InternalFormat& format = RenderBuffer::Depth24_Stencil8);
 
+    Graphic::Mesh* GetOutputMesh() { return m_outputMesh; }
 protected:
     virtual void InitOutputMesh();
 private:

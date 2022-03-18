@@ -12,7 +12,7 @@ void FaceCulling::Init()
     }
     else
     {
-        glDisable(GL_CULL_FACE);
+        //glDisable(GL_CULL_FACE);
     }
 }
 void FaceCulling::SetUp() const

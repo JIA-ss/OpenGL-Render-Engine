@@ -70,6 +70,10 @@ void FrameBuffer::Bind() const
         glEnable(GL_DEPTH_TEST);
     if (m_renderBuffers.find(Stencil) != m_renderBuffers.end())
         glEnable(GL_STENCIL_TEST);
+    if (m_textureBuffers.find(Depth) != m_textureBuffers.end())
+        glEnable(GL_DEPTH_TEST);
+    if (m_textureBuffers.find(Stencil) != m_textureBuffers.end())
+        glEnable(GL_STENCIL_TEST);
 }
 
 void FrameBuffer::UnBind() const
@@ -77,8 +81,6 @@ void FrameBuffer::UnBind() const
     if (!IsValid())
         return;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_STENCIL_TEST);
 }
 
 GLbitfield FrameBuffer::ClearMask() const
@@ -106,6 +108,11 @@ void FrameBuffer::SetSize(int width, int height)
 bool FrameBuffer::IsValid() const
 {
     return m_outputMesh != nullptr && m_enable;
+}
+
+GLuint FrameBuffer::GetId() const
+{
+    return m_enable ? m_frameBufferId : 0;
 }
 
 static Graphic::TextureType Convert(const FrameBuffer::AttachmentType& type)
@@ -182,7 +189,7 @@ void FrameBuffer::InitOutputMesh()
         texs.push_back(texture);
     }
 
-    if (m_shaderPath.empty() || Resource::ResourceManager::Instance()->GetResource(m_shaderPath.c_str(), Resource::shader).isNull())
+    if (m_shaderPath.empty() || Resource::ResourceManager::Instance()->GetResource((m_shaderPath + ".vs").c_str(), Resource::shader).isNull())
         m_shaderPath = "FrameBuffer/Default";
 
     Graphic::Material* mat = new Graphic::Material(m_shaderPath, texs);

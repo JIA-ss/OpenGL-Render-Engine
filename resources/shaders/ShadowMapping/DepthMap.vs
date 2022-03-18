@@ -13,7 +13,7 @@ layout(std140) uniform GlobalMatrices
 {
     mat4 view;
     mat4 projection;
-    mat4 lightSpaceMatrice
+    mat4 lightSpaceMatrice;
 };
 
 uniform mat4 model;

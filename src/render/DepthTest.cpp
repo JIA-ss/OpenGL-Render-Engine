@@ -11,7 +11,7 @@ void DepthTest::Init()
     }
     else
     {
-        glDisable(GL_DEPTH_TEST);
+        //glDisable(GL_DEPTH_TEST);
     }
 }
 
