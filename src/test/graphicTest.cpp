@@ -628,13 +628,6 @@ void GraphicTest::_renderQueue(Window* window)
     Camera& cam = window->getCamera();
     cam.enableControl(true);
     cam.setSensitive(0.02f);
-    GlobalShaderParam* gsp = GlobalShaderParam::Get();
-    gsp->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
-    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(cam.getViewMat4()));
-    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cam.getProjectionMat4()));
-
-    gsp->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
-    gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(cam.getCameraPos()));
 
     glm::vec3 planePos = glm::vec3(0,-0.5,0);
     glm::vec3 planeSize = glm::vec3(100,0.1,100);

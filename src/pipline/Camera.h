@@ -111,6 +111,7 @@ public:
     bool isControlEnable() const { return m_control.isEnable(); }
     void processControl() { m_control.processActions(); }
 
+    void update();
     inline Pipline::Window& getWindow() const { return *m_window; }
     inline void setWindow(Window* window) { m_window = window; }
 

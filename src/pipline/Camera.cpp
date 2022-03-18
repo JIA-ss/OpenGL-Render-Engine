@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "pipline/window.h"
 #include "input/InputManager.h"
+#include "graphic/GlobalShaderParam.h"
 using namespace Pipline;
 
 void Camera::updateProjectionMat4()
@@ -241,4 +242,15 @@ void CameraControl::processActions() const
         if (isTriggered((CameraActions)i))
             resolveResponse((CameraActions)i);
     }
+}
+
+void Camera::update()
+{
+    processControl();
+    Graphic::GlobalShaderParam* gsp = Graphic::GlobalShaderParam::Get();
+
+    gsp->SubData("GlobalMatrices", 0, sizeof(glm::mat4), glm::value_ptr(getViewMat4()));
+    gsp->SubData("GlobalMatrices", sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(getProjectionMat4()));
+
+    gsp->SubData("GlobalPositions", 0, sizeof(glm::vec3), glm::value_ptr(getCameraPos()));
 }

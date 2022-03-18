@@ -218,7 +218,7 @@ void Window::doUpdate()
         mask |= m_depthTest.ClearMask();
         glClear(mask);
         
-        m_camera.processControl();
+        m_camera.update();
 
         m_renderQueue.Render(Render::RenderQueue::Geometry);
         m_renderQueue.Render(Render::RenderQueue::Transparent);

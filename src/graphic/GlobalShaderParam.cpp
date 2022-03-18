@@ -13,6 +13,8 @@ GlobalShaderParam *GlobalShaderParam::Get()
         return instance;
     }
     instance = new GlobalShaderParam();
+    instance->GenBlock("GlobalMatrices", 2 * sizeof(glm::mat4), nullptr);
+    instance->GenBlock("GlobalPositions", 2 * sizeof(glm::vec4), nullptr);
     return instance;
 }
 
