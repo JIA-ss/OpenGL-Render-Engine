@@ -37,11 +37,16 @@ public:
     void draw(Shader* shader = nullptr) const;
 
     Mesh* Clone() const;
+    void SetPosition(const glm::vec3& pos);
+    glm::vec3 GetPosition() { return m_position; }
+    void SetSize(const glm::vec3& size);
+    glm::vec3 GetSize() { return m_size; }
 
     template<typename T>
     void SetShaderParam(const std::string& name, const T& val);
 private:
     void SetUpMesh();
+    void SetUpModelMatrice();
 private:
     std::vector<GLuint> m_indices;
     std::vector<Vertex> m_vertices;
@@ -51,6 +56,8 @@ private:
     GLuint EBO;
 
     std::string m_name;
+    glm::vec3 m_position = glm::vec3(0.0f);
+    glm::vec3 m_size = glm::vec3(1.0f);
 
     Material* m_material;
 

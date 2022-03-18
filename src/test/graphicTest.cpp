@@ -625,6 +625,7 @@ void GraphicTest::_frameBuffer(Window* window)
 
 void GraphicTest::_renderQueue(Window* window)
 {
+    auto& renderQueue = window->getRenderQueue();
     Camera& cam = window->getCamera();
     cam.enableControl(true);
     cam.setSensitive(0.02f);
@@ -632,29 +633,27 @@ void GraphicTest::_renderQueue(Window* window)
     glm::vec3 planePos = glm::vec3(0,-0.5,0);
     glm::vec3 planeSize = glm::vec3(100,0.1,100);
 
+    Texture* planeTex = new Texture("Blend/plane.png", Diffuse);
+    Material* planeMaterial = new Material("Blend/blendTest", {planeTex});
+    Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
+    plane->SetPosition(planePos);
+    plane->SetSize(planeSize);
+    renderQueue.EnqueMesh(plane);
+
     std::vector<glm::vec3> cubePoses = {
-        glm::vec3(0,0,0),
-        glm::vec3(2,0,0),
-        glm::vec3(-1,0,-1)
+        glm::vec3(0,0.5,0),
+        glm::vec3(2,0.5,0),
+        glm::vec3(-1,0.5,-1)
     };
 
     Texture* cubeTex = new Texture("Blend/cube.jpg", Diffuse);
     Material* cubeMaterial = new Material("Blend/blendTest", {cubeTex});
-    cubeMaterial->SetShaderParam("model", glm::mat4(1.0f));
-
-    Texture* planeTex = new Texture("Blend/plane.png", Diffuse);
-    Material* planeMaterial = new Material("Blend/blendTest", {planeTex});
-    glm::mat4 planeModel(1.0f);
-    planeModel = glm::translate(planeModel, planePos);
-    planeModel = glm::scale(planeModel, planeSize);
-    planeMaterial->SetShaderParam("model", planeModel);
-
-    auto& renderQueue = window->getRenderQueue();
-    Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
-
     Mesh* cube = new Mesh(Vertex::boxElement, Vertex::box, cubeMaterial, "cube");
-
-    renderQueue.EnqueMesh(plane);
-    renderQueue.EnqueMesh(cube);
+    for (int i = 0; i < cubePoses.size(); i++)
+    {
+        cube->SetPosition(cubePoses[i]);
+        renderQueue.EnqueMesh(cube);
+        cube = cube->Clone();
+    }
     
 }
