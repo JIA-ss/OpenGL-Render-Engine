@@ -24,4 +24,6 @@ void _faceCulling(Window* window);
 void _frameBuffer(Window* window);
 
 void _renderQueue(Window* window);
+
+void _shadowMapping(Window* window);
 }

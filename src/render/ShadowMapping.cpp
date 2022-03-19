@@ -18,6 +18,7 @@ void ShadowMapping::InitLightMatrice()
 {
     Graphic::GlobalShaderParam* sp = Graphic::GlobalShaderParam::Get();
     sp->SubData("GlobalMatrices", 2 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(GetLightSpaceMatrice()));
+    sp->SubData("GlobalPositions", 1 * sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(m_view_from));
 }
 
 void ShadowMapping::InitDepthMap()
@@ -27,16 +28,23 @@ void ShadowMapping::InitDepthMap()
     m_depthMapFrameBuffer.SetShader("FrameBuffer/Depth");
     m_depthMapFrameBuffer.SetSize(m_shadowPrecision, m_shadowPrecision);
 
-    m_depthMapFrameBuffer.AddTextureAttachment
+    Graphic::Texture* depthTex = m_depthMapFrameBuffer.AddTextureAttachment
     (
         FrameBuffer::Depth, 
         Graphic::Texture::DepthComponent, 
         Graphic::Texture::Depth, 
         Graphic::Texture::Float
     );
-    m_depthMapFrameBuffer.Init();
+    glBindTexture(GL_TEXTURE_2D, depthTex->GetId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
 
-    _Render_Queue_->EnqueMesh(m_depthMapFrameBuffer.GetOutputMesh(), RenderQueue::Overlay);
+    m_depthMapFrameBuffer.Init();
+    //_Render_Queue_->EnqueMesh(m_depthMapFrameBuffer.GetOutputMesh(), RenderQueue::Overlay);
 
     m_depthMapFrameBuffer.Bind();
     glDrawBuffer(GL_NONE);
@@ -50,6 +58,11 @@ void ShadowMapping::SetUp(int width, int height, RenderQueue* rdq)
     m_width = width;
     m_height = height;
     _Render_Queue_ = rdq;
+}
+
+Graphic::Texture* ShadowMapping::GetDepthTexture()
+{
+    return m_depthMapFrameBuffer.GetTextureAttachment(FrameBuffer::Depth);
 }
 
 void ShadowMapping::SetLightView(const glm::vec3& from, const glm::vec3& to)
@@ -90,17 +103,19 @@ void ShadowMapping::DepthPass()
     glViewport(0, 0, m_shadowPrecision, m_shadowPrecision);
     m_depthMapFrameBuffer.Bind();
     glClear(GL_DEPTH_BUFFER_BIT);
+    glCullFace(GL_FRONT);
     _Render_Queue_->Render(RenderQueue::Geometry, m_depthShader);
     m_depthMapFrameBuffer.UnBind();
+    glCullFace(GL_BACK);
 }
 
-void ShadowMapping::LightPass(GLuint targetFrameId)
+void ShadowMapping::ShadowPass(GLuint targetFrameId)
 {
     if (!m_enable)
         return;
     glBindFramebuffer(GL_FRAMEBUFFER, targetFrameId);
     glViewport(0, 0, m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //_Render_Queue_->Render(RenderQueue::Geometry);
+    _Render_Queue_->Render(RenderQueue::Geometry);
     //m_depthMapFrameBuffer.Draw();
 }

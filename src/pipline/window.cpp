@@ -55,17 +55,23 @@ Window::Window(int width, int height, const char* title)
     m_height = height;
     m_title = title;
     m_bgColor = Color{0,0,0,0};
-    m_camera.setWindow(this);
-    m_frameBuffer.SetSize(width, height);
-    m_shadowMapping.SetUp(width, height, &m_renderQueue);
     init();
+
+    m_inputMgr = new InputManager();
+    m_inputMgr->setWindow(this);
+    m_frameBuffer.Init();
+    m_stencilTest.Init();
+    m_depthTest.Init();
+    m_blend.Init();
+    m_faceCulling.Init();
+    m_shadowMapping.Init();
+    m_camera.setWindow(this);
+    m_frameBuffer.SetSize(m_width, m_height);
+    m_shadowMapping.SetUp(m_width, m_height, &m_renderQueue);
 }
 
 void Window::init()
 {
-    m_inputMgr = new InputManager();
-    m_inputMgr->setWindow(this);
-
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -201,13 +207,6 @@ void Window::InvokeResizeCallbacks(GLFWwindow* window, int width, int height)
 
 void Window::doUpdate()
 {
-    m_frameBuffer.Init();
-    m_stencilTest.Init();
-    m_depthTest.Init();
-    m_blend.Init();
-    m_faceCulling.Init();
-    m_shadowMapping.Init();
-
     while(!glfwWindowShouldClose(m_window))
     {
         m_inputMgr->update();
@@ -226,7 +225,7 @@ void Window::doUpdate()
         
         // 2nd pass
         {
-            m_shadowMapping.LightPass(m_frameBuffer.GetId());
+            m_shadowMapping.ShadowPass(m_frameBuffer.GetId());
             m_renderQueue.Render(Render::RenderQueue::Geometry);
             m_renderQueue.Render(Render::RenderQueue::Transparent);
         }

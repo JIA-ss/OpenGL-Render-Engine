@@ -83,7 +83,8 @@ int main()
     //GraphicTest::_blend(window);
     //GraphicTest::_faceCulling(window);
     //GraphicTest::_frameBuffer(window);
-    GraphicTest::_renderQueue(window);
+    //GraphicTest::_renderQueue(window);
+    GraphicTest::_shadowMapping(window);
     window->doUpdate();
     return 1;
 }

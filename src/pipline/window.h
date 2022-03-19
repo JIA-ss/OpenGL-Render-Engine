@@ -100,6 +100,7 @@ namespace Pipline
         inline Render::FaceCulling& getFaceCulling() { return m_faceCulling; }
         inline Render::FrameBuffer& getFrameBuffer() { return m_frameBuffer; }
         inline Render::RenderQueue& getRenderQueue() { return m_renderQueue; }
+        inline Render::ShadowMapping& getShadowMapping() { return m_shadowMapping; }
     public:
         int AddFramebufferSizeCallback(std::function<void(int,int)> func);
         void DeleteFramebufferSizeCallback(int id);

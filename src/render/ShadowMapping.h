@@ -8,13 +8,14 @@ public:
     ShadowMapping() { m_enable = true; }
     virtual void Init();
     Graphic::Shader* GetDepthShader() { return m_depthShader; }
+    Graphic::Texture* GetDepthTexture();
 public:
     void SetUp(int width, int height, RenderQueue* rdq);
     void SetLightProjection(GLfloat left, GLfloat right, GLfloat top, GLfloat bottom, GLfloat near = 0, GLfloat far = 0);
     void SetLightView(const glm::vec3& from, const glm::vec3& to);
     glm::mat4 GetLightSpaceMatrice() const;
     void DepthPass();
-    void LightPass(GLuint targetFrameId = 0);
+    void ShadowPass(GLuint targetFrameId = 0);
 private:
     void InitLightMatrice();
     void InitDepthMap();
