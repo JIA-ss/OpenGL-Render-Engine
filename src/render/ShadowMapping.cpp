@@ -116,6 +116,6 @@ void ShadowMapping::ShadowPass(GLuint targetFrameId)
     glBindFramebuffer(GL_FRAMEBUFFER, targetFrameId);
     glViewport(0, 0, m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    _Render_Queue_->Render(RenderQueue::Geometry);
+    //_Render_Queue_->Render(RenderQueue::Geometry);
     //m_depthMapFrameBuffer.Draw();
 }
