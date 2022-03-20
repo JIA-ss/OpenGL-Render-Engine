@@ -1,3 +1,4 @@
+#pragma once
 #include "FrameBuffer.h"
 #include "RenderQueue.h"
 RENDER_NAMESPACE_BEGIN

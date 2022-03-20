@@ -8,6 +8,8 @@
 #include "tools/ioUtil.h"
 #include "input/InputManager.h"
 #include "test/graphicTest.h"
+
+#include "system/Engine.h"
 using namespace Pipline;
 
 void InitSingleTons()
@@ -49,8 +51,8 @@ int main()
 {
     InitSingleTons();
     InitMgrs();
-    Window* window = WindowInit();
-
+    //Window* window = WindowInit();
+    Engine* engine = Engine::InitEngine();
 
     //test::drawTriangle(window);
     //test::drawTextureWithBuff(window);
@@ -84,7 +86,10 @@ int main()
     //GraphicTest::_faceCulling(window);
     //GraphicTest::_frameBuffer(window);
     //GraphicTest::_renderQueue(window);
-    GraphicTest::_shadowMapping(window);
-    window->doUpdate();
+    //GraphicTest::_shadowMapping(window);
+    //window->doUpdate();
+    
+    GraphicTest::_shadowMapping_engine();
+    engine->StartEngine();
     return 1;
 }

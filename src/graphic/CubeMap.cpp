@@ -1,0 +1,3 @@
+#include "CubeMap.h"
+
+GRAPHIC_NAMESPACE_USING
