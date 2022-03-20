@@ -4,6 +4,8 @@
 #include "EntitySystem.h"
 #include "RenderSystem.h"
 
+#include "tools/fileWatcher.h"
+#include "resource/resourceManager.h"
 Engine* Engine::_instance_ = nullptr;
 SystemManager* Engine::_system_manager_ = nullptr;
 int Engine::_window_width_ = DEFAULT_WINDOW_WIDTH;
@@ -26,8 +28,17 @@ void Engine::SetWindowInfo(int width, int height, const std::string& title)
 
 Engine* Engine::InitEngine()
 {
-    Engine* engine = Engine::Instance();
     SystemManager::InitSingleTon();
+    
+    {
+        // todo: refactor later
+        Util::FileWatcherManager::InitSingleTon();
+        Resource::ResourceManager::InitSingleTon();
+        Resource::ResourceManager::Instance()->Init();
+    }
+
+    Engine* engine = Engine::Instance();
+
     _system_manager_ = SystemManager::Instance();
     
     engine->m_windowSystem = _system_manager_->AddSystem<WindowSystem>();
