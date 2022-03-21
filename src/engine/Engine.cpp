@@ -1,13 +1,16 @@
 #include "Engine.h"
-#include "WindowSystem.h"
-#include "InputSystem.h"
-#include "EntitySystem.h"
-#include "RenderSystem.h"
+#include "system/WindowSystem.h"
+#include "system/InputSystem.h"
+#include "system/EntitySystem.h"
+#include "system/RenderSystem.h"
+#include "system/FileWatcherSystem.h"
+#include "system/ResourceSystem.h"
 
-#include "tools/fileWatcher.h"
-#include "resource/resourceManager.h"
+
 Engine* Engine::_instance_ = nullptr;
 SystemManager* Engine::_system_manager_ = nullptr;
+WindowSystem* Engine::_window_system_ = nullptr;
+
 int Engine::_window_width_ = DEFAULT_WINDOW_WIDTH;
 int Engine::_window_height_ = DEFAULT_WINDOW_HEIGHT;
 std::string Engine::_window_title_ = DEFAULT_WINDOW_TITLE;
@@ -29,24 +32,18 @@ void Engine::SetWindowInfo(int width, int height, const std::string& title)
 Engine* Engine::InitEngine()
 {
     SystemManager::InitSingleTon();
-    
-    {
-        // todo: refactor later
-        Util::FileWatcherManager::InitSingleTon();
-        Resource::ResourceManager::InitSingleTon();
-        Resource::ResourceManager::Instance()->Init();
-    }
-
     Engine* engine = Engine::Instance();
 
     _system_manager_ = SystemManager::Instance();
     
-    engine->m_windowSystem = _system_manager_->AddSystem<WindowSystem>();
-    engine->m_windowSystem->setWindowInfo(_window_width_, _window_height_, _window_title_);
+    _window_system_ = _system_manager_->AddSystem<WindowSystem>();
+    _window_system_->setWindowInfo(_window_width_, _window_height_, _window_title_);
 
     _system_manager_->AddSystem<InputSystem>();
     _system_manager_->AddSystem<EntitySystem>();
     _system_manager_->AddSystem<RenderSystem>();
+    _system_manager_->AddSystem<FileWatcherSystem>();
+    _system_manager_->AddSystem<ResourceSystem>();
 
 
 
@@ -56,15 +53,17 @@ Engine* Engine::InitEngine()
 
 void Engine::StartEngine()
 {
-    while(!glfwWindowShouldClose(m_windowSystem->getGLFWwindow()))
+    while(!glfwWindowShouldClose(_window_system_->getGLFWwindow()))
     {
         _system_manager_->Update();
     }
 
     glfwTerminate();
+
+    _system_manager_->UnInit();
 }
 
 void Engine::StopEngine()
 {
-    glfwSetWindowShouldClose(m_windowSystem->getGLFWwindow(), true);
+    glfwSetWindowShouldClose(_window_system_->getGLFWwindow(), true);
 }

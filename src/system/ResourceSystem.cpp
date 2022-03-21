@@ -1,14 +1,15 @@
-#include "resourceManager.h"
-#include "tools/fileWatcher.h"
-#include "resource/types/TextureResource.h"
+#include "ResourceSystem.h"
 #include "resource/types/ShaderResource.h"
-#include <filesystem>
-#include <algorithm>
+#include "resource/types/TextureResource.h"
+#include "resource/types/AtlasTextureResource.h"
+
+#include "tools/ioUtil.h"
+#include "FileWatcherSystem.h"
+#include <iostream>
 using namespace Resource;
 
-IMPLEMENT_SINGLETON(ResourceManager)
 
-std::string ResourceManager::getResourceRootPath(eResourceType type)
+std::string ResourceSystem::getResourceRootPath(eResourceType type)
 {
     switch (type)
     {
@@ -23,14 +24,14 @@ std::string ResourceManager::getResourceRootPath(eResourceType type)
     }
 }
 
-void ResourceManager::ImportResource(const char* path, eResourceType type)
+void ResourceSystem::ImportResource(const char* path, eResourceType type)
 {
     std::filesystem::path path_(path);
     std::string filename = path_.filename().string();
     sResourceRef ref = GetResource(filename.c_str(), type);
     if (ref.isNull())
     {
-        ref = ResourceFactory::ImportResourceByType(path, type);
+        ref = Resource::ResourceFactory::ImportResourceByType(path, type);
         m_resourceMap[type][filename] = ref;
     }
     else
@@ -47,7 +48,7 @@ void ResourceManager::ImportResource(const char* path, eResourceType type)
     }
 }
 
-void ResourceManager::InitShaderResource(const std::string& full_path,const std::string& relative_path)
+void ResourceSystem::InitShaderResource(const std::string& full_path,const std::string& relative_path)
 {
     std::filesystem::path path = getResourceRootPath(shader);
     if (!full_path.empty())
@@ -70,11 +71,11 @@ void ResourceManager::InitShaderResource(const std::string& full_path,const std:
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<ShaderResource>(path_str.c_str());
         m_resourceMap[shader][relative_path + it_path.filename().string()] = res;
-        //std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
+        //std::cout << "ResourceSystem::InitResource " << path_str << it_path.filename() << std::endl;
     }
 }
 
-void ResourceManager::InitTextureResource(const std::string& full_path,const std::string& relative_path)
+void ResourceSystem::InitTextureResource(const std::string& full_path,const std::string& relative_path)
 {
     std::filesystem::path path = getResourceRootPath(texture);
     if (!full_path.empty())
@@ -95,11 +96,11 @@ void ResourceManager::InitTextureResource(const std::string& full_path,const std
         std::string path_str = it_path.string();
         sResourceRef res = ResourceFactory::ImportResource<TextureResource>(path_str.c_str());
         m_resourceMap[texture][relative_path + it_path.filename().string()] = res;
-        //std::cout << "ResourceManager::InitResource " << path_str << it_path.filename() << std::endl;
+        //std::cout << "ResourceSystem::InitResource " << path_str << it_path.filename() << std::endl;
     }
 }
 
-void ResourceManager::InitAtlasTextureResource(const std::string& path,const std::string& relative_path)
+void ResourceSystem::InitAtlasTextureResource(const std::string& path,const std::string& relative_path)
 {
     return;
     
@@ -180,7 +181,7 @@ void ResourceManager::InitAtlasTextureResource(const std::string& path,const std
     std::cout << "total Pack Time: " << elapsed_seconds.count() * 1000 << " ms" << std::endl;
 }
 
-void ResourceManager::InitResource(eResourceType type)
+void ResourceSystem::InitResource(eResourceType type)
 {
     std::filesystem::path path = getResourceRootPath(type);
 
@@ -202,10 +203,10 @@ void ResourceManager::InitResource(eResourceType type)
     }
 
 
-    Util::FileWatcher* watcher = Util::FileWatcherManager::Instance()->GetFileWatcher(path.string().c_str());
+    FileWatcher* watcher = FileWatcherSystem::Get()->GetFileWatcher(path.string().c_str());
     if (watcher != nullptr)
         return;
-    watcher = Util::FileWatcherManager::Instance()->CreateFileWatcher(path.string().c_str(), false);
+    watcher = FileWatcherSystem::Get()->CreateFileWatcher(path.string().c_str(), false);
     watcher->AddCreateFileCallback([this, type](const std::string& path, const std::string& name)
     {
         ImportResource(path.c_str(), type);
@@ -230,7 +231,7 @@ void ResourceManager::InitResource(eResourceType type)
 }
 
 
-void ResourceManager::Init()
+void ResourceSystem::Init()
 {
     //m_rootResourcePath = Util::getSrcPath().parent_path() / "resources";
     //m_rootResourcePath = std::filesystem::path("F:\\StudyProj\\openGLStudy\\review\\resources");
@@ -247,24 +248,29 @@ void ResourceManager::Init()
     }
 }
 
-sResourceRef ResourceManager::GetResource(const char* name, eResourceType type)
+void ResourceSystem::Update()
+{
+    
+}
+
+void ResourceSystem::UnInit()
+{
+    std::string ShaderPath = getResourceRootPath(shader);
+    std::string TexturePath = getResourceRootPath(texture);
+    FileWatcherSystem::Get()->DeleteFileWatcher(ShaderPath.c_str());
+    FileWatcherSystem::Get()->DeleteFileWatcher(TexturePath.c_str());
+
+    m_resourceMap.clear();
+}
+
+sResourceRef ResourceSystem::GetResource(const char* name, eResourceType type)
 {
     if (m_resourceMap[type].find(name) == m_resourceMap[type].end())
         return sResourceRef::invalid;
     return m_resourceMap[type][name];
 }
 
-void ResourceManager::DeleteResource(const char* name, eResourceType type)
+void ResourceSystem::DeleteResource(const char* name, eResourceType type)
 {
     m_resourceMap[type].erase(name);
-}
-
-ResourceManager::~ResourceManager()
-{
-    std::string ShaderPath = getResourceRootPath(shader);
-    std::string TexturePath = getResourceRootPath(texture);
-    Util::FileWatcherManager::Instance()->DeleteFileWatcher(ShaderPath.c_str());
-    Util::FileWatcherManager::Instance()->DeleteFileWatcher(TexturePath.c_str());
-
-    m_resourceMap.clear();
 }

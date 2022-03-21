@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "resource/resourceManager.h"
+#include "system/ResourceSystem.h"
 #include "resource/types/ShaderResource.h"
 GRAPHIC_NAMESPACE_USING
 
@@ -74,7 +74,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
         if (shaderPath.empty())
         {
             shaderPath = m_directory + "/" + matName;
-            Resource::ShaderRef vRef = Resource::ResourceManager::Instance()->GetResource((shaderPath + ".vs").c_str(), Resource::shader);
+            Resource::ShaderRef vRef = ResourceSystem::Get()->GetResource((shaderPath + ".vs").c_str(), Resource::shader);
             if (vRef.isNull())
                 shaderPath = "DefaultModel";
         }

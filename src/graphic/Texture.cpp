@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "resource/resourceManager.h"
+#include "system/ResourceSystem.h"
 GRAPHIC_NAMESPACE_USING
 
 
@@ -10,7 +10,7 @@ Texture::Texture(const std::string& texName,
             const DataFormat &format,
             const DataType &type)
 {
-    m_textureRef = ResourceManager::Instance()->GetResource(texName.c_str(), eResourceType::texture);
+    m_textureRef = ResourceSystem::Get()->GetResource(texName.c_str(), eResourceType::texture);
     const ubyte* data = m_textureRef->getTextureData();
     glGenTextures(1, &m_textureId);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
@@ -43,7 +43,7 @@ Texture::Texture(const TextureRef& tex,
 Texture::Texture(const std::string& texName, const TextureType& textureType)
 {
     std::cout << "gen tex: " << texName << "\ttype: " << Texture::ToString(textureType) << std::endl;
-    m_textureRef = ResourceManager::Instance()->GetResource(texName.c_str(), eResourceType::texture);
+    m_textureRef = ResourceSystem::Get()->GetResource(texName.c_str(), eResourceType::texture);
     m_type = textureType;
     const ubyte* data = m_textureRef->getTextureData();
     glGenTextures(1, &m_textureId);

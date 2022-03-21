@@ -39,6 +39,7 @@ public:
     System(Type type) : m_type(type) { }
     virtual void Init() { };
     virtual void Update() { };
+    virtual void UnInit() { };
     virtual std::string GetTypeStr() = 0;
     Type GetType() const;
 protected:
@@ -51,6 +52,7 @@ class SystemManager
 public:
     void Init();
     void Update();
+    void UnInit();
 
     void AddSystem(System::Type type, System* system);
     System* GetSystem(System::Type type);

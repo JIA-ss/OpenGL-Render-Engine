@@ -1,5 +1,5 @@
 #include "Material.h"
-#include "resource/resourceManager.h"
+#include "system/ResourceSystem.h"
 #include "ShaderSetting.h"
 GRAPHIC_NAMESPACE_USING
 

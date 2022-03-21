@@ -1,9 +1,8 @@
-#include "fileWatcher.h"
+#include "FileWatcherSystem.h"
+#include <vector>
+#include <functional>
 #include <filesystem>
 #include <iostream>
-using namespace Util;
-
-IMPLEMENT_SINGLETON(FileWatcherManager)
 
 void FileWatcher::Init(const char* path, bool isRecursive)
 {
@@ -30,7 +29,7 @@ void FileWatcher::FileChangeCallback(uv_fs_event_t* handle, const char* fileName
 {
     std::filesystem::path p = std::filesystem::absolute(handle->path);
     std::string rootPath = p.string();
-    FileWatcher* watcher = FileWatcherManager::Instance()->GetFileWatcher(rootPath.c_str());
+    FileWatcher* watcher = FileWatcherSystem::Get()->GetFileWatcher(rootPath.c_str());
     if (!watcher)
     {
         return;
@@ -89,7 +88,37 @@ FileWatcher::~FileWatcher()
     }
 }
 
-FileWatcher* FileWatcherManager::CreateFileWatcher(const char* path, bool isRecursive)
+
+void FileWatcherSystem::Init()
+{
+    //CreateFileWatcher(_RESOURCE_PATH_, true);
+}
+
+void FileWatcherSystem::UnInit()
+{
+    for(auto&&[path, watcher] : m_watchers)
+    {
+        if (watcher)
+        {
+            delete watcher;
+        }
+    }
+    m_watchers.clear();
+}
+
+void FileWatcherSystem::Update()
+{
+    for (auto&& wPair : m_watchers)
+    {
+        if (wPair.second)
+        {
+            wPair.second->Update();
+        }
+    }
+}
+
+
+FileWatcher* FileWatcherSystem::CreateFileWatcher(const char* path, bool isRecursive)
 {
     auto it = m_watchers.find(path);
     if (it == m_watchers.end())
@@ -106,7 +135,7 @@ FileWatcher* FileWatcherManager::CreateFileWatcher(const char* path, bool isRecu
     }
 }
 
-void FileWatcherManager::DeleteFileWatcher(const char* path)
+void FileWatcherSystem::DeleteFileWatcher(const char* path)
 {
     auto it = m_watchers.find(path);
     if (it != m_watchers.end())
@@ -118,7 +147,7 @@ void FileWatcherManager::DeleteFileWatcher(const char* path)
     }
 }
 
-FileWatcher* FileWatcherManager::GetFileWatcher(const char* path)
+FileWatcher* FileWatcherSystem::GetFileWatcher(const char* path)
 {
     auto it = m_watchers.find(path);
     if (it == m_watchers.end())
@@ -126,15 +155,4 @@ FileWatcher* FileWatcherManager::GetFileWatcher(const char* path)
         return nullptr;
     }
     return it->second;
-}
-
-void FileWatcherManager::Update()
-{
-    for (auto&& wPair : m_watchers)
-    {
-        if (wPair.second)
-        {
-            wPair.second->Update();
-        }
-    }
 }

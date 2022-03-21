@@ -25,6 +25,16 @@ void SystemManager::Update()
     }
 }
 
+void SystemManager::UnInit()
+{
+    for (auto it = m_systems.rbegin(); it != m_systems.rend(); it++)
+    {
+        std::cout << it->second->GetTypeStr() << " UnInit ..." << std::endl;
+        it->second->UnInit();
+        delete it->second;
+    }
+}
+
 void SystemManager::AddSystem(System::Type type, System* system)
 {
     assert(m_systems.find(type) == m_systems.end());

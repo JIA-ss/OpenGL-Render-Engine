@@ -4,6 +4,8 @@
 typedef unsigned char ubyte;
 typedef signed char sbyte;
 
+
+class ResourceSystem;
 namespace Resource
 {
 
@@ -96,9 +98,11 @@ public:
 };
 
 class ResourceManager;
+
 class ResourceFactory
 {
     friend ResourceManager;
+    friend ResourceSystem;
 private:
     template<class T>
     static tResourceRef<T> ImportResource(const char* path);

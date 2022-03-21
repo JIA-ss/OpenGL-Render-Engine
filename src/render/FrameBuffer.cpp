@@ -1,5 +1,5 @@
 #include "FrameBuffer.h"
-#include "resource/resourceManager.h"
+#include "system/ResourceSystem.h"
 
 RENDER_NAMESPACE_USING
 
@@ -189,7 +189,7 @@ void FrameBuffer::InitOutputMesh()
         texs.push_back(texture);
     }
 
-    if (m_shaderPath.empty() || Resource::ResourceManager::Instance()->GetResource((m_shaderPath + ".vs").c_str(), Resource::shader).isNull())
+    if (m_shaderPath.empty() || ResourceSystem::Get()->GetResource((m_shaderPath + ".vs").c_str(), Resource::shader).isNull())
         m_shaderPath = "FrameBuffer/Default";
 
     Graphic::Material* mat = new Graphic::Material(m_shaderPath, texs);

@@ -1,9 +1,10 @@
 #include "Shader.h"
-#include "resource/resourceManager.h"
+#include "system/ResourceSystem.h"
 #include "resource/resourceBasic.h"
 #include "resource/types/ShaderResource.h"
 #include <fstream>
 #include <sstream>
+#include <iostream>
 GRAPHIC_NAMESPACE_USING
 
 
@@ -100,9 +101,9 @@ Shader* Shader::Add(const std::string& name)
 
 Shader::Shader(const std::string& name)
 {
-    Resource::ShaderRef vRef = Resource::ResourceManager::Instance()->GetResource((name + ".vs").c_str(), Resource::shader);
-    Resource::ShaderRef fRef = Resource::ResourceManager::Instance()->GetResource((name + ".fs").c_str(), Resource::shader);
-    Resource::ShaderRef gRef = Resource::ResourceManager::Instance()->GetResource((name + ".gs").c_str(), Resource::shader);
+    Resource::ShaderRef vRef = ResourceSystem::Get()->GetResource((name + ".vs").c_str(), Resource::shader);
+    Resource::ShaderRef fRef = ResourceSystem::Get()->GetResource((name + ".fs").c_str(), Resource::shader);
+    Resource::ShaderRef gRef = ResourceSystem::Get()->GetResource((name + ".gs").c_str(), Resource::shader);
 
     if (vRef.isNull() || fRef.isNull())
     {
@@ -120,8 +121,8 @@ Shader::Shader(const std::string& name)
 
 Shader::Shader(const char* vsName, const char* fsName)
 {
-    Resource::ShaderRef vRef = Resource::ResourceManager::Instance()->GetResource(vsName, Resource::shader);
-    Resource::ShaderRef fRef = Resource::ResourceManager::Instance()->GetResource(fsName, Resource::shader);
+    Resource::ShaderRef vRef = ResourceSystem::Get()->GetResource(vsName, Resource::shader);
+    Resource::ShaderRef fRef = ResourceSystem::Get()->GetResource(fsName, Resource::shader);
 
     if (vRef.isNull() || fRef.isNull())
     {
