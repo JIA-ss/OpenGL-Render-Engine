@@ -5,7 +5,8 @@ void _test()
 {
     //Util::testJson();
     //std::cout << std::endl;
-    GraphicTest::_shadowMapping_engine();
+    //GraphicTest::_shadowMapping_engine();
+    GraphicTest::_cube_map_test_();
 }
 
 int main()

@@ -27,6 +27,7 @@ enum TextureType
     DepthAttachment = 21,
     StencilAttachment = 22,
     DepthStencilAttachment = 23,
+    CubeMapType = 24,
 };
 
 class Texture
@@ -115,10 +116,11 @@ public:
     const TextureType &GetType() const;
     void Free();
 
-private:
+protected:
     unsigned int m_textureId = 0;
-    TextureRef m_textureRef;
     TextureType m_type = TextureType::None;
+private:
+    TextureRef m_textureRef;
     int m_width = 0;
     int m_height = 0;
 

@@ -1,11 +1,14 @@
 #include "graphicTest.h"
 #include "graphic/Texture.h"
+#include "graphic/CubeMap.h"
+#include "system/RenderSystem.h"
+
 #include <glm/vec4.hpp>
 #include <vector>
 using namespace GraphicTest;
 using namespace Graphic;
 
-#include "system/RenderSystem.h"
+
 void GraphicTest::_shadowMapping_engine()
 {
     RenderSystem* rdSystem = RenderSystem::Get();
@@ -40,4 +43,67 @@ void GraphicTest::_shadowMapping_engine()
         rq.EnqueMesh(cube);
         cube = cube->Clone();
     }
+}
+
+void GraphicTest::_cube_map_test_()
+{
+    RenderSystem* rdSystem = RenderSystem::Get();
+    auto& rq = rdSystem->getRenderQueue();
+    Entity::Camera& cam = rdSystem->getCamera();
+    cam.enableControl(true);
+    cam.setSensitive(0.02f);
+
+    std::vector<glm::vec3> skyboxVertices = {
+        // positions          
+        glm::vec3(-1.0f,  1.0f, -1.0f),
+        glm::vec3(-1.0f, -1.0f, -1.0f),
+        glm::vec3( 1.0f, -1.0f, -1.0f),
+        glm::vec3( 1.0f, -1.0f, -1.0f),
+        glm::vec3( 1.0f,  1.0f, -1.0f),
+        glm::vec3(-1.0f,  1.0f, -1.0f),
+        glm::vec3(-1.0f, -1.0f,  1.0f),
+        glm::vec3(-1.0f, -1.0f, -1.0f),
+        glm::vec3(-1.0f,  1.0f, -1.0f),
+        glm::vec3(-1.0f,  1.0f, -1.0f),
+        glm::vec3(-1.0f,  1.0f,  1.0f),
+        glm::vec3(-1.0f, -1.0f,  1.0f),
+        glm::vec3( 1.0f, -1.0f, -1.0f),
+        glm::vec3( 1.0f, -1.0f,  1.0f),
+        glm::vec3( 1.0f,  1.0f,  1.0f),
+        glm::vec3( 1.0f,  1.0f,  1.0f),
+        glm::vec3( 1.0f,  1.0f, -1.0f),
+        glm::vec3( 1.0f, -1.0f, -1.0f),
+        glm::vec3(-1.0f, -1.0f,  1.0f),
+        glm::vec3(-1.0f,  1.0f,  1.0f),
+        glm::vec3( 1.0f,  1.0f,  1.0f),
+        glm::vec3( 1.0f,  1.0f,  1.0f),
+        glm::vec3( 1.0f, -1.0f,  1.0f),
+        glm::vec3(-1.0f, -1.0f,  1.0f),
+        glm::vec3(-1.0f,  1.0f, -1.0f),
+        glm::vec3( 1.0f,  1.0f, -1.0f),
+        glm::vec3( 1.0f,  1.0f,  1.0f),
+        glm::vec3( 1.0f,  1.0f,  1.0f),
+        glm::vec3(-1.0f,  1.0f,  1.0f),
+        glm::vec3(-1.0f,  1.0f, -1.0f),
+        glm::vec3(-1.0f, -1.0f, -1.0f),
+        glm::vec3(-1.0f, -1.0f,  1.0f),
+        glm::vec3( 1.0f, -1.0f, -1.0f),
+        glm::vec3( 1.0f, -1.0f, -1.0f),
+        glm::vec3(-1.0f, -1.0f,  1.0f),
+        glm::vec3( 1.0f, -1.0f,  1.0f),
+    };
+
+    std::vector<Vertex> vers;
+    for (auto pos: skyboxVertices)
+    {
+        Vertex v;
+        v.position = pos;
+        vers.push_back(v);
+    }
+
+
+    Graphic::CubeMap* cubeMap = new CubeMap("skybox/", ".jpg");
+    Material* skybox = new Material("CubeMap/skybox", { cubeMap });
+    Mesh* sky = new Mesh({}, vers, skybox, "skybox");
+    rq.EnqueMesh(sky, 2);
 }

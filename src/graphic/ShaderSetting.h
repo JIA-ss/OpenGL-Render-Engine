@@ -26,7 +26,8 @@ enum class ShaderParamType
     Mat2,
     Mat3,
     Mat4,
-    Sampler2D
+    Sampler2D,
+    SamplerCube
 };
 
 class Texture;

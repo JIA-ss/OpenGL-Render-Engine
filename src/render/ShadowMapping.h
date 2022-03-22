@@ -6,7 +6,7 @@ RENDER_NAMESPACE_BEGIN
 class ShadowMapping : public RenderControllerBase
 {
 public:
-    ShadowMapping() { m_enable = true; }
+    ShadowMapping() { m_enable = false; }
     virtual void Init();
     Graphic::Shader* GetDepthShader() { return m_depthShader; }
     Graphic::Texture* GetDepthTexture();

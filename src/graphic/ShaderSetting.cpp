@@ -42,6 +42,7 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
     static const std::string ColorAttachTex = "colorAttachmentTex";
     static const std::string DepthAttachTex = "depthAttachmentTex";
     static const std::string StencilAttachTex = "stencilAttachmentTex";
+    static const std::string CubeMapTex = "cubeMapTex";
 
     int noneCount = 0;
     int diffuseCount = 0;
@@ -56,6 +57,7 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
     int lightmapCount = 0;
     int reflectionCount = 0;
     int colorAttachCount = 0;
+    int cubemapCount = 0;
 
     for (size_t texUnit = 0; texUnit < newTextures.size(); texUnit++)
     {
@@ -123,6 +125,10 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
             count = 0;
             textureName = &StencilAttachTex;
             break;
+        case CubeMapType:
+            count = cubemapCount++;
+            textureName = &CubeMapTex;
+            break;
         default:
             std::cerr << "\nUNSUPPORTED texture type:" << newTextures[texUnit]->GetName();
             return;
@@ -137,7 +143,10 @@ void ShaderSetting::ShaderParam<ShaderSetting::TextureParamValue>::Use()
 {
     glActiveTexture(GL_TEXTURE0 + m_val.texUnit); 
     if(m_val.texture)
-        glBindTexture(GL_TEXTURE_2D, m_val.texture->GetId());
+    {
+        GLenum textureType = m_val.texture->GetType() == CubeMapType ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D;
+        glBindTexture(textureType, m_val.texture->GetId());
+    }
     else 
         glBindTexture(GL_TEXTURE_2D, 0);
     Shader::setUniform(m_loc, m_val.texUnit);
@@ -183,6 +192,26 @@ void ShaderSetting::ShaderParam<ShaderSetting::TextureParamValue>::Use()
         }                                                                                                               \
         break;
 
+#define MAKE_CASE_TEXTURE(glType, enumType, glFunc)                                                                     \
+    case glType:                                                                                                        \
+        for (int s = 0; s < size; s++)                                                                                  \
+        {                                                                                                               \
+            if (s > 0)                                                                                                  \
+            {                                                                                                           \
+                nameStr = nameStr.substr(0, nameStr.find_last_of("["));                                                 \
+                nameStr += "[" + std::to_string(s) + "]";                                                               \
+            }                                                                                                           \
+            auto loc = glGetUniformLocation(program, nameStr.data());                                                   \
+            if (loc != GL_INVALID_INDEX)                                                                                \
+            {                                                                                                           \
+                GLint val;                                                                                              \
+                glFunc(program, loc, &val);                                                                             \
+                TextureParamValue actualVal(val, nullptr);                                                              \
+                m_params.emplace(nameStr, new ShaderParam<TextureParamValue>(actualVal, loc, ShaderParamType::enumType));   \
+            }                                                                                                           \
+        }                                                                                                               \
+        break;
+
 
 void ShaderSetting::UpdateParameters(Shader* shader)
 {
@@ -213,24 +242,8 @@ void ShaderSetting::UpdateParameters(Shader* shader)
             MAKE_CASE_VM(GL_FLOAT_MAT2, glm::mat2, Mat2, glGetUniformfv);
             MAKE_CASE_VM(GL_FLOAT_MAT3, glm::mat3, Mat3, glGetUniformfv);
             MAKE_CASE_VM(GL_FLOAT_MAT4, glm::mat4, Mat4, glGetUniformfv);
-            case GL_SAMPLER_2D:
-                for (int s = 0; s < size; s++)
-                {
-                    if (s > 0)
-                    {
-                        nameStr = nameStr.substr(0, nameStr.find_last_of("["));
-                        nameStr += "[" + std::to_string(s) + "]";
-                    }
-                    auto loc = glGetUniformLocation(program, nameStr.data());
-                    if (loc != GL_INVALID_INDEX)
-                    {
-                        GLint val;
-                        glGetUniformiv(program, loc, &val);
-                        TextureParamValue actualVal(val, nullptr);
-                        m_params.emplace(nameStr, new ShaderParam<TextureParamValue>(actualVal, loc, ShaderParamType::Sampler2D));
-                    }
-                }
-                break;
+            MAKE_CASE_TEXTURE(GL_SAMPLER_2D, Sampler2D, glGetUniformiv);
+            MAKE_CASE_TEXTURE(GL_SAMPLER_CUBE, SamplerCube, glGetUniformiv);
         default:
             std::cerr << "type not supported in shader parameter: " << type << " " << name << std::endl;
             break;

@@ -52,6 +52,9 @@ void RenderQueue::EnqueModel(Graphic::Model* model, unsigned int order)
 
 void RenderQueue::Render(Order order, Graphic::Shader* shader)
 {
+    if (order == Order::Background)
+        glDepthFunc(GL_LEQUAL);
+
     // todo: sort by distance with camera when order is transparent
     auto& targetQue = GetTargetOrderQueue(order);
     for (auto&&[renderIdx, renderSet] : targetQue)
@@ -61,4 +64,7 @@ void RenderQueue::Render(Order order, Graphic::Shader* shader)
             element.mesh->draw(shader);
         }
     }
+
+    if (order == Order::Background)
+        glDepthFunc(GL_LESS);  
 }
