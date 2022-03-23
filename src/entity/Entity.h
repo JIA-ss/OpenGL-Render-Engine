@@ -46,10 +46,14 @@ public:
 
     static sEntity* Clone(sEntity* entity);
 
+    void SetActive(bool v);
+    bool IsActiveSelf();
+    bool IsHierarchyActive();
 protected:
     static std::map<size_t, entity_meta> EntityDirevedClasses;
     static const size_t EntityId;
     std::unordered_map<size_t ,Component::sComponent*> m_components;
+    bool m_enable = true;
 };
 
 
@@ -74,6 +78,8 @@ T* sEntity::AddComponent(Args &&... params)
     // dont need to rtti record comps, because components is dynamic added
     T* comp = new T(params...);
     comp->bind_entity(this);
+    comp->OnAwake();
+    comp->SetActive(true);
     m_components[compId] = comp;
     return comp;
 }
@@ -97,6 +103,8 @@ bool sEntity::DestroyComponent()
         return false;
     Component::sComponent* comp = it->second;
     m_components.erase(it);
+    comp->SetActive(false);
+    comp->OnDestroy();
     delete comp;
     return true;
 }

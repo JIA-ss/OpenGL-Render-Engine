@@ -23,6 +23,8 @@ protected:
     static std::map<size_t, comp_meta> ComponentDirevedClasses;
 
     Entity::sEntity* m_entity;
+
+    bool m_enable = false;
 protected:
     template<typename T>
     static size_t registerComponentId(const std::string& name);
@@ -55,6 +57,16 @@ public:
 
     void bind_entity(Entity::sEntity* entity) { assert(!m_entity); m_entity = entity; }
 
+public:
+    // life time behavior
+    virtual void OnAwake() { }
+    virtual void OnEnable() { }
+    virtual void OnUpdate() { }
+    virtual void OnDisable() { }
+    virtual void OnDestroy() { }
+
+    void SetActive(bool v);
+    bool IsActive();
 };
 
 

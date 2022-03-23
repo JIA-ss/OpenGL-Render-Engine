@@ -60,3 +60,17 @@ void sComponent::notifyPropertyChanged(const prop_variant& prop)
     std::cout << "[Component Value Changed] ";
     std::cout << meta.name << "::" << prop.meta.name << std::endl;
 }
+
+void sComponent::SetActive(bool v)
+{
+    if (v != m_enable)
+    {
+        m_enable = v;
+        m_enable ? OnEnable() : OnDisable();
+    }
+}
+
+bool sComponent::IsActive()
+{
+    return m_enable;
+}

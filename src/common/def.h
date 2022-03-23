@@ -64,6 +64,25 @@ public:                                                                         
         }                                                                                       \
     }
 
+#define COMPONENT_PROPERTY_WITHOUT_COMPARE(_TYPE_, _NAME_, _VALUE_)                             \
+private:                                                                                        \
+    _TYPE_ m_##_NAME_ = registerPropertyId<_TYPE_>(#_NAME_, _VALUE_, &m_##_NAME_);              \
+public:                                                                                         \
+    _TYPE_ get_##_NAME_() const { return m_##_NAME_; }                                          \
+    void set_##_NAME_(_TYPE_& val, bool notify = true)                                          \
+    {                                                                                           \
+        m_##_NAME_ = val;                                                                       \
+        if (notify)                                                                             \
+        {                                                                                       \
+            prop_variant v = m_properties[std::hash<std::string>()(#_NAME_)];                   \
+            notifyPropertyChanged(v);                                                           \
+        }                                                                                       \
+    }
+
+#define COMPONENT_PROPERTY_WITHOUT_SETTER_AND_GETTER(_TYPE_, _NAME_, _VALUE_)                               \
+private:                                                                                                    \
+    _TYPE_ m_##_NAME_ = registerPropertyId<_TYPE_>(#_NAME_, _VALUE_, &m_##_NAME_);                          
+
 
 // ENTITY DEFINITIONS
 #define ENTITY_NAMESPACE_BEGIN      \

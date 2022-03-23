@@ -1,7 +1,11 @@
 #include "RenderQueue.h"
-
+#include "component/MeshRender.h"
 RENDER_NAMESPACE_USING
 
+bool RenderQueue::RenderElement::operator<(const RenderQueue::RenderElement& re) const 
+{ 
+    return mesh->get_renderIdx() < re.mesh->get_renderIdx(); 
+}
 
 RenderQueue::Order RenderQueue::GetTargetOrder(unsigned int order)
 {
@@ -32,21 +36,16 @@ std::map<unsigned int, RenderQueue::RenderSet>& RenderQueue::GetTargetOrderQueue
     return std::map<unsigned int, RenderSet>{};
 }
 
-
-void RenderQueue::EnqueMesh(Graphic::Mesh* mesh, unsigned int order)
+void RenderQueue::Enqueue(Component::sMeshRender* meshRender,unsigned int order)
 {
     auto& targetQue = GetTargetOrderQueue(GetTargetOrder(order));
-    targetQue[order].emplace(mesh);
+    targetQue[order].emplace(meshRender);
+    
 }
-
-void RenderQueue::EnqueModel(Graphic::Model* model, unsigned int order)
+void RenderQueue::Dequeue(Component::sMeshRender* meshRender,unsigned int order)
 {
     auto& targetQue = GetTargetOrderQueue(GetTargetOrder(order));
-    auto& meshes = model->GetMeshes();
-    for (auto& mesh : meshes)
-    {
-        targetQue[order].emplace(mesh);
-    }
+    targetQue[order].erase(meshRender);
 }
 
 
@@ -61,7 +60,7 @@ void RenderQueue::Render(Order order, Graphic::Shader* shader)
     {
         for (auto&& element : renderSet)
         {
-            element.mesh->draw(shader);
+            element.mesh->once_draw(shader);
         }
     }
 

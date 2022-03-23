@@ -28,9 +28,9 @@ void GraphicTest::_shadowMapping_engine()
     Texture* planeTex = new Texture("Blend/plane.png", Diffuse);
     Material* planeMaterial = new Material("ShadowMapping/ShadowPass", {depthTexture, planeTex});
     Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
-    plane->SetPosition(planePos);
-    plane->SetSize(planeSize);
-    rq.EnqueMesh(plane);
+    //plane->SetPosition(planePos);
+    //plane->SetSize(planeSize);
+    //rq.EnqueMesh(plane);
 
     std::vector<glm::vec3> cubePoses = {
         glm::vec3(0,4,0),
@@ -43,8 +43,8 @@ void GraphicTest::_shadowMapping_engine()
     Mesh* cube = new Mesh(Vertex::boxElement, Vertex::box, cubeMaterial, "cube");
     for (int i = 0; i < cubePoses.size(); i++)
     {
-        cube->SetPosition(cubePoses[i]);
-        rq.EnqueMesh(cube);
+        //cube->SetPosition(cubePoses[i]);
+        //rq.EnqueMesh(cube);
         cube = cube->Clone();
     }
 }
@@ -61,7 +61,7 @@ void GraphicTest::_cube_map_test_()
     Graphic::CubeMap* cubeMap = new CubeMap("skybox/", ".jpg");
     Material* skybox = new Material("CubeMap/skybox", { cubeMap });
     Mesh* sky = new Mesh(Vertex::boxElement, Vertex::box, skybox, "skybox");
-    rq.EnqueMesh(sky, 2);
+    //rq.EnqueMesh(sky, 2);
 
 
     _shadowMapping_engine();

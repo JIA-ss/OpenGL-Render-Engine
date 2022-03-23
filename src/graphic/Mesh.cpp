@@ -54,8 +54,6 @@ void Mesh::SetUpMesh()
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, bitangent));
 
     glBindVertexArray(0);
-
-    SetUpModelMatrice();
 }
 
 void Mesh::loadFromAssimp(aiMesh *mesh)
@@ -154,6 +152,17 @@ void Mesh::draw(Shader* shader) const
     glBindVertexArray(0);
 }
 
+void Mesh::draw(Material* material, Shader* shader) const
+{
+    material->UseMaterial(shader);
+    glBindVertexArray(VAO);
+    if (m_indices.empty())
+        glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
+    else
+        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
 Mesh* Mesh::Clone() const
 {
     Mesh* mesh = new Mesh();
@@ -169,35 +178,5 @@ Mesh* Mesh::Clone() const
 
     mesh->m_renderIndex = m_renderIndex;
     mesh->m_enable = m_enable;
-    mesh->m_position = m_position;
-    mesh->m_size = m_size;
-
-    mesh->SetUpModelMatrice();
     return mesh;
-}
-
-void Mesh::SetPosition(const glm::vec3& pos)
-{
-    if (pos != m_position)
-    {
-        m_position = pos;
-        SetUpModelMatrice();
-    }
-}
-
-void Mesh::SetSize(const glm::vec3& size)
-{
-    if (size != m_size)
-    {
-        m_size = size;
-        SetUpModelMatrice();
-    }
-}
-
-void Mesh::SetUpModelMatrice()
-{
-    glm::mat4 model(1.0f);
-    model = glm::scale(model, m_size);
-    model = glm::translate(model, m_position);
-    m_material->SetShaderParam("model", model);
 }

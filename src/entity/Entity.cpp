@@ -1,5 +1,8 @@
 #include "Entity.h"
 #include "component/Component.h"
+#include "component/Transform.h"
+#include "component/MeshRender.h"
+
 #include "system/EntitySystem.h"
 ENTITY_NAMESPACE_USE
 
@@ -49,6 +52,13 @@ void sEntity::Destroy(sEntity* entity)
     if (!entity)
         return;
     entity->Unregister();
+    for (auto&&[compId, comp] : entity->m_components)
+    {
+        comp->SetActive(false);
+        comp->OnDestroy();
+        delete comp;
+    }
+    entity->m_components.clear();
     delete entity;
 }
 
@@ -56,7 +66,26 @@ void sEntity::Destroy(sEntity* entity)
 
 sEntity* sEntity::Clone(sEntity* entity)
 {
+    if (!entity)
+        return nullptr;
     sEntity* new_entity = entity->Clone();
+
+    sTransform* transform = entity->GetComponent<sTransform>();
+    if (transform && transform->getChildrenSize() > 0)
+    {
+        sTransform* new_transform = new_entity->GetComponent<sTransform>();
+        
+        auto& children = transform->getChildren();
+        for (auto& child : children)
+        {
+            sEntity* new_childEntity = Clone(child->get_entity());
+            sTransform* new_child = new_childEntity->GetComponent<sTransform>();
+            new_child->setParent(new_transform);
+        }
+        
+        new_transform->setParent(transform->getParent());
+    }
+    
     new_entity->Register();
     return new_entity;
 }
@@ -74,7 +103,48 @@ sEntity* sEntity::Clone()
     {
         Component::sComponent* new_comp = comp->Clone();
         new_comp->bind_entity(entity);
+        new_comp->OnAwake();
+        new_comp->SetActive(true);
         entity->m_components[compId] = new_comp;
     }
     return entity;
+}
+
+void sEntity::SetActive(bool v)
+{
+    if (v != m_enable)
+    {
+        m_enable = v;
+        if (v && IsHierarchyActive())
+        {
+            for (auto& [compId, comp] : m_components)
+            {
+                comp->OnEnable();
+            }
+        }
+        else
+        {
+            for (auto& [compId, comp] : m_components)
+            {
+                comp->OnDisable();
+            }
+        }
+    }
+}
+
+bool sEntity::IsHierarchyActive()
+{
+    if (!IsActiveSelf())
+        return false;
+    sTransform* trans = GetComponent<sTransform>();
+    if (trans && trans->getParent())
+    {
+        return trans->getParent()->get_entity()->IsHierarchyActive();
+    }
+    return true;
+}
+
+bool sEntity::IsActiveSelf()
+{
+    return m_enable;
 }
