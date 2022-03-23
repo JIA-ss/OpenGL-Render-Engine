@@ -2,7 +2,7 @@
 #include <iostream>
 COMPONENT_NAMESPACE_USING
 
-std::map<size_t, sComponent::comp_meta> sComponent::ComponentDirevedClasses = std::map<size_t, sComponent::comp_meta>();
+std::map<size_t, comp_meta> sComponent::ComponentDirevedClasses = std::map<size_t, comp_meta>();
 const size_t sComponent::ComponentId = registerComponentId<sComponent>("Component");
 size_t sComponent::GetStaticComponentId()
 {
@@ -17,7 +17,7 @@ void* sComponent::get_property(size_t prop_id)
     return it->second.ptr;
 }
 
-std::map<size_t, sComponent::prop_variant> sComponent::get_properties()
+std::map<size_t, prop_variant> sComponent::get_properties()
 {
     return m_properties;
 }

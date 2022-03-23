@@ -75,6 +75,18 @@ public:                                                                         
 #define ENTITY_NAMESPACE_USE        \
     using namespace Entity;
 
+#define ENTITY_DECLARE                                                                          \
+public:                                                                                         \
+    size_t get_entityId() const override { return EntityId; }                                   \
+    static size_t GetStaticEntityId();                                                          \
+    static const size_t EntityId;
+
+#define ENTITY_IMPLEMENT(_CLASS_)                                                               \
+const size_t _CLASS_::EntityId = registerEntityId<_CLASS_>(#_CLASS_);                        \
+size_t _CLASS_::GetStaticEntityId()                                                             \
+{                                                                                               \
+    return EntityId;                                                                            \
+}
 
 
 #endif

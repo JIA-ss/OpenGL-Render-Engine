@@ -3,6 +3,14 @@
 #include "system/EntitySystem.h"
 ENTITY_NAMESPACE_USE
 
+std::map<size_t, entity_meta> sEntity::EntityDirevedClasses = std::map<size_t, entity_meta>();
+ENTITY_IMPLEMENT(sEntity)
+
+sEntity::sEntity()
+{
+
+}
+
 sEntity::~sEntity()
 {
     for (auto&&[compId, comp] : m_components)
@@ -55,7 +63,13 @@ sEntity* sEntity::Clone(sEntity* entity)
 
 sEntity* sEntity::Clone()
 {
-    sEntity* entity = new sEntity();
+    size_t entityId = get_entityId();
+    entity_meta entityMeta = EntityDirevedClasses[entityId];
+    void* newEntity = new char[entityMeta.size];
+    memcpy(newEntity, this, entityMeta.size);
+
+    sEntity* entity = static_cast<sEntity*>(newEntity);
+
     for (auto&&[compId, comp] : m_components)
     {
         Component::sComponent* new_comp = comp->Clone();

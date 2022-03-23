@@ -1,6 +1,8 @@
 #pragma once
 
 #include "common/def.h"
+#include "common/custom_rtti.h"
+
 #include <string>
 #include <map>
 #include <vector>
@@ -11,28 +13,6 @@ COMPONENT_NAMESPACE_BEGIN
 
 class sComponent
 {
-public:
-    struct prop_meta
-    {
-        std::string name;
-        size_t size;
-        prop_meta() = default;
-    };
-
-    struct prop_variant
-    {
-        sComponent::prop_meta meta;
-        void* ptr;
-        prop_variant() = default;
-    };
-    struct comp_meta
-    {
-        std::string name;
-        size_t size;
-        std::map<size_t, sComponent::prop_meta> props = { };
-        comp_meta() = default;
-    };
-
 protected:
     static const size_t ComponentId;
     
@@ -102,7 +82,7 @@ size_t sComponent::registerComponentId(const std::string& name)
     if (it != ComponentDirevedClasses.end())
         return id;
     
-    sComponent::comp_meta meta{name, sizeof(T)};
+    comp_meta meta{name, sizeof(T)};
     ComponentDirevedClasses[id] = meta;
     return id;
 }

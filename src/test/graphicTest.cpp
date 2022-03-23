@@ -4,6 +4,7 @@
 #include "system/RenderSystem.h"
 #include "component/Transform.h"
 #include "entity/Entity.h"
+#include "entity/GameObject.h"
 #include <glm/vec4.hpp>
 #include <vector>
 using namespace GraphicTest;
@@ -68,11 +69,11 @@ void GraphicTest::_cube_map_test_()
 
 void GraphicTest::_component_test()
 {
-    Entity::sEntity* entity = Entity::sEntity::Create<Entity::sEntity>();
-    Component::sTransform* transfrom = entity->AddComponent<Component::sTransform>();
+    Entity::sGameObject* entity = Entity::sEntity::Create<Entity::sGameObject>();
+    Component::sTransform* transfrom = entity->GetComponent<Component::sTransform>();
     transfrom->set_position(glm::vec3(5.0f));
 
-    Entity::sEntity* newEntity = Entity::sEntity::Clone(entity);
+    Entity::sGameObject* newEntity = (Entity::sGameObject*)Entity::sEntity::Clone(entity);
     Component::sTransform* newTransform = newEntity->GetComponent<Component::sTransform>();
 
     std::cout << newTransform->get_position().x << std::endl;
