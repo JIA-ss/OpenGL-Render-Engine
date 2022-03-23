@@ -28,8 +28,6 @@ void RenderSystem::Update()
     mask |= m_depthTest.ClearMask();
     glClear(mask);
 
-    m_renderQueue.Render(Render::RenderQueue::Background);
-
     // 1st pass
     m_shadowMapping.DepthPass();
     
@@ -58,6 +56,8 @@ void RenderSystem::Update()
     
     
     m_renderQueue.Render(Render::RenderQueue::Overlay);
+    m_renderQueue.Render(Render::RenderQueue::Background);
+
     glfwSwapBuffers(WindowSystem::Get()->getGLFWwindow());
     glfwPollEvents();
 }

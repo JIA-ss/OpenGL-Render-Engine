@@ -16,6 +16,8 @@ void GraphicTest::_shadowMapping_engine()
     Entity::Camera& cam = rdSystem->getCamera();
     cam.enableControl(true);
     cam.setSensitive(0.02f);
+    rdSystem->getShadowMapping().SetActive(true);
+    rdSystem->getShadowMapping().Init();
     Texture* depthTexture = rdSystem->getShadowMapping().GetDepthTexture();
 
     glm::vec3 planePos = glm::vec3(0,-0.5,0);
@@ -53,57 +55,12 @@ void GraphicTest::_cube_map_test_()
     cam.enableControl(true);
     cam.setSensitive(0.02f);
 
-    std::vector<glm::vec3> skyboxVertices = {
-        // positions          
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f, -1.0f, -1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
-        glm::vec3( 1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f, -1.0f,  1.0f),
-        glm::vec3(-1.0f, -1.0f, -1.0f),
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f,  1.0f,  1.0f),
-        glm::vec3(-1.0f, -1.0f,  1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
-        glm::vec3( 1.0f, -1.0f,  1.0f),
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f,  1.0f, -1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
-        glm::vec3(-1.0f, -1.0f,  1.0f),
-        glm::vec3(-1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f, -1.0f,  1.0f),
-        glm::vec3(-1.0f, -1.0f,  1.0f),
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3( 1.0f,  1.0f, -1.0f),
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3( 1.0f,  1.0f,  1.0f),
-        glm::vec3(-1.0f,  1.0f,  1.0f),
-        glm::vec3(-1.0f,  1.0f, -1.0f),
-        glm::vec3(-1.0f, -1.0f, -1.0f),
-        glm::vec3(-1.0f, -1.0f,  1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
-        glm::vec3( 1.0f, -1.0f, -1.0f),
-        glm::vec3(-1.0f, -1.0f,  1.0f),
-        glm::vec3( 1.0f, -1.0f,  1.0f),
-    };
-
-    std::vector<Vertex> vers;
-    for (auto pos: skyboxVertices)
-    {
-        Vertex v;
-        v.position = pos;
-        vers.push_back(v);
-    }
-
 
     Graphic::CubeMap* cubeMap = new CubeMap("skybox/", ".jpg");
     Material* skybox = new Material("CubeMap/skybox", { cubeMap });
-    Mesh* sky = new Mesh({}, vers, skybox, "skybox");
+    Mesh* sky = new Mesh(Vertex::boxElement, Vertex::box, skybox, "skybox");
     rq.EnqueMesh(sky, 2);
+
+
+    _shadowMapping_engine();
 }
