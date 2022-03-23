@@ -3,7 +3,7 @@
 #include "graphic/CubeMap.h"
 #include "system/RenderSystem.h"
 #include "component/Transform.h"
-
+#include "entity/Entity.h"
 #include <glm/vec4.hpp>
 #include <vector>
 using namespace GraphicTest;
@@ -68,15 +68,13 @@ void GraphicTest::_cube_map_test_()
 
 void GraphicTest::_component_test()
 {
-    Component::sTransform t;
-    std::cout << t.get_componentId() << std::endl;
+    Entity::sEntity* entity = Entity::sEntity::Create<Entity::sEntity>();
+    Component::sTransform* transfrom = entity->AddComponent<Component::sTransform>();
+    transfrom->set_position(glm::vec3(5.0f));
 
-    std::cout << t.isType("Transform") << std::endl;
+    Entity::sEntity* newEntity = Entity::sEntity::Clone(entity);
+    Component::sTransform* newTransform = newEntity->GetComponent<Component::sTransform>();
 
-    std::cout << t.isType<Component::sTransform>() << std::endl;
+    std::cout << newTransform->get_position().x << std::endl;
 
-    for (auto& pair : t.get_properties())
-    {
-        std::cout << pair.first << std::endl;
-    }
 }

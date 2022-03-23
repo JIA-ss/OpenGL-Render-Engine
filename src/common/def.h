@@ -33,24 +33,24 @@ public:     \
     using namespace Component;
 
 
-#define COMPONENT_DECLARE                                                               \
-public:                                                                                 \
-    size_t get_componentId() const override { return ComponentId; }                     \
-    static size_t GetStaticComponentId();                                               \
+#define COMPONENT_DECLARE                                                                       \
+public:                                                                                         \
+    size_t get_componentId() const override { return ComponentId; }                             \
+    static size_t GetStaticComponentId();                                                       \
     static const size_t ComponentId;
 
-#define COMPONENT_IMPLEMENT(_CLASS_)                                                    \
-const size_t _CLASS_::ComponentId = registerComponentId(#_CLASS_);                      \
-size_t _CLASS_::GetStaticComponentId()                                                  \
-{                                                                                       \
-    return ComponentId;                                                                 \
+#define COMPONENT_IMPLEMENT(_CLASS_)                                                            \
+const size_t _CLASS_::ComponentId = registerComponentId<_CLASS_>(#_CLASS_);                     \
+size_t _CLASS_::GetStaticComponentId()                                                          \
+{                                                                                               \
+    return ComponentId;                                                                         \
 }
 
-#define COMPONENT_PROPERTY(_TYPE_, _NAME_, _VALUE_)                                     \
-private:                                                                                \
-    _TYPE_ m_##_NAME_ = registerPropertyId<_TYPE_>(#_NAME_, _VALUE_, &m_##_NAME_);      \
-public:                                                                                 \
-    _TYPE_ get_##_NAME_() const { return m_##_NAME_; }                                  \
+#define COMPONENT_PROPERTY(_TYPE_, _NAME_, _VALUE_)                                             \
+private:                                                                                        \
+    _TYPE_ m_##_NAME_ = registerPropertyId<_TYPE_>(#_NAME_, _VALUE_, &m_##_NAME_);              \
+public:                                                                                         \
+    _TYPE_ get_##_NAME_() const { return m_##_NAME_; }                                          \
     void set_##_NAME_(_TYPE_& val) { m_##_NAME_ = val; }
 
 

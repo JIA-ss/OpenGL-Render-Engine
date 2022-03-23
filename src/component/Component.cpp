@@ -2,30 +2,24 @@
 
 COMPONENT_NAMESPACE_USING
 
-std::map<size_t, std::map<size_t, std::string>> sComponent::ComponentDirevedClasses = std::map<size_t, std::map<size_t, std::string>>();
-const size_t sComponent::ComponentId = registerComponentId("Component");
+std::map<size_t, sComponent::comp_meta> sComponent::ComponentDirevedClasses = std::map<size_t, sComponent::comp_meta>();
+const size_t sComponent::ComponentId = registerComponentId<sComponent>("Component");
 size_t sComponent::GetStaticComponentId()
 {
     return ComponentId;
 }
 
-size_t sComponent::registerComponentId(const std::string& name)
+void* sComponent::get_property(size_t prop_id)
 {
-    size_t id = std::hash<std::string>()(name);
-    ComponentDirevedClasses[id] = std::map<size_t, std::string>();
-    return id;
+    auto it = m_properties.find(prop_id);
+    if (it == m_properties.end())
+        return nullptr;
+    return it->second.ptr;
 }
 
-
-std::vector<std::pair<std::string, void*>> sComponent::get_properties()
+std::map<size_t, sComponent::prop_variant> sComponent::get_properties()
 {
-    size_t componentId = get_componentId();
-    std::vector<std::pair<std::string, void*>> res;
-    for (auto&&[propId, propVal] : m_properties)
-    {
-        res.emplace_back(ComponentDirevedClasses[componentId][propId], propVal);
-    }
-    return res;
+    return m_properties;
 }
 
 size_t sComponent::get_componentId() const { return ComponentId; }
@@ -33,4 +27,29 @@ size_t sComponent::get_componentId() const { return ComponentId; }
 bool sComponent::isType(const std::string& name)
 {
     return get_componentId() == std::hash<std::string>()(name);
+}
+
+sComponent* sComponent::Clone()
+{
+    size_t compId = get_componentId();
+    comp_meta compMeta = ComponentDirevedClasses[compId];
+    void* newComp = new char[compMeta.size];
+    memcpy(newComp, this, compMeta.size);
+
+    sComponent* comp = static_cast<sComponent*>(newComp);
+    comp->m_entity = nullptr;
+    auto&& props = get_properties();
+    for (auto&&[propId, propVariant] : props)
+    {
+        void* newProp = comp->get_property(propId);
+        if (newProp != nullptr)
+        {
+            memcpy(newProp, propVariant.ptr, propVariant.meta.size);
+        }
+        else
+        {
+            assert(false);
+        }
+    }
+    return comp;
 }
