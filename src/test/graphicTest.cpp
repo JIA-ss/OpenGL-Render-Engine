@@ -2,6 +2,7 @@
 #include "graphic/Texture.h"
 #include "graphic/CubeMap.h"
 #include "system/RenderSystem.h"
+#include "component/Transform.h"
 
 #include <glm/vec4.hpp>
 #include <vector>
@@ -63,4 +64,19 @@ void GraphicTest::_cube_map_test_()
 
 
     _shadowMapping_engine();
+}
+
+void GraphicTest::_component_test()
+{
+    Component::sTransform t;
+    std::cout << t.get_componentId() << std::endl;
+
+    std::cout << t.isType("Transform") << std::endl;
+
+    std::cout << t.isType<Component::sTransform>() << std::endl;
+
+    for (auto& pair : t.get_properties())
+    {
+        std::cout << pair.first << std::endl;
+    }
 }

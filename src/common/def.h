@@ -16,5 +16,54 @@ public:     \
 #define IMPLEMENT_SINGLETON(T)  \
     T* T::_instance_ = nullptr;
 
-#define DEFAULT_RESOURCE_PATH "F:\\StudyProj\\openGLStudy\\review\\resources"
+
+
+
+
+
+// COMPONENT DEFINITIONS
+
+#define COMPONENT_NAMESPACE_BEGIN      \
+    namespace Component {                  
+
+#define COMPONENT_NAMESPACE_END        \
+    }
+
+#define COMPONENT_NAMESPACE_USING        \
+    using namespace Component;
+
+
+#define COMPONENT_DECLARE                                                               \
+public:                                                                                 \
+    size_t get_componentId() const override { return ComponentId; }                     \
+    static size_t GetStaticComponentId();                                               \
+    static const size_t ComponentId;
+
+#define COMPONENT_IMPLEMENT(_CLASS_)                                                    \
+const size_t _CLASS_::ComponentId = registerComponentId(#_CLASS_);                      \
+size_t _CLASS_::GetStaticComponentId()                                                  \
+{                                                                                       \
+    return ComponentId;                                                                 \
+}
+
+#define COMPONENT_PROPERTY(_TYPE_, _NAME_, _VALUE_)                                     \
+private:                                                                                \
+    _TYPE_ m_##_NAME_ = registerPropertyId<_TYPE_>(#_NAME_, _VALUE_, &m_##_NAME_);      \
+public:                                                                                 \
+    _TYPE_ get_##_NAME_() const { return m_##_NAME_; }                                  \
+    void set_##_NAME_(_TYPE_& val) { m_##_NAME_ = val; }
+
+
+// ENTITY DEFINITIONS
+#define ENTITY_NAMESPACE_BEGIN      \
+    namespace Entity {                  
+
+#define ENTITY_NAMESPACE_END        \
+    }
+
+#define ENTITY_NAMESPACE_USE        \
+    using namespace Entity;
+
+
+
 #endif

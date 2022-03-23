@@ -13,5 +13,5 @@ public:
     template<typename T>
     T* CreateEntity();
 
-    void DestroyEntity(Entity::Entity* entity);
+    void DestroyEntity(Entity::sEntity* entity);
 };

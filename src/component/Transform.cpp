@@ -1,0 +1,6 @@
+#include "Transform.h"
+
+COMPONENT_NAMESPACE_USING
+
+COMPONENT_IMPLEMENT(sTransform)
+
