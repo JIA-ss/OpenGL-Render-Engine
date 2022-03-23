@@ -104,7 +104,7 @@ sEntity* sEntity::Clone()
         Component::sComponent* new_comp = comp->Clone();
         new_comp->bind_entity(entity);
         new_comp->OnAwake();
-        new_comp->SetActive(true);
+        new_comp->IsActive() ? new_comp->OnEnable() : new_comp->OnDisable();
         entity->m_components[compId] = new_comp;
     }
     return entity;

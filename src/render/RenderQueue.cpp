@@ -4,7 +4,7 @@ RENDER_NAMESPACE_USING
 
 bool RenderQueue::RenderElement::operator<(const RenderQueue::RenderElement& re) const 
 { 
-    return mesh->get_renderIdx() < re.mesh->get_renderIdx(); 
+    return mesh < re.mesh; 
 }
 
 RenderQueue::Order RenderQueue::GetTargetOrder(unsigned int order)
@@ -39,13 +39,16 @@ std::map<unsigned int, RenderQueue::RenderSet>& RenderQueue::GetTargetOrderQueue
 void RenderQueue::Enqueue(Component::sMeshRender* meshRender,unsigned int order)
 {
     auto& targetQue = GetTargetOrderQueue(GetTargetOrder(order));
-    targetQue[order].emplace(meshRender);
-    
+    RenderElement element(meshRender);
+    targetQue[order].insert(element);
 }
 void RenderQueue::Dequeue(Component::sMeshRender* meshRender,unsigned int order)
 {
     auto& targetQue = GetTargetOrderQueue(GetTargetOrder(order));
-    targetQue[order].erase(meshRender);
+    RenderElement element(meshRender);
+    auto it = targetQue[order].find(element);
+    if (it != targetQue[order].end())
+        targetQue[order].erase(element);
 }
 
 

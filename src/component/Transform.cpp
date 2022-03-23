@@ -9,6 +9,7 @@ COMPONENT_IMPLEMENT(sTransform)
 void sTransform::notifyPropertyChanged(const prop_variant& variant)
 {
     m_modelMatriceDirty = true;
+    EntitySystem::Get()->onTransformChanged(this);
 }
 
 bool sTransform::deleteChild(sTransform* child)
@@ -32,6 +33,7 @@ void sTransform::setParent(sTransform* parent)
     parent->addChild(this);
     m_modelMatriceDirty = true;
     EntitySystem::Get()->onParentChanged(this, oldParent);
+    EntitySystem::Get()->onTransformChanged(this);
 }
 
 std::set<sTransform*> sTransform::getChildren() const
@@ -60,6 +62,32 @@ sComponent* sTransform::Clone()
     sTransform* clone = (sTransform*)sComponent::Clone();
     clone->m_children.clear();
     clone->m_parent = nullptr;
-    //EntitySystem::Get()->onParentChanged(clone, nullptr);
+    clone->m_modelMatriceDirty = true;
+    EntitySystem::Get()->onTransformChanged(this);
     return clone;
+}
+
+void sTransform::UpdateModelMatriceRecursively()
+{
+    if (!m_modelMatriceDirty)
+        return;
+    m_modelMatriceDirty = false;
+    
+    glm::mat4 parentModel(1.0f);
+    if (m_parent)
+        parentModel = m_parent->get_modelMatrice();
+
+    m_modelMatrice = glm::mat4(1.0f);
+    m_modelMatrice = glm::translate(m_modelMatrice, m_position);
+    m_modelMatrice = glm::rotate(m_modelMatrice, m_rotation.x, glm::vec3(1,0,0));
+    m_modelMatrice = glm::rotate(m_modelMatrice, m_rotation.y, glm::vec3(0,1,0));
+    m_modelMatrice = glm::rotate(m_modelMatrice, m_rotation.z, glm::vec3(0,0,1));
+    m_modelMatrice = glm::scale(m_modelMatrice, m_size);
+
+    m_modelMatrice *= parentModel;
+
+    for (auto& child : m_children)
+    {
+        child->UpdateModelMatriceRecursively();
+    }
 }

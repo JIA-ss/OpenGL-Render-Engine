@@ -55,7 +55,7 @@ public:
 
     Entity::sEntity* get_entity() const { return m_entity; };
 
-    void bind_entity(Entity::sEntity* entity) { assert(!m_entity); m_entity = entity; }
+    void bind_entity(Entity::sEntity* entity) { m_entity = entity; }
 
 public:
     // life time behavior

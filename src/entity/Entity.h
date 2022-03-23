@@ -13,6 +13,7 @@ class sEntity
 {
 public:
     sEntity();
+    sEntity(const std::string& name) : m_name(name) { }
     ~sEntity();
 
     virtual void CreateComponents() { };
@@ -49,10 +50,13 @@ public:
     void SetActive(bool v);
     bool IsActiveSelf();
     bool IsHierarchyActive();
+    void setName(const std::string& name) { m_name = name; }
+    std::string getName() { return m_name; } 
 protected:
     static std::map<size_t, entity_meta> EntityDirevedClasses;
     static const size_t EntityId;
     std::unordered_map<size_t ,Component::sComponent*> m_components;
+    std::string m_name;
     bool m_enable = true;
 };
 

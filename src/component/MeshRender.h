@@ -4,8 +4,12 @@
 #include <functional>
 
 class RenderSystem;
-namespace Render { class RenderQueue; }
+namespace Render { 
+    class RenderQueue;
+}
+
 COMPONENT_NAMESPACE_BEGIN
+
 
 class sMeshRender : public sComponent
 {
@@ -18,6 +22,8 @@ class sMeshRender : public sComponent
     COMPONENT_PROPERTY(std::vector<Graphic::Material*>, sharedMaterials, {})
     COMPONENT_PROPERTY_WITHOUT_COMPARE(std::vector<std::function<void()>>, passOperations, {})
 public:
+    sMeshRender(Graphic::Mesh* mesh) : m_meshes({mesh}) { }
+    sMeshRender(const std::vector<Graphic::Mesh*>& meshes) : m_meshes(meshes) { }
     void OnEnable() override;
     void OnDisable() override;
 public:

@@ -50,8 +50,8 @@ sComponent* sComponent::Clone()
         {
             assert(false);
         }
-    }
     return comp;
+    }
 }
 
 void sComponent::notifyPropertyChanged(const prop_variant& prop)

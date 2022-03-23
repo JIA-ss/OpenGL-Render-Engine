@@ -2,7 +2,7 @@
 #include "RenderControllerBase.h"
 #include "graphic/Texture.h"
 #include "graphic/Mesh.h"
-
+#include "entity/Entity.h"
 #include <unordered_map>
 RENDER_NAMESPACE_BEGIN
 
@@ -84,6 +84,7 @@ private:
     int m_height;
     GLuint m_frameBufferId = 0;
     Graphic::Mesh* m_outputMesh = nullptr;
+    Entity::sEntity* m_outputEntity = nullptr;
     std::string m_shaderPath = "";
 };
 

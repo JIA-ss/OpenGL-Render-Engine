@@ -1,6 +1,6 @@
 #include "FrameBuffer.h"
 #include "system/ResourceSystem.h"
-
+#include "component/MeshRender.h"
 RENDER_NAMESPACE_USING
 
 FrameBuffer::~FrameBuffer()
@@ -195,6 +195,10 @@ void FrameBuffer::InitOutputMesh()
     Graphic::Material* mat = new Graphic::Material(m_shaderPath, texs);
 
     m_outputMesh = new Graphic::Mesh(Graphic::Vertex::quadElement, Graphic::Vertex::quad, mat, "FrameBuffer");
+
+    m_outputEntity = Entity::sEntity::Create<Entity::sEntity>();
+    m_outputEntity->AddComponent<Component::sMeshRender>(m_outputMesh);
+    m_outputEntity->setName("frameBuffer");
 }
 
 

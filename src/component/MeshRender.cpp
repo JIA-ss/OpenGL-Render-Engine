@@ -28,6 +28,11 @@ void sMeshRender::draw() const
     
     int passes = get_pass();
 
+    glm::mat4 model(1.0f);
+    sTransform* transform = get_entity()->GetComponent<sTransform>();
+    if (transform)
+        model = transform->get_modelMatrice();
+
     for (int meshIdx = 0; meshIdx < m_meshes.size(); meshIdx++)
     {
         for (int pass = 0; pass < passes; pass++)
@@ -40,10 +45,12 @@ void sMeshRender::draw() const
             {
                 if (pass < m_sharedMaterials.size())
                 {
+                    m_sharedMaterials[pass]->SetShaderParam("model", model);
                     m_meshes[meshIdx]->draw(m_sharedMaterials[pass]);
                 }
                 else
                 {
+                    m_meshes[meshIdx]->SetShaderParam("model", model);
                     m_meshes[meshIdx]->draw();
                 }
             }
@@ -52,10 +59,12 @@ void sMeshRender::draw() const
                 // use respective materials
                 if (pass < m_respectiveMaterials.size() && meshIdx < m_respectiveMaterials[pass].size())
                 {
+                    m_respectiveMaterials[pass][meshIdx]->SetShaderParam("model", model);
                     m_meshes[meshIdx]->draw(m_respectiveMaterials[pass][meshIdx]);
                 }
                 else
                 {
+                    m_meshes[meshIdx]->SetShaderParam("model", model);
                     m_meshes[meshIdx]->draw();
                 }
             }
