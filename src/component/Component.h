@@ -64,6 +64,8 @@ public:
 
     virtual size_t get_componentId() const;
 
+    virtual void notifyPropertyChanged(const prop_variant& prop);
+
     bool isType(const std::string& name);
 
     template<typename T>
@@ -72,6 +74,7 @@ public:
     Entity::sEntity* get_entity() const { return m_entity; };
 
     void bind_entity(Entity::sEntity* entity) { assert(!m_entity); m_entity = entity; }
+
 };
 
 

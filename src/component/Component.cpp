@@ -1,5 +1,5 @@
 #include "Component.h"
-
+#include <iostream>
 COMPONENT_NAMESPACE_USING
 
 std::map<size_t, sComponent::comp_meta> sComponent::ComponentDirevedClasses = std::map<size_t, sComponent::comp_meta>();
@@ -52,4 +52,11 @@ sComponent* sComponent::Clone()
         }
     }
     return comp;
+}
+
+void sComponent::notifyPropertyChanged(const prop_variant& prop)
+{
+    comp_meta meta = ComponentDirevedClasses[get_componentId()];
+    std::cout << "[Component Value Changed] ";
+    std::cout << meta.name << "::" << prop.meta.name << std::endl;
 }
