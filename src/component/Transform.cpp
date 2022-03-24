@@ -72,10 +72,14 @@ void sTransform::UpdateModelMatriceRecursively()
     if (!m_modelMatriceDirty)
         return;
     m_modelMatriceDirty = false;
-    
+    m_globalPosition = m_position;
+
     glm::mat4 parentModel(1.0f);
     if (m_parent)
+    {
         parentModel = m_parent->get_modelMatrice();
+        m_globalPosition += m_parent->getGlobalPosition();
+    }
 
     m_modelMatrice = glm::mat4(1.0f);
     m_modelMatrice = glm::translate(m_modelMatrice, m_position);

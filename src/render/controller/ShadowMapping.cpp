@@ -118,7 +118,6 @@ void ShadowMapping::RenderWithShadow(GLuint targetFrameId)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _Render_Queue_->Render(RenderQueue::Geometry);
     _Render_Queue_->Render(RenderQueue::Transparent);
-    _Render_Queue_->Render(RenderQueue::Overlay);
     _Render_Queue_->Render(RenderQueue::Background);
     //m_depthMapFrameBuffer.Draw();
 }

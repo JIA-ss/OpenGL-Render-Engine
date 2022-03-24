@@ -33,8 +33,11 @@ public:
 
     bool IsMatriceDirty() const { return m_modelMatriceDirty; }
     void UpdateModelMatriceRecursively();
+
+    glm::vec3 getGlobalPosition() { return m_globalPosition; }
 private:
     bool m_modelMatriceDirty = true;
+    glm::vec3 m_globalPosition;
 };
 
 COMPONENT_NAMESPACE_END

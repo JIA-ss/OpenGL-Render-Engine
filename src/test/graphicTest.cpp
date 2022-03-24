@@ -96,4 +96,11 @@ void GraphicTest::_component_test()
     plane->AddComponent<sMeshRender>(mesh);
     p_t->set_size(glm::vec3(100,0.5,100));
     p_t->set_position(glm::vec3(0,-1,0));
+
+
+    Graphic::CubeMap* cubeMap = new CubeMap("skybox/", ".jpg");
+    Material* skybox = new Material("CubeMap/skybox", { cubeMap });
+    Mesh* sky = new Mesh(Vertex::boxElement, Vertex::box, skybox, "skybox");
+    sEntity* entity = sEntity::Create<sEntity>("skybox");
+    entity->AddComponent<sMeshRender>(sky, 1000);
 }

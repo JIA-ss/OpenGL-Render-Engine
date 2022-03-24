@@ -31,10 +31,20 @@ private:
         bool operator<(const RenderElement& re) const;
     };
 
+    struct TransparentRenderElement
+    {
+        Component::sMeshRender* mesh;
+        unsigned int distance;
+        TransparentRenderElement(Component::sMeshRender* _mesh);
+        bool operator<(const TransparentRenderElement& re) const;
+    };
+
     typedef std::set<RenderElement> RenderSet;
 
     Order GetTargetOrder(unsigned int order);
     std::map<unsigned int, RenderSet>& GetTargetOrderQueue(Order order);
+
+    void RenderTransparentObj(Graphic::Shader* shader);
 private:
     std::map<unsigned int, RenderSet> m_backgrounds;
     std::map<unsigned int, RenderSet> m_geometries;

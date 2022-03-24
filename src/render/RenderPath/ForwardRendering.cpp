@@ -31,8 +31,6 @@ void ForwardRendering::InitForwardPath()
         this->GetPostProcessingController().TextureToScreen();
         auto& rq = RenderSystem::Get()->getRenderQueue();
         rq.Render(RenderQueue::Overlay);
-        rq.Render(RenderQueue::Background);
-
     });
 }
 
