@@ -82,11 +82,11 @@ void sTransform::UpdateModelMatriceRecursively()
     }
 
     m_modelMatrice = glm::mat4(1.0f);
-    m_modelMatrice = glm::translate(m_modelMatrice, m_position);
+    m_modelMatrice = glm::scale(m_modelMatrice, m_size);
     m_modelMatrice = glm::rotate(m_modelMatrice, m_rotation.x, glm::vec3(1,0,0));
     m_modelMatrice = glm::rotate(m_modelMatrice, m_rotation.y, glm::vec3(0,1,0));
     m_modelMatrice = glm::rotate(m_modelMatrice, m_rotation.z, glm::vec3(0,0,1));
-    m_modelMatrice = glm::scale(m_modelMatrice, m_size);
+    m_modelMatrice = glm::translate(m_modelMatrice, m_position);
 
     m_modelMatrice *= parentModel;
 
