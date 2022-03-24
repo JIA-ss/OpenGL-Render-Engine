@@ -17,11 +17,15 @@ void EntitySystem::Update()
 
 void EntitySystem::UnInit()
 {
-    for (auto& entity : m_entities)
+    auto it = m_entities.begin();
+    while (it != m_entities.end())
     {
+        sEntity* entity = *it;
+        it = m_entities.erase(it);
         sEntity::Destroy(entity);
+
     }
-    m_entities.clear();
+
     m_roots.clear();
     m_dirtyTransforms.clear();
 }

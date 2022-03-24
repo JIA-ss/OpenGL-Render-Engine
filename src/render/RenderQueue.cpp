@@ -63,7 +63,10 @@ void RenderQueue::Render(Order order, Graphic::Shader* shader)
     {
         for (auto&& element : renderSet)
         {
-            element.mesh->once_draw(shader);
+            if (shader)
+                element.mesh->once_draw(shader);
+            else
+                element.mesh->draw();
         }
     }
 

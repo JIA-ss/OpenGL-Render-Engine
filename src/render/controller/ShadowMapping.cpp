@@ -96,7 +96,7 @@ glm::mat4 ShadowMapping::GetLightSpaceMatrice() const
     return proj * view;
 }
 
-void ShadowMapping::DepthPass()
+void ShadowMapping::RenderToDepthBuffer()
 {
     if (!m_enable)
         return;
@@ -109,7 +109,7 @@ void ShadowMapping::DepthPass()
     glCullFace(GL_BACK);
 }
 
-void ShadowMapping::ShadowPass(GLuint targetFrameId)
+void ShadowMapping::RenderWithShadow(GLuint targetFrameId)
 {
     if (!m_enable)
         return;

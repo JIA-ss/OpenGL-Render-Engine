@@ -22,16 +22,16 @@ void GraphicTest::_shadowMapping_engine()
     Entity::Camera& cam = rdSystem->getCamera();
     cam.enableControl(true);
     cam.setSensitive(0.02f);
-    rdSystem->getShadowMapping().SetActive(true);
-    rdSystem->getShadowMapping().Init();
-    Texture* depthTexture = rdSystem->getShadowMapping().GetDepthTexture();
+    //rdSystem->getShadowMapping().SetActive(true);
+    //rdSystem->getShadowMapping().Init();
+    //Texture* depthTexture = rdSystem->getShadowMapping().GetDepthTexture();
 
     glm::vec3 planePos = glm::vec3(0,-0.5,0);
     glm::vec3 planeSize = glm::vec3(100,0.1,100);
 
     Texture* planeTex = new Texture("Blend/plane.png", Diffuse);
-    Material* planeMaterial = new Material("ShadowMapping/ShadowPass", {depthTexture, planeTex});
-    Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
+    //Material* planeMaterial = new Material("ShadowMapping/RenderWithShadow", {depthTexture, planeTex});
+    //Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
     //plane->SetPosition(planePos);
     //plane->SetSize(planeSize);
     //rq.EnqueMesh(plane);
@@ -43,13 +43,13 @@ void GraphicTest::_shadowMapping_engine()
     };
 
     Texture* cubeTex = new Texture("Blend/cube.jpg", Diffuse);
-    Material* cubeMaterial = new Material("ShadowMapping/ShadowPass", {depthTexture, cubeTex});
-    Mesh* cube = new Mesh(Vertex::boxElement, Vertex::box, cubeMaterial, "cube");
+    //Material* cubeMaterial = new Material("ShadowMapping/RenderWithShadow", {depthTexture, cubeTex});
+    //Mesh* cube = new Mesh(Vertex::boxElement, Vertex::box, cubeMaterial, "cube");
     for (int i = 0; i < cubePoses.size(); i++)
     {
         //cube->SetPosition(cubePoses[i]);
         //rq.EnqueMesh(cube);
-        cube = cube->Clone();
+        //cube = cube->Clone();
     }
 }
 
@@ -74,44 +74,15 @@ void GraphicTest::_cube_map_test_()
 void GraphicTest::_component_test()
 {
     RenderSystem* rdSystem = RenderSystem::Get();
-    auto& rq = rdSystem->getRenderQueue();
+    
     Entity::Camera& cam = rdSystem->getCamera();
     cam.enableControl(true);
     cam.setSensitive(0.02f);
-    rdSystem->getShadowMapping().SetActive(true);
-    rdSystem->getShadowMapping().Init();
-    Texture* depthTexture = rdSystem->getShadowMapping().GetDepthTexture();
 
-    glm::vec3 planePos = glm::vec3(0,-0.5,0);
-    glm::vec3 planeSize = glm::vec3(100,0.1,100);
+    Texture* defaultTexture = new Texture("Blend/plane.png",Diffuse);
+    Material* mat = new Material("Default/3D_Obj", {defaultTexture});
+    Mesh* mesh = new Mesh(Vertex::boxElement, Vertex::box, mat, "mesh");
+    sGameObject* obj = (sGameObject*)sEntity::Create<sGameObject>("default");
+    obj->AddComponent<sMeshRender>(mesh);
 
-    Texture* planeTex = new Texture("Blend/plane.png", Diffuse);
-    Material* planeMaterial = new Material("ShadowMapping/ShadowPass", {depthTexture, planeTex});
-    Mesh* plane = new Mesh(Vertex::boxElement, Vertex::box, planeMaterial, "plane");
-    sEntity* planeEntity = sEntity::Create<sEntity>("plane");
-    sTransform* planeTransform = planeEntity->AddComponent<sTransform>();
-    sMeshRender* planeRender = planeEntity->AddComponent<sMeshRender>(plane);
-
-    planeTransform->set_position(planePos);
-    planeTransform->set_size(planeSize);
-
-    std::vector<glm::vec3> cubePoses = {
-        glm::vec3(0,4,0),
-        glm::vec3(3,0.5,0),
-        glm::vec3(-1,2,-1)
-    };
-
-    Texture* cubeTex = new Texture("Blend/cube.jpg", Diffuse);
-    Material* cubeMaterial = new Material("ShadowMapping/ShadowPass", {depthTexture, cubeTex});
-    Mesh* cube = new Mesh(Vertex::boxElement, Vertex::box, cubeMaterial, "cube");
-    sEntity* cubeEntity = sEntity::Create<sEntity>("cube");
-    sTransform* cubeTrans = cubeEntity->AddComponent<sTransform>();
-    sMeshRender* cubeRender = cubeEntity->AddComponent<sMeshRender>(cube);
-
-    for (int i = 0; i < cubePoses.size(); i++)
-    {
-        cubeTrans->set_position(cubePoses[i]);
-        cubeEntity = sEntity::Clone(cubeEntity);
-        cubeTrans = cubeEntity->GetComponent<sTransform>();
-    }
 }

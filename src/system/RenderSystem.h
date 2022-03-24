@@ -2,13 +2,15 @@
 #include "System.h"
 #include "entity/Camera.h"
 
-#include "render/DepthTest.h"
-#include "render/StencilTest.h"
-#include "render/Blend.h"
-#include "render/FaceCulling.h"
-#include "render/FrameBuffer.h"
 #include "render/RenderQueue.h"
-#include "render/ShadowMapping.h"
+
+#include "render/controller/PostProcessing.h"
+#include "render/controller/FrameBuffer.h"
+#include "render/controller/ShadowMapping.h"
+
+#include "render/RenderPath/ForwardRendering.h"
+#include "render/RenderPath/DeferredRendering.h"
+
 class RenderSystem : public System
 {
     SYSTEM_STATIC_TYPE(RenderSystem, System::Type::RenderSystem)
@@ -17,25 +19,18 @@ public:
     void Init() override;
     void Update() override;
 
-
-
 public:
     inline Entity::Camera& getCamera() { return *m_mainCamera; }
-    inline Render::DepthTest& getDepthTest() { return m_depthTest; }
-    inline Render::StencilTest& getStencilTest() { return m_stencilTest; }
-    inline Render::Blend& getBlend() { return m_blend; }
-    inline Render::FaceCulling& getFaceCulling() { return m_faceCulling; }
-    inline Render::FrameBuffer& getFrameBuffer() { return m_frameBuffer; }
     inline Render::RenderQueue& getRenderQueue() { return m_renderQueue; }
-    inline Render::ShadowMapping& getShadowMapping() { return m_shadowMapping; }
+
+    void SetRenderPath(Render::RenderPath path);
+    Render::RenderPath GetCurRenderPath() const;
 private:
     Entity::Camera* m_mainCamera = nullptr;
+    Render::RenderPath m_renderPath;
 
-    Render::DepthTest m_depthTest;
-    Render::StencilTest m_stencilTest;
-    Render::Blend m_blend;
-    Render::FaceCulling m_faceCulling;
-    Render::FrameBuffer m_frameBuffer;
+    Render::ForwardRendering m_forward;
+    Render::DeferredRendering m_deferred;
+
     Render::RenderQueue m_renderQueue;
-    Render::ShadowMapping m_shadowMapping;
 };

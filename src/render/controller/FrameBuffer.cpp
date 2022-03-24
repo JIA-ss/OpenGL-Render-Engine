@@ -76,11 +76,11 @@ void FrameBuffer::Bind() const
         glEnable(GL_STENCIL_TEST);
 }
 
-void FrameBuffer::UnBind() const
+void FrameBuffer::UnBind(GLuint targetBuffer) const
 {
     if (!IsValid())
         return;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
 }
 
 GLbitfield FrameBuffer::ClearMask() const
@@ -194,11 +194,12 @@ void FrameBuffer::InitOutputMesh()
 
     Graphic::Material* mat = new Graphic::Material(m_shaderPath, texs);
 
-    m_outputMesh = new Graphic::Mesh(Graphic::Vertex::quadElement, Graphic::Vertex::quad, mat, "FrameBuffer");
+    m_outputMesh = new Graphic::Mesh(Graphic::Vertex::quadElement, Graphic::Vertex::quad, mat, "FrameBufferOutputMesh");
 
-    m_outputEntity = Entity::sEntity::Create<Entity::sEntity>();
-    m_outputEntity->AddComponent<Component::sMeshRender>(m_outputMesh);
-    m_outputEntity->setName("frameBuffer");
+    //m_outputEntity = Entity::sEntity::Create<Entity::sEntity>();
+    //m_outputEntity->AddComponent<Component::sMeshRender>(m_outputMesh);
+    //m_outputEntity->setName("FrameBufferOutputEntity");
+    //m_outputEntity->SetActive(false);
 }
 
 

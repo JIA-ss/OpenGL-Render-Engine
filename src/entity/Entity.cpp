@@ -52,10 +52,14 @@ void sEntity::Destroy(sEntity* entity)
     if (!entity)
         return;
     entity->Unregister();
-    for (auto&&[compId, comp] : entity->m_components)
+    auto it = entity->m_components.begin();
+    while (it != entity->m_components.end())
     {
-        comp->SetActive(false);
-        comp->OnDestroy();
+        it->second->SetActive(false);
+        it->second->OnDestroy();
+        Component::sComponent* comp = it->second;
+        it->second = nullptr;
+        it = entity->m_components.erase(it);
         delete comp;
     }
     entity->m_components.clear();

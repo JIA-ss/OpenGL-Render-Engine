@@ -87,7 +87,7 @@ void sMeshRender::once_draw(Graphic::Shader* shader)
 void sMeshRender::OnEnable()
 {
     auto& rq = RenderSystem::Get()->getRenderQueue();
-    rq.Enqueue(this);
+    rq.Enqueue(this, m_renderQueueOrder);
     Entity::sEntity* entity = get_entity();
     sTransform* transform = entity->GetComponent<sTransform>();
     if (transform)
@@ -106,7 +106,7 @@ void sMeshRender::OnEnable()
 void sMeshRender::OnDisable()
 {
     auto& rq = RenderSystem::Get()->getRenderQueue();
-    rq.Dequeue(this);
+    rq.Dequeue(this, m_renderQueueOrder);
     Entity::sEntity* entity = get_entity();
     sTransform* transform = entity->GetComponent<sTransform>();
     if (transform)

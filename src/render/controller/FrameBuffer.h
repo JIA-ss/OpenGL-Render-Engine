@@ -56,7 +56,7 @@ public:
     GLbitfield ClearMask() const override;
     void Update() const override;
     void Bind() const;
-    void UnBind() const;
+    void UnBind(GLuint targetBuffer = 0) const;
     void Draw() const;
 public:
     void SetSize(int width, int height);

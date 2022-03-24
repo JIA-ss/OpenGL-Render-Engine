@@ -17,13 +17,14 @@ class sMeshRender : public sComponent
     friend class Render::RenderQueue;
     COMPONENT_DECLARE
     COMPONENT_PROPERTY(unsigned int, renderIdx, 1)
+    COMPONENT_PROPERTY(unsigned int, renderQueueOrder, 2000)
     COMPONENT_PROPERTY(std::vector<Graphic::Mesh*>, meshes, {})
     COMPONENT_PROPERTY(std::vector<std::vector<Graphic::Material*>>, respectiveMaterials, {})
     COMPONENT_PROPERTY(std::vector<Graphic::Material*>, sharedMaterials, {})
     COMPONENT_PROPERTY_WITHOUT_COMPARE(std::vector<std::function<void()>>, passOperations, {})
 public:
-    sMeshRender(Graphic::Mesh* mesh) : m_meshes({mesh}) { }
-    sMeshRender(const std::vector<Graphic::Mesh*>& meshes) : m_meshes(meshes) { }
+    sMeshRender(Graphic::Mesh* mesh, unsigned int order = 2000) : m_meshes({mesh}), m_renderQueueOrder(order) { }
+    sMeshRender(const std::vector<Graphic::Mesh*>& meshes, unsigned int order = 2000) : m_meshes(meshes), m_renderQueueOrder(order) { }
     void OnEnable() override;
     void OnDisable() override;
 public:

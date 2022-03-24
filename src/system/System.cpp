@@ -27,10 +27,16 @@ void SystemManager::Update()
 
 void SystemManager::UnInit()
 {
-    for (auto it = m_systems.rbegin(); it != m_systems.rend(); it++)
+    for (auto it = m_systems.begin(); it != m_systems.end(); it++)
     {
         std::cout << it->second->GetTypeStr() << " UnInit ..." << std::endl;
         it->second->UnInit();
+        //delete it->second;
+    }
+
+    for (auto it = m_systems.begin(); it != m_systems.end(); it++)
+    {
+        std::cout << it->second->GetTypeStr() << " Closing ..." << std::endl;
         delete it->second;
     }
 }
