@@ -85,4 +85,15 @@ void GraphicTest::_component_test()
     sGameObject* obj = (sGameObject*)sEntity::Create<sGameObject>("default");
     obj->AddComponent<sMeshRender>(mesh);
 
+    sEntity* cube = sEntity::Create<sGameObject>("cube");
+    cube->AddComponent<sMeshRender>(mesh);
+    sTransform* t = cube->GetComponent<sTransform>();
+    //t->setParent(obj->GetComponent<sTransform>());
+    t->set_position(glm::vec3(1,2,-2));
+
+    sEntity* plane = sEntity::Create<sGameObject>("plane");
+    sTransform* p_t = plane->GetComponent<sTransform>();
+    plane->AddComponent<sMeshRender>(mesh);
+    p_t->set_size(glm::vec3(100,0.5,100));
+    p_t->set_position(glm::vec3(0,-1,0));
 }
