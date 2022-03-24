@@ -14,6 +14,7 @@ public:
 public:
     void PrepareRenderToTexture();
     void TextureToScreen();
+    GLuint GetBufferId() const;
 private:
     FrameBuffer m_buffer;
 };

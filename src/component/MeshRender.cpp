@@ -77,8 +77,13 @@ void sMeshRender::once_draw(Graphic::Shader* shader)
 {
     if (!isValid())
         return;
+    glm::mat4 model(0.0f);
+    sTransform* transform = get_entity()->GetComponent<sTransform>();
+    if (transform)
+        model = transform->get_modelMatrice();
     for (auto& mesh : m_meshes)
     {
+        mesh->SetShaderParam("model", model);
         mesh->draw(shader);
     }
 }

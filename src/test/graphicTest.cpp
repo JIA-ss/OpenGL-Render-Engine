@@ -80,7 +80,7 @@ void GraphicTest::_component_test()
     cam.setSensitive(0.02f);
 
     Texture* defaultTexture = new Texture("Blend/plane.png",Diffuse);
-    Material* mat = new Material("Default/3D_Obj", {defaultTexture});
+    Material* mat = new Material("ShadowMapping/ShadowPass", {defaultTexture});
     Mesh* mesh = new Mesh(Vertex::boxElement, Vertex::box, mat, "mesh");
     sGameObject* obj = (sGameObject*)sEntity::Create<sGameObject>("default");
     obj->AddComponent<sMeshRender>(mesh);

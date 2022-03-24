@@ -45,3 +45,8 @@ void PostProcessing::TextureToScreen()
     glClear(GL_COLOR_BUFFER_BIT);
     m_buffer.Draw();
 }
+
+GLuint PostProcessing::GetBufferId() const
+{
+    return m_buffer.GetId();
+}
