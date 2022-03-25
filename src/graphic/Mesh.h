@@ -15,6 +15,7 @@ class Mesh : public GraphicBase
 public:
     Mesh(const std::vector<GLuint> &indices, const std::vector<Vertex> &vertices, Material *mat, const std::string &name = "");
     Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<std::string>& texture, TextureType type = Diffuse, const std::string& name = "");
+    Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<Texture*>& textures, const std::string& name = "");
     Mesh(aiMesh *mesh, Material *m = nullptr, const std::string &name = "");
     Mesh() = default;
     ~Mesh() { delete m_material; }

@@ -93,8 +93,8 @@ void GraphicTest::_component_test()
     sEntity* cube = sEntity::Create<sGameObject>("cube");
     cube->AddComponent<sMeshRender>(mesh);
     sTransform* t = cube->GetComponent<sTransform>();
-    //t->setParent(obj->GetComponent<sTransform>());
     t->set_position(glm::vec3(1,2,-2));
+
 
     sEntity* plane = sEntity::Create<sGameObject>("plane");
     sTransform* p_t = plane->GetComponent<sTransform>();
@@ -105,8 +105,8 @@ void GraphicTest::_component_test()
 
     //Graphic::CubeMap* cubeMap = new CubeMap("skybox/", ".jpg");
     Graphic::CubeMap* cubeMap = ResourceSystem::LoadGraphicResource<CubeMap>("sky", "skybox/", ".jpg").GetGraphic();
-    Material* skybox = ResourceSystem::LoadGraphicResource<Material>("sky", "CubeMap/skybox", std::vector<Texture*>{ cubeMap }).GetGraphic();
-    Mesh* sky = ResourceSystem::LoadGraphicResource<Mesh>("sky", Vertex::boxElement, Vertex::box, skybox, "skybox").GetGraphic();
+    Mesh* sky = ResourceSystem::LoadGraphicResource<Mesh>("sky", VertexStream::box, "CubeMap/skybox", std::vector<Texture*>{cubeMap}).GetGraphic();
+    
     sEntity* entity = sEntity::Create<sEntity>("skybox");
     entity->AddComponent<sMeshRender>(sky, 1000);
 }

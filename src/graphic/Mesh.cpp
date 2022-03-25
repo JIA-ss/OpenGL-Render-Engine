@@ -11,7 +11,7 @@ Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<Vertex> &vertic
     SetUpMesh();
 }
 
-Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<std::string>& texture, TextureType type, const std::string& name)
+Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<std::string>& texture, TextureType type, const std::string& name) : m_name(name)
 {
     m_indices = vertex.indices;
     m_vertices = vertex.vertices;
@@ -19,6 +19,17 @@ Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vec
     VAO = 0;
     VBO = 0;
     m_material = ResourceSystem::LoadGraphicResource<Material>(m_name + "- Material", shader, texture, type).GetGraphic();
+    SetUpMesh();
+}
+
+Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<Texture*>& textures, const std::string& name) : m_name(name)
+{
+    m_indices = vertex.indices;
+    m_vertices = vertex.vertices;
+    EBO = 0;
+    VAO = 0;
+    VBO = 0;
+    m_material = ResourceSystem::LoadGraphicResource<Material>(m_name + "- Material", shader, textures).GetGraphic();
     SetUpMesh();
 }
 
