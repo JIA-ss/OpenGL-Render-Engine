@@ -3,7 +3,7 @@
 #include "resource/types/ShaderResource.h"
 GRAPHIC_NAMESPACE_USING
 
-
+GRAPHIC_IMPLEMENT(Model)
 
 Model::Model(std::vector<Mesh*> &&meshes)
 {
@@ -19,6 +19,14 @@ Model::Model(const std::string &path, const std::string& shader) : m_id(path)
 {
     m_shaderPath = shader;
     loadModel(path);
+}
+
+void Model::Free()
+{
+    for (auto& mesh : m_meshes)
+    {
+        mesh->Free();
+    }
 }
 
 Model *Model::loadModel(const std::string &path)
@@ -59,7 +67,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
                 material->GetTexture((aiTextureType)aiType, i, &name);
                 auto path = m_directory + "/" + name.C_Str();
                 
-                Texture *texture = Texture::Add(path, path, (TextureType)aiType);
+                Texture *texture = ResourceSystem::LoadGraphicResource<Texture>(path, path, (TextureType)aiType).GetGraphic();
                 textures.push_back(texture);
             }
         }
@@ -78,9 +86,10 @@ void Model::processNode(aiNode *node, const aiScene *scene)
             if (vRef.isNull())
                 shaderPath = "DefaultModel";
         }
-		auto mat = Material::Add(m_id + "-" + matName , shaderPath, textures);
+
+        auto mat = ResourceSystem::LoadGraphicResource<Material>(m_id + "-" + matName , shaderPath, textures).GetGraphic();
         mat->SetName(m_id + "-" + matName);
-        Mesh* _mesh_ = new Mesh(mesh, mat, std::to_string(mesh->mMaterialIndex));
+        Mesh* _mesh_ = ResourceSystem::LoadGraphicResource<Mesh>(m_id + "-Mesh" + std::to_string(i), mesh, mat, std::to_string(mesh->mMaterialIndex)).GetGraphic();
         m_meshes.emplace_back(_mesh_);
     }
     for (size_t i = 0; i < node->mNumChildren; i++)

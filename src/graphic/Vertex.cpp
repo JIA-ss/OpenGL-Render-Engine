@@ -98,3 +98,9 @@ const std::vector<unsigned int> Vertex::boxElementQuad = {
     20, 21, 22, 23};
 
 const std::vector<unsigned int> Vertex::boxElement = { };
+
+
+
+const VertexStream VertexStream::box = VertexStream(Vertex::box, Vertex::boxElement);
+const VertexStream VertexStream::quad = VertexStream(Vertex::quad, Vertex::quadElement);
+const VertexStream VertexStream::boxQuad = VertexStream(Vertex::boxQuad, Vertex::boxElementQuad);

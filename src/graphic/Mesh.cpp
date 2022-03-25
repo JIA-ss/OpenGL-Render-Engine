@@ -1,7 +1,7 @@
 #include "Mesh.h"
-
+#include "system/ResourceSystem.h"
 GRAPHIC_NAMESPACE_USING
-
+GRAPHIC_IMPLEMENT(Mesh)
 Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<Vertex> &vertices, Material *mat, const std::string &name) : m_indices(indices), m_vertices(vertices), m_name(name)
 {
     EBO = 0;
@@ -10,6 +10,19 @@ Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<Vertex> &vertic
     m_material = mat;
     SetUpMesh();
 }
+
+Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<std::string>& texture, TextureType type, const std::string& name)
+{
+    m_indices = vertex.indices;
+    m_vertices = vertex.vertices;
+    EBO = 0;
+    VAO = 0;
+    VBO = 0;
+    m_material = ResourceSystem::LoadGraphicResource<Material>(m_name + "- Material", shader, texture, type).GetGraphic();
+    SetUpMesh();
+}
+
+
 
 Mesh::Mesh(aiMesh *mesh, Material *m, const std::string &name) : m_material(m), m_name(name)
 {
@@ -54,6 +67,14 @@ void Mesh::SetUpMesh()
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, bitangent));
 
     glBindVertexArray(0);
+}
+
+void Mesh::Free()
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    if (!m_indices.empty())
+        glDeleteBuffers(1, &EBO);
 }
 
 void Mesh::loadFromAssimp(aiMesh *mesh)
@@ -165,7 +186,9 @@ void Mesh::draw(Material* material, Shader* shader) const
 
 Mesh* Mesh::Clone() const
 {
-    Mesh* mesh = new Mesh();
+    auto meshRes = ResourceSystem::LoadGraphicResource<Mesh>(m_name + "_copy");
+    Mesh* mesh = meshRes.GetGraphic();
+    mesh->m_name = meshRes.GetName();
     mesh->VAO = VAO;
     mesh->VBO = VBO;
     mesh->EBO = EBO;

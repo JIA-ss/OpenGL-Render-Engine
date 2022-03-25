@@ -108,4 +108,19 @@ size_t _CLASS_::GetStaticEntityId()                                             
 }
 
 
+
+// Graphic
+#define GRAPHIC_DECLARE                                                                         \
+public:                                                                                         \
+    size_t get_graphicId() const override { return GraphicId; }                                 \
+    static size_t GetStaticGraphicId();                                                         \
+    static const size_t GraphicId;
+
+#define GRAPHIC_IMPLEMENT(_CLASS_)                                                              \
+const size_t _CLASS_::GraphicId = registerGraphicId<_CLASS_>(#_CLASS_);                         \
+size_t _CLASS_::GetStaticGraphicId()                                                            \
+{                                                                                               \
+    return GraphicId;                                                                           \
+}
+
 #endif

@@ -11,6 +11,8 @@ namespace Entity { class sEntity; }
 
 COMPONENT_NAMESPACE_BEGIN
 
+using namespace custom_rtti;
+
 class sComponent
 {
 protected:

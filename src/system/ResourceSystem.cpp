@@ -261,6 +261,15 @@ void ResourceSystem::UnInit()
     FileWatcherSystem::Get()->DeleteFileWatcher(TexturePath.c_str());
 
     m_resourceMap.clear();
+
+    for (auto&[graphicId, graphicMap] : m_graphices)
+    {
+        for (auto&[name, graphic] : graphicMap)
+        {
+            graphic->Free();
+        }
+    }
+    m_graphices.clear();
 }
 
 sResourceRef ResourceSystem::GetResource(const char* name, eResourceType type)

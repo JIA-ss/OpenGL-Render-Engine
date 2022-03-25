@@ -1,14 +1,15 @@
 #pragma once
 #include "GraphicCommonHeader.h"
 #include "GlobalShaderParam.h"
-
+#include "GraphicBase.h"
 #include <string>
 
 
 GRAPHIC_NAMESPACE_BEGIN
 
-class Shader
+class Shader : public GraphicBase
 {
+    GRAPHIC_DECLARE
 public:
     Shader(const std::string& name);
     Shader(const char* vsName, const char* fsName);
@@ -25,6 +26,8 @@ public:
     void setVec3(const std::string& name, float v1, float v2, float v3) const;
     void setMat3f(const std::string& name, const float* value) const;
     void setMat4f(const std::string& name, const float* value) const;
+
+    void Free() override;
 
     template<typename T>
     static void setUniform(const GLuint &location, const T& val);

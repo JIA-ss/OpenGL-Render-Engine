@@ -3,7 +3,21 @@
 #include "ShaderSetting.h"
 GRAPHIC_NAMESPACE_USING
 
+
+GRAPHIC_IMPLEMENT(Material)
+
 std::unordered_map<std::string, Material> Material::collection;
+
+Material::Material(const std::string& shader, const std::vector<std::string>& textures, TextureType type) : Material(1)
+{
+    SetShader(shader);
+    std::vector<Texture*> texes;
+    for (auto&& tex : textures)
+    {
+        texes.push_back(new Texture(tex, type));
+    }
+    m_params.SetTextures(texes);
+}
 
 Material::Material() : m_shader(nullptr){};
 
@@ -15,7 +29,10 @@ Material::Material(const unsigned int&renderIndex):Material()
 
 void Material::SetShader(const std::string &name)
 {
-    m_shader = Shader::Add(name);
+    Shader* shader = ResourceSystem::GetGraphic<Shader>(name);
+    if (shader == nullptr)
+        shader = ResourceSystem::LoadGraphicResource<Shader>(name,name).GetGraphic();
+    m_shader = shader;
     m_params.UpdateParameters(m_shader);
 }
 
@@ -36,10 +53,17 @@ void Material::UseMaterial(Shader* shader) const
     }
 }
 
+void Material::Free()
+{
+    // do nothing
+        //because maybe other is referencing the shader
+}
+
 Material* Material::Clone() const
 {
-    Material* mat = new Material();
-    mat->m_name = m_name;
+    auto matRes = ResourceSystem::LoadGraphicResource<Material>(m_name + "_copy");
+    Material* mat = matRes.GetGraphic();
+    mat->m_name = matRes.GetName();
     mat->m_shader = m_shader;
     mat->m_params = m_params.Clone();
     return mat;

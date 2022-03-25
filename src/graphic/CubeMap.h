@@ -1,4 +1,5 @@
 #pragma once
+#include "GraphicBase.h"
 #include "Texture.h"
 #include <vector>
 #include <string>
@@ -7,6 +8,7 @@ GRAPHIC_NAMESPACE_BEGIN
 
 class CubeMap : public Texture
 {
+    GRAPHIC_DECLARE
 public:
     enum Target
     {
@@ -18,11 +20,12 @@ public:
         Back  = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,     //	前
     };
     std::string to_string(Target);
-
+    CubeMap() = default;
     CubeMap(const std::string& groupPath, const std::string& suffix);
     CubeMap(const std::vector<std::string>& facesPath);
     CubeMap(const std::map<Target, std::string>& facesPath);
-    ~CubeMap() { Texture::Free(); }
+    ~CubeMap() { Free(); }
+
 
     void SetUp();
     Resource::TextureRef GetTargetRef(Target);

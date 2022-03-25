@@ -6,6 +6,8 @@ GRAPHIC_NAMESPACE_USING
     case _TARGET_:                          \
         return #_TARGET_;
 
+GRAPHIC_IMPLEMENT(CubeMap)
+
 std::string CubeMap::to_string(Target target)
 {
     switch (target)

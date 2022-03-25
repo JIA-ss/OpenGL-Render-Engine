@@ -2,16 +2,19 @@
 #include "GraphicCommonHeader.h"
 #include "Vertex.h"
 #include "Material.h"
+#include "GraphicBase.h"
 
 #include <assimp/mesh.h>
 #include <vector>
 GRAPHIC_NAMESPACE_BEGIN
 
 
-class Mesh
+class Mesh : public GraphicBase
 {
+    GRAPHIC_DECLARE
 public:
     Mesh(const std::vector<GLuint> &indices, const std::vector<Vertex> &vertices, Material *mat, const std::string &name = "");
+    Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<std::string>& texture, TextureType type = Diffuse, const std::string& name = "");
     Mesh(aiMesh *mesh, Material *m = nullptr, const std::string &name = "");
     Mesh() = default;
     ~Mesh() { delete m_material; }
@@ -39,6 +42,7 @@ public:
 
     Mesh* Clone() const;
 
+    void Free() override;
     template<typename T>
     void SetShaderParam(const std::string& name, const T& val);
 private:

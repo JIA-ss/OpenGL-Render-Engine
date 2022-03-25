@@ -23,6 +23,21 @@ struct Vertex
     static const std::vector<unsigned int> boxElement;
 };
 
+struct VertexStream
+{
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    VertexStream() = default;
+
+    VertexStream(const std::vector<Vertex>& vers, const std::vector<unsigned int>& inds) : 
+        vertices(vers), indices(inds) { }
+
+    static const VertexStream quad;
+    static const VertexStream boxQuad;
+    static const VertexStream box;
+};
+
 
 
 GRAPHIC_NAMESPACE_END

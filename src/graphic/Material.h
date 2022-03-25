@@ -1,18 +1,20 @@
 #pragma once
 #include "GraphicCommonHeader.h"
 #include "ShaderSetting.h"
+#include "Texture.h"
+#include "GraphicBase.h"
 GRAPHIC_NAMESPACE_BEGIN
 
 class Mesh;
 
-class Texture;
 class Shader;
-class Material
+class Material : public GraphicBase
 {
+    GRAPHIC_DECLARE
 public:
     Material();
     Material(const unsigned int& renderIndex);
-    
+    Material(const std::string& shader, const std::vector<std::string>& textures, TextureType type = Diffuse);
     Material(const std::string &shader, const std::vector<Texture *>& textures) : Material(1)
     {
         SetShader(shader);
@@ -31,6 +33,7 @@ public:
     bool SetShaderParam(const std::string& name, const T& val);
 
     Material* Clone() const;
+    void Free() override;
 protected:
     std::string m_name;
     Shader* m_shader;

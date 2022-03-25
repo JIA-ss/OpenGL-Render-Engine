@@ -1,6 +1,7 @@
 #pragma once
 #include "GraphicCommonHeader.h"
 #include "Mesh.h"
+#include "GraphicBase.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -8,8 +9,9 @@
 #include <vector>
 GRAPHIC_NAMESPACE_BEGIN
 
-class Model
+class Model : public GraphicBase
 {
+    GRAPHIC_DECLARE
 public:
     Model() = default;
     ~Model();
@@ -24,7 +26,7 @@ public:
     Model* Clone() const;
     bool IsActive() const { return m_enable; }
     void SetActive(bool v);
-
+    void Free() override;
     template<typename T>
     void SetShaderParam(const std::string& name, const T& val);
 private:

@@ -2,6 +2,7 @@
 #include "system/ResourceSystem.h"
 GRAPHIC_NAMESPACE_USING
 
+GRAPHIC_IMPLEMENT(Texture)
 
 std::unordered_map<std::string, Texture> Texture::collection = std::unordered_map<std::string, Texture>();
 

@@ -9,6 +9,8 @@
 
 ENTITY_NAMESPACE_BEGIN
 
+using namespace custom_rtti;
+
 class sEntity
 {
 public:

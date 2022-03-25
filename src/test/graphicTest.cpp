@@ -2,6 +2,7 @@
 #include "graphic/Texture.h"
 #include "graphic/CubeMap.h"
 #include "system/RenderSystem.h"
+#include "system/ResourceSystem.h"
 #include "component/Transform.h"
 #include "component/MeshRender.h"
 #include "entity/Entity.h"
@@ -79,9 +80,13 @@ void GraphicTest::_component_test()
     cam.enableControl(true);
     cam.setSensitive(0.02f);
 
-    Texture* defaultTexture = new Texture("Blend/plane.png",Diffuse);
-    Material* mat = new Material("ShadowMapping/ShadowPass", {defaultTexture});
-    Mesh* mesh = new Mesh(Vertex::boxElement, Vertex::box, mat, "mesh");
+    //Texture* defaultTexture = new Texture("Blend/plane.png",Diffuse);
+    //Material* mat = new Material("ShadowMapping/ShadowPass", {defaultTexture});
+    //Mesh* mesh = new Mesh(Vertex::boxElement, Vertex::box, mat, "mesh");
+
+    GraphicResource _mesh_ = ResourceSystem::LoadGraphicResource<Mesh>("firstMesh", VertexStream::box, "ShadowMapping/ShadowPass", std::vector<std::string>{"Blend/plane.png"}, Diffuse);
+    Mesh* mesh = _mesh_.GetGraphic();
+
     sGameObject* obj = (sGameObject*)sEntity::Create<sGameObject>("default");
     obj->AddComponent<sMeshRender>(mesh);
 
@@ -98,9 +103,10 @@ void GraphicTest::_component_test()
     p_t->set_position(glm::vec3(0,-1,0));
 
 
-    Graphic::CubeMap* cubeMap = new CubeMap("skybox/", ".jpg");
-    Material* skybox = new Material("CubeMap/skybox", { cubeMap });
-    Mesh* sky = new Mesh(Vertex::boxElement, Vertex::box, skybox, "skybox");
+    //Graphic::CubeMap* cubeMap = new CubeMap("skybox/", ".jpg");
+    Graphic::CubeMap* cubeMap = ResourceSystem::LoadGraphicResource<CubeMap>("sky", "skybox/", ".jpg").GetGraphic();
+    Material* skybox = ResourceSystem::LoadGraphicResource<Material>("sky", "CubeMap/skybox", std::vector<Texture*>{ cubeMap }).GetGraphic();
+    Mesh* sky = ResourceSystem::LoadGraphicResource<Mesh>("sky", Vertex::boxElement, Vertex::box, skybox, "skybox").GetGraphic();
     sEntity* entity = sEntity::Create<sEntity>("skybox");
     entity->AddComponent<sMeshRender>(sky, 1000);
 }

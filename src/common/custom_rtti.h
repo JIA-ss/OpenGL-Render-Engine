@@ -3,45 +3,48 @@
 #include <string>
 #include <map>
 
-struct prop_meta
+namespace custom_rtti
+{
+
+struct common_meta
 {
     std::string name;
     size_t size;
-    prop_meta() = default;
+    common_meta() = default;
 };
-struct prop_variant
+
+struct common_variant
 {
-    prop_meta meta;
+    common_meta meta;
     void* ptr;
-    prop_variant() = default;
+    common_variant() = default;
 };
 
-
-struct comp_meta
+template<typename T>
+struct common_meta_container
 {
     std::string name;
     size_t size;
-    std::map<size_t, prop_meta> props = { };
-    comp_meta() = default;
-};
-struct comp_variant
-{
-    comp_meta meta;
-    void* ptr;
-    comp_variant() = default;
+    std::map<size_t, T> props = { };
+    common_meta_container<T>() = default;
 };
 
-
-struct entity_meta
+template<typename T>
+struct common_variant_container
 {
-    std::string name;
-    size_t size;
-    std::map<size_t, comp_meta> comps = { };
-    entity_meta() = default;
-};
-struct entity_variant
-{
-    entity_meta meta;
+    common_meta_container<T> meta;
     void* ptr;
-    entity_variant() = default;
+    common_variant_container<T>() = default;
 };
+
+typedef common_meta                             graphic_meta;
+typedef common_meta                             prop_meta;
+typedef common_meta_container<prop_meta>        comp_meta;
+typedef common_meta_container<comp_meta>        entity_meta;
+
+typedef common_variant                          graphic_variant;
+typedef common_variant                          prop_variant;
+typedef common_variant_container<prop_meta>     comp_variant;
+typedef common_variant_container<comp_meta>    entity_variant;
+
+}

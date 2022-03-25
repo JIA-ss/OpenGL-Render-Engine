@@ -1,6 +1,7 @@
 #pragma once
 #include "GraphicCommonHeader.h"
 #include "resource/types/TextureResource.h"
+#include "GraphicBase.h"
 #include <assimp/material.h>
 #include <unordered_map>
 GRAPHIC_NAMESPACE_BEGIN
@@ -30,8 +31,9 @@ enum TextureType
     CubeMapType = 24,
 };
 
-class Texture
+class Texture : public GraphicBase
 {
+    GRAPHIC_DECLARE
 public:
 	enum InternalFormat
     {
@@ -114,7 +116,7 @@ public:
     int GetHeight() const;
     int GetNRChannel() const;
     const TextureType &GetType() const;
-    void Free();
+    void Free() override;
 
 protected:
     unsigned int m_textureId = 0;

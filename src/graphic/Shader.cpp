@@ -7,6 +7,7 @@
 #include <iostream>
 GRAPHIC_NAMESPACE_USING
 
+GRAPHIC_IMPLEMENT(Shader)
 
 static unsigned int compileShader(const char* vShaderCode, const char* fShaderCode, const char* gShaderCode = nullptr)
 {
@@ -181,6 +182,10 @@ void Shader::setMat4f(const std::string& name, const float* value) const
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value);
 }
 
+void Shader::Free()
+{
+    glDeleteProgram(ID);
+}
 
 template<typename T>
 void Shader::setUniform(const GLuint &location, const T& val)
