@@ -19,6 +19,7 @@ void ShadowMapping::InitLightMatrice()
     Graphic::GlobalShaderParam* sp = Graphic::GlobalShaderParam::Get();
     sp->SubData("GlobalMatrices", 2 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(GetLightSpaceMatrice()));
     sp->SubData("GlobalPositions", 1 * sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(m_view_from));
+    sp->SubData("GlobalPositions", 2 * sizeof(glm::vec4), sizeof(glm::vec2), glm::value_ptr(glm::vec2(m_proj_near, m_proj_far)));
 }
 
 void ShadowMapping::InitDepthMap()
@@ -86,7 +87,8 @@ glm::mat4 ShadowMapping::GetLightSpaceMatrice() const
     glm::mat4 proj(1.0f);
     if (m_proj_near != m_proj_far)
     {
-        proj = glm::ortho(m_proj_left,m_proj_right,m_proj_bottom,m_proj_top,m_proj_near,m_proj_far);
+        proj = glm::perspective(glm::radians(90.f), (float)m_width / (float)m_height, m_proj_near, m_proj_far);
+        //proj = glm::ortho(m_proj_left,m_proj_right,m_proj_bottom,m_proj_top,m_proj_near,m_proj_far);
     }
     else
     {

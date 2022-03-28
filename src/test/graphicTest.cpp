@@ -84,11 +84,18 @@ void GraphicTest::_component_test()
     //Material* mat = new Material("ShadowMapping/ShadowPass", {defaultTexture});
     //Mesh* mesh = new Mesh(Vertex::boxElement, Vertex::box, mat, "mesh");
 
-    GraphicResource _mesh_ = ResourceSystem::LoadGraphicResource<Mesh>("firstMesh", VertexStream::box, "ShadowMapping/ShadowPass", std::vector<std::string>{"Blend/plane.png"}, Diffuse);
+    auto& forward = rdSystem->GetForwardRendering();
+    Texture* diffuseTex = ResourceSystem::LoadGraphicResource<Texture>("Blend/plane.png- Texture", "Blend/plane.png", TextureType::Diffuse).GetGraphic();
+    Texture* depthTex = forward.GetShadowMapingController().GetDepthTexture();
+    Texture* depthAttachTest = ResourceSystem::GetGraphic<Texture>("DepthAttachment- Texture");
+
+
+    GraphicResource _mesh_ = ResourceSystem::LoadGraphicResource<Mesh>("firstMesh", VertexStream::box, "ShadowMapping/ShadowPass", std::vector<Texture* >{diffuseTex, depthTex});
     Mesh* mesh = _mesh_.GetGraphic();
 
     sGameObject* obj = (sGameObject*)sEntity::Create<sGameObject>("default");
     obj->AddComponent<sMeshRender>(mesh);
+    obj->GetComponent<sTransform>()->set_position(glm::vec3(2,0.5,-3));
 
     sEntity* cube = sEntity::Create<sGameObject>("cube");
     cube->AddComponent<sMeshRender>(mesh);

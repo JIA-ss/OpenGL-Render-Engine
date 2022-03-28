@@ -16,10 +16,33 @@ layout(std140) uniform GlobalMatrices
     mat4 lightSpaceMatrice;
 };
 
+layout(std140) uniform GlobalPositions
+{
+    vec3 camPos;
+    vec3 lightPos;
+    vec2 lightNearFar;
+};
+
 uniform mat4 model;
 
+out VS_OUT
+{
+    vec2 near_far;
+    vec3 light_pos;
+    vec4 frag_pos;
+    vec2 lightDistance;
+}vs_out;
 
 void main()
 {
-    gl_Position = lightSpaceMatrice * model * vec4(position, 1.0f);
+    vs_out.near_far = lightNearFar;
+    vs_out.light_pos = lightPos;
+    vs_out.frag_pos = model * vec4(position, 1.0);
+
+    //gl_FragDepth = gl_FragCoord.z;
+    float lightDistance = length(vs_out.frag_pos.xyz - vs_out.light_pos);
+    lightDistance /= vs_out.near_far.y;
+    vs_out.lightDistance = vec2(lightDistance,lightDistance);
+
+    gl_Position = lightSpaceMatrice * vs_out.frag_pos;
 }

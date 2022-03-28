@@ -26,8 +26,12 @@ private:
     int m_width;
     int m_height;
     
-    GLfloat m_proj_left = -10, m_proj_right = 10, m_proj_top = 10, m_proj_bottom = -10, m_proj_near = 1, m_proj_far = 7.5f;
-    glm::vec3 m_view_from = glm::vec3(-2.0f, 4.0f, -1.0f), m_view_to = glm::vec3(0.0f);
+    // for ortho
+    GLfloat m_proj_left = -10, m_proj_right = 10, m_proj_top = 10, m_proj_bottom = -10;
+    
+    // common
+    GLfloat m_proj_near = 1, m_proj_far = 25;
+    glm::vec3 m_view_from = glm::vec3(0, 3.0f, 3.0f), m_view_to = glm::vec3(0.0f);
 
     Graphic::Shader* m_depthShader;
     RenderQueue* _Render_Queue_;

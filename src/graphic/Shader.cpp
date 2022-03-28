@@ -9,7 +9,7 @@ GRAPHIC_NAMESPACE_USING
 
 GRAPHIC_IMPLEMENT(Shader)
 
-static unsigned int compileShader(const char* vShaderCode, const char* fShaderCode, const char* gShaderCode = nullptr)
+static unsigned int compileShader(const char* vShaderCode, const char* fShaderCode, const char* gShaderCode = nullptr, const char* name = nullptr)
 {
     unsigned int shaderProgram, vertex, fragment, geometry;
     int success;
@@ -32,7 +32,7 @@ static unsigned int compileShader(const char* vShaderCode, const char* fShaderCo
     if (!success)
     {
         glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-        std::cout << "Error::Shader::Vertex::Compile Faild\n" << infoLog << std::endl;
+        std::cout << "Error::Shader::Vertex::Compile Faild: " << name << std::endl << infoLog << std::endl;
     }
 
     glCompileShader(fragment);
@@ -40,7 +40,7 @@ static unsigned int compileShader(const char* vShaderCode, const char* fShaderCo
     if (!success)
     {
         glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
-        std::cout << "Error::Shader::Fragment::Compile Faild\n" << infoLog << std::endl;
+        std::cout << "Error::Shader::Fragment::Compile Faild: " << name << std::endl << infoLog << std::endl;
     }
 
     if (gShaderCode)
@@ -50,7 +50,7 @@ static unsigned int compileShader(const char* vShaderCode, const char* fShaderCo
         if (!success)
         {
             glGetShaderInfoLog(geometry, 512, nullptr, infoLog);
-            std::cout << "Error::Shader::Geometry::Compile Faild\n" << infoLog << std::endl;
+            std::cout << "Error::Shader::Geometry::Compile Faild: " << name << std::endl << infoLog << std::endl;
         }
     }
 
@@ -116,7 +116,7 @@ Shader::Shader(const std::string& name)
     const char* fragmentCode = fRef->getContent();
     const char* geometryCode = gRef.isNull() ? nullptr : gRef->getContent();
 
-    ID = compileShader(vertexCode, fragmentCode, geometryCode);
+    ID = compileShader(vertexCode, fragmentCode, geometryCode, name.c_str());
     GlobalShaderParam::Get()->ConfigureShaderParameterBlock(ID);
 }
 

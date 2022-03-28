@@ -148,7 +148,8 @@ Graphic::Texture* FrameBuffer::AddTextureAttachment(
     auto it = m_textureBuffers.find(type);
     if (it == m_textureBuffers.end())
     {
-        Graphic::Texture* texture = new Graphic::Texture(Convert(type), m_width, m_height,internalFormat, dataFormat, dataType);
+        //Graphic::Texture* texture = new Graphic::Texture(Convert(type), m_width, m_height,internalFormat, dataFormat, dataType);
+        Graphic::Texture* texture = ResourceSystem::LoadGraphicResource<Graphic::Texture>(Texture::ToString(Convert(type)) + "- Texture", Convert(type), m_width, m_height,internalFormat, dataFormat, dataType).GetGraphic();
         m_textureBuffers[type] = texture;
         return texture;
     }

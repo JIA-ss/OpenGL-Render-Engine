@@ -25,6 +25,8 @@ public:
 
     void SetRenderPath(Render::RenderPath path);
     Render::RenderPath GetCurRenderPath() const;
+
+    Render::ForwardRendering& GetForwardRendering() { return m_forward; }
 private:
     Entity::Camera* m_mainCamera = nullptr;
     Render::RenderPath m_renderPath;

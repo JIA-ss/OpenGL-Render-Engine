@@ -14,7 +14,8 @@ Material::Material(const std::string& shader, const std::vector<std::string>& te
     std::vector<Texture*> texes;
     for (auto&& tex : textures)
     {
-        texes.push_back(new Texture(tex, type));
+        Texture* t = ResourceSystem::LoadGraphicResource<Texture>(tex + "- Texture", tex, type).GetGraphic();
+        texes.push_back(t);
     }
     m_params.SetTextures(texes);
 }

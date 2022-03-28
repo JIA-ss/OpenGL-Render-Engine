@@ -67,7 +67,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
                 material->GetTexture((aiTextureType)aiType, i, &name);
                 auto path = m_directory + "/" + name.C_Str();
                 
-                Texture *texture = ResourceSystem::LoadGraphicResource<Texture>(path, path, (TextureType)aiType).GetGraphic();
+                Texture *texture = ResourceSystem::LoadGraphicResource<Texture>(path + "- Texture", path, (TextureType)aiType).GetGraphic();
                 textures.push_back(texture);
             }
         }
@@ -87,9 +87,9 @@ void Model::processNode(aiNode *node, const aiScene *scene)
                 shaderPath = "DefaultModel";
         }
 
-        auto mat = ResourceSystem::LoadGraphicResource<Material>(m_id + "-" + matName , shaderPath, textures).GetGraphic();
+        auto mat = ResourceSystem::LoadGraphicResource<Material>(m_id + "- " + matName , shaderPath, textures).GetGraphic();
         mat->SetName(m_id + "-" + matName);
-        Mesh* _mesh_ = ResourceSystem::LoadGraphicResource<Mesh>(m_id + "-Mesh" + std::to_string(i), mesh, mat, std::to_string(mesh->mMaterialIndex)).GetGraphic();
+        Mesh* _mesh_ = ResourceSystem::LoadGraphicResource<Mesh>(m_id + "- Mesh" + std::to_string(i), mesh, mat, std::to_string(mesh->mMaterialIndex)).GetGraphic();
         m_meshes.emplace_back(_mesh_);
     }
     for (size_t i = 0; i < node->mNumChildren; i++)
