@@ -146,7 +146,35 @@ void GraphicTest::_model_forward_()
         entity->AddComponent<sMeshRender>(model->GetMeshes());
         sTransform* transform = entity->GetComponent<sTransform>();
         transform->set_position(objectPositions[i] * 3.0f);
-        transform->set_size(glm::vec3(0.1f));
+        transform->set_size(glm::vec3(0.25f));
+    }
+}
+
+void GraphicTest::_model_deferred_()
+{
+    GlobalShaderParam* gs = GlobalShaderParam::Get();
+    std::vector<glm::vec3> lightPos;
+    std::vector<glm::vec3> lightColor;
+
+    for (int i = 0; i < 5; i++)
+    {
+        // Calculate slightly random offsets
+        GLfloat xPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
+        GLfloat yPos = ((rand() % 100) / 100.0) * 6.0 - 4.0;
+        GLfloat zPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
+        lightPos.push_back(glm::vec3(xPos * 2, yPos * 2, zPos * 2));
+        // Also calculate random color
+        GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        lightColor.push_back(glm::vec3(rColor, gColor, bColor));
     }
 
+    for (int i = 0; i < 5; i++)
+    {
+        gs->SubData("LightPositions", i * sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(lightPos[i]));
+        gs->SubData("LightColors", i * sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(lightColor[i]));
+    }
+    
+    _model_forward_();
 }

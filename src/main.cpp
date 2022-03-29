@@ -8,7 +8,8 @@ void _test()
     //GraphicTest::_shadowMapping_engine();
     //GraphicTest::_cube_map_test_();
     //GraphicTest::_component_test();
-    GraphicTest::_model_forward_();
+    //GraphicTest::_model_forward_();
+    GraphicTest::_model_deferred_();
 }
 
 int main()

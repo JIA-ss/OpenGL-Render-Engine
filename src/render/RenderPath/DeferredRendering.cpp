@@ -12,42 +12,9 @@ RENDER_NAMESPACE_USING
 GRAPHIC_NAMESPACE_USING
 
 
-static void LightParamTest()
-{
-    
-    GlobalShaderParam* gs = GlobalShaderParam::Get();
-
-    std::vector<glm::vec3> lightPos;
-
-    std::vector<glm::vec3> lightColor;
-
-    for (int i = 0; i < 5; i++)
-    {
-        // Calculate slightly random offsets
-        GLfloat xPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
-        GLfloat yPos = ((rand() % 100) / 100.0) * 6.0 - 4.0;
-        GLfloat zPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
-        lightPos.push_back(glm::vec3(xPos, yPos, zPos));
-        // Also calculate random color
-        GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        lightColor.push_back(glm::vec3(rColor, gColor, bColor));
-    }
-
-    for (int i = 0; i < 5; i++)
-    {
-        gs->SubData("LightPositions", i * sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(lightPos[i]));
-        gs->SubData("LightColors", i * sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(lightColor[i]));
-    }
-}
-
-
 void DeferredRendering::InitDeferredPath()
 {
     InitGBuffer(true);
-
-    LightParamTest();
 
     // geometry pass
     m_passes.push_back([this]()
@@ -118,7 +85,6 @@ void DeferredRendering::LightPass()
     //glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //LightParamTest();
     m_outputMesh->draw();
     auto& rq = RenderSystem::Get()->getRenderQueue();
     rq.Render(RenderQueue::Overlay);

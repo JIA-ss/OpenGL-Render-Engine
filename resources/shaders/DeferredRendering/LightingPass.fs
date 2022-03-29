@@ -56,8 +56,8 @@ vec3 LIGHT_COLOR(int input)
 
 void main()
 {             
-    float Linear = 0.7;
-    float Quadratic = 1.8;
+    float Linear = 0.09f;
+    float Quadratic = 0.032f;
     // Retrieve data from gbuffer
     vec3 FragPos = texture(gPosAttachment, TexCoords).rgb;
     vec3 Normal = texture(gNormalAttachment, TexCoords).rgb;
