@@ -1,4 +1,7 @@
 #include "ShaderSetting.h"
+
+#include "system/RenderSystem.h"
+
 #include <iostream>
 GRAPHIC_NAMESPACE_USING
 
@@ -59,7 +62,8 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
     int colorAttachCount = 0;
     int cubemapCount = 0;
 
-    for (size_t texUnit = 0; texUnit < newTextures.size(); texUnit++)
+    size_t texUnit = 0;
+    for (texUnit; texUnit < newTextures.size(); texUnit++)
     {
         const std::string *textureName;
         int count;
@@ -136,6 +140,25 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
         SetParameter(*textureName + std::to_string(count),
                      TextureParamValue(texUnit, newTextures[texUnit]));
     }
+
+    Render::RenderPath curRenderPath = RenderSystem::Get()->GetCurRenderPath();
+    switch (curRenderPath)
+    {
+    case Render::Forward:
+    {
+        break;
+    }
+    case Render::Deferred:
+    {
+        auto& deferredRender = RenderSystem::Get()->GetDeferredRendering();
+        SetParameter("gPosAttachment", TextureParamValue(texUnit++, deferredRender.GetPosTexture()));
+        SetParameter("gNormalAttachment", TextureParamValue(texUnit++, deferredRender.GetNormalTexture()));
+        SetParameter("gColorAttachment", TextureParamValue(texUnit++, deferredRender.GetColorTexture()));
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 template <>
@@ -206,7 +229,7 @@ void ShaderSetting::ShaderParam<ShaderSetting::TextureParamValue>::Use()
             {                                                                                                           \
                 GLint val;                                                                                              \
                 glFunc(program, loc, &val);                                                                             \
-                TextureParamValue actualVal(val, nullptr);                                                              \
+                TextureParamValue actualVal(loc, nullptr);                                                              \
                 m_params.emplace(nameStr, new ShaderParam<TextureParamValue>(actualVal, loc, ShaderParamType::enumType));   \
             }                                                                                                           \
         }                                                                                                               \
@@ -215,6 +238,7 @@ void ShaderSetting::ShaderParam<ShaderSetting::TextureParamValue>::Use()
 
 void ShaderSetting::UpdateParameters(Shader* shader)
 {
+    Render::RenderPath curRenderPath = RenderSystem::Get()->GetCurRenderPath();
     m_params.clear();
     auto program = shader->ID;
     const GLsizei buffSize = 256;
@@ -249,6 +273,17 @@ void ShaderSetting::UpdateParameters(Shader* shader)
             break;
         }
     }
+
+    auto& deferredRender = RenderSystem::Get()->GetDeferredRendering();
+    TextureParamValue* posAttach = GetParameter<TextureParamValue>("gPosAttachment");
+    TextureParamValue* normalAttach = GetParameter<TextureParamValue>("gNormalAttachment");
+    TextureParamValue* colorAttach = GetParameter<TextureParamValue>("gColorAttachment");
+    if (posAttach)
+        posAttach->texture = deferredRender.GetPosTexture();
+    if (normalAttach)
+        normalAttach->texture = deferredRender.GetNormalTexture();
+    if (colorAttach)
+        colorAttach->texture = deferredRender.GetColorTexture();
 }
 
 void* ShaderSetting::GetRawValue(const std::string& name)

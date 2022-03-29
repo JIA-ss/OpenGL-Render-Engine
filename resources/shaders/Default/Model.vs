@@ -12,12 +12,14 @@ layout(std140) uniform GlobalMatrices
 {
     mat4 view;
     mat4 projection;
+    mat4 lightSpaceMatrice;
 };
 
 layout(std140) uniform GlobalPositions
 {
     vec3 camPos;
     vec3 lightPos;
+    vec2 lightNearFar;
 };
 
 layout(std140) uniform GlobalColors
@@ -54,5 +56,5 @@ void main()
     o_pos.uv = texCoord;
 
     o_color.ambient = ambientColor;
-    o_color.light = lightColor;
+    o_color.light = vec3(1.0);
 }

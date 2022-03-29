@@ -41,7 +41,7 @@ Texture::Texture(const TextureRef& tex,
 
 }
 
-Texture::Texture(const std::string& texName, const TextureType& textureType)
+Texture::Texture(const std::string& texName, const TextureType& textureType, TextureMapMode s_mode, TextureMapMode t_mode)
 {
     std::cout << "gen tex: " << texName << "\ttype: " << Texture::ToString(textureType) << std::endl;
     m_textureRef = ResourceSystem::Get()->GetResource(texName.c_str(), eResourceType::texture);
@@ -52,8 +52,8 @@ Texture::Texture(const std::string& texName, const TextureType& textureType)
     glTexImage2D(GL_TEXTURE_2D,0, InternalFormat::RGBAInternal, GetWidth(), GetHeight(), 0, DataFormat::RGBA, DataType::UnsignedByte, data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)s_mode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)t_mode);
 }
 Texture::Texture(const TextureRef& tex, const TextureType& textureType)
 {

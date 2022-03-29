@@ -90,7 +90,7 @@ void GraphicTest::_component_test()
     Texture* depthAttachTest = ResourceSystem::GetGraphic<Texture>("DepthAttachment- Texture");
 
 
-    GraphicResource _mesh_ = ResourceSystem::LoadGraphicResource<Mesh>("firstMesh", VertexStream::box, "ShadowMapping/ShadowPass", std::vector<Texture* >{diffuseTex, depthTex});
+    GraphicResource _mesh_ = ResourceSystem::LoadGraphicResource<Mesh>("firstMesh", VertexStream::box, "ShadowMapping/ShadowPass", std::vector<Texture* >{diffuseTex/*, depthTex*/});
     Mesh* mesh = _mesh_.GetGraphic();
 
     sGameObject* obj = (sGameObject*)sEntity::Create<sGameObject>("default");
@@ -116,4 +116,37 @@ void GraphicTest::_component_test()
     
     sEntity* entity = sEntity::Create<sEntity>("skybox");
     entity->AddComponent<sMeshRender>(sky, 1000);
+}
+
+void GraphicTest::_model_forward_()
+{
+    RenderSystem* rdSystem = RenderSystem::Get();
+    
+    Entity::Camera& cam = rdSystem->getCamera();
+    cam.enableControl(true);
+    cam.setSensitive(0.02f);
+
+    std::vector<glm::vec3> objectPositions = 
+    {
+        glm::vec3(-3.0, -3.0, -3.0),
+        glm::vec3(0.0, -3.0, -3.0),
+        glm::vec3(3.0, -3.0, -3.0),
+        glm::vec3(-3.0, -3.0, 0.0),
+        glm::vec3(0.0, -3.0, 0.0),
+        glm::vec3(3.0, -3.0, 0.0),
+        glm::vec3(-3.0, -3.0, 3.0),
+        glm::vec3(0.0, -3.0, 3.0),
+        glm::vec3(3.0, -3.0, 3.0)
+    };
+
+    Model* model = ResourceSystem::LoadGraphicResource<Model>("model", "nanosuit/nanosuit.obj").GetGraphic();
+    for (int i = 0; i < objectPositions.size(); i++ )
+    {
+        sEntity* entity = sEntity::Create<sGameObject>("model" + std::to_string(i));
+        entity->AddComponent<sMeshRender>(model->GetMeshes());
+        sTransform* transform = entity->GetComponent<sTransform>();
+        transform->set_position(objectPositions[i] * 3.0f);
+        transform->set_size(glm::vec3(0.1f));
+    }
+
 }

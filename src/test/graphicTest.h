@@ -8,4 +8,6 @@ void _shadowMapping_engine();
 void _cube_map_test_();
 
 void _component_test();
+
+void _model_forward_();
 }

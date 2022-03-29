@@ -5,6 +5,23 @@ GRAPHIC_NAMESPACE_USING
 
 GRAPHIC_IMPLEMENT(Model)
 
+static TextureMapMode Convert(aiTextureMapMode mapmode)
+{
+    switch (mapmode)
+    {
+    case aiTextureMapMode_Wrap:
+        return TextureMapMode::Wrap;
+    case aiTextureMapMode_Clamp:
+        return TextureMapMode::Clamp;
+    case aiTextureMapMode_Decal:
+        return TextureMapMode::Decal;
+    case aiTextureMapMode_Mirror:
+        return TextureMapMode::Mirror;
+    default:
+        return TextureMapMode::_Unknown_;
+    }
+}
+
 Model::Model(std::vector<Mesh*> &&meshes)
 {
     m_meshes = std::move(meshes);
@@ -67,7 +84,12 @@ void Model::processNode(aiNode *node, const aiScene *scene)
                 material->GetTexture((aiTextureType)aiType, i, &name);
                 auto path = m_directory + "/" + name.C_Str();
                 
-                Texture *texture = ResourceSystem::LoadGraphicResource<Texture>(path + "- Texture", path, (TextureType)aiType).GetGraphic();
+                aiTextureMapMode s_mode;
+                material->Get(AI_MATKEY_MAPPINGMODE_U(aiType, i), s_mode);
+                aiTextureMapMode t_mode;
+                material->Get(AI_MATKEY_MAPPINGMODE_V(aiType, i), t_mode);
+                
+                Texture *texture = ResourceSystem::LoadGraphicResource<Texture>(path + "- Texture", path, (TextureType)aiType, Convert(s_mode), Convert(t_mode)).GetGraphic();
                 textures.push_back(texture);
             }
         }
@@ -84,7 +106,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
             shaderPath = m_directory + "/" + matName;
             Resource::ShaderRef vRef = ResourceSystem::Get()->GetResource((shaderPath + ".vs").c_str(), Resource::shader);
             if (vRef.isNull())
-                shaderPath = "DefaultModel";
+                shaderPath = "Default/Model";
         }
 
         auto mat = ResourceSystem::LoadGraphicResource<Material>(m_id + "- " + matName , shaderPath, textures).GetGraphic();

@@ -11,6 +11,7 @@ class RenderBuffer
 public:
     enum InternalFormat
     {
+        DepthComponent = GL_DEPTH_COMPONENT,
         Depth24_Stencil8 = GL_DEPTH24_STENCIL8,
         Depth32_Stencil8 = GL_DEPTH32F_STENCIL8,
     };

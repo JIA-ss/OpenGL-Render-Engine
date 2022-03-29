@@ -7,14 +7,15 @@ void _test()
     //std::cout << std::endl;
     //GraphicTest::_shadowMapping_engine();
     //GraphicTest::_cube_map_test_();
-    GraphicTest::_component_test();
+    //GraphicTest::_component_test();
+    GraphicTest::_model_forward_();
 }
 
 int main()
 {
     Engine* engine = Engine::InitEngine();
     RenderSystem* renderSys = RenderSystem::Get();
-    renderSys->SetRenderPath(Render::Forward);
+    renderSys->SetRenderPath(Render::Deferred);
     _test();
 
     engine->StartEngine();

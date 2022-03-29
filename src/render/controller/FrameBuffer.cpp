@@ -1,16 +1,14 @@
 #include "FrameBuffer.h"
 #include "system/ResourceSystem.h"
 #include "component/MeshRender.h"
+#include <set>
+#include <algorithm>
 RENDER_NAMESPACE_USING
 
 FrameBuffer::~FrameBuffer()
 {
     if (m_frameBufferId != 0)
         glDeleteFramebuffers(1, &m_frameBufferId);
-    for (auto it = m_textureBuffers.begin(); it != m_textureBuffers.end(); it++)
-    {
-        delete it->second;
-    }
 
     for (auto it = m_renderBuffers.begin(); it != m_renderBuffers.end(); it++)
     {
@@ -43,14 +41,23 @@ void FrameBuffer::SetUp() const
     if (!m_enable)
         return;
     glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferId);
+    std::vector<GLuint> colors;
     for (auto&&[attachType, texture] : m_textureBuffers)
     {
         glFramebufferTexture2D(GL_FRAMEBUFFER, attachType, GL_TEXTURE_2D, texture->GetId(), 0);
+        if (attachType >= Color0 && attachType < Depth) colors.push_back(attachType);
     }
     for (auto&&[attachType, render] : m_renderBuffers)
     {
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachType, GL_RENDERBUFFER, render->GetId());
     }
+
+    if (!colors.empty())
+    {
+        std::sort(colors.begin(), colors.end());
+        glDrawBuffers(colors.size(), colors.data());
+    }
+
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 }

@@ -31,6 +31,29 @@ enum TextureType
     CubeMapType = 24,
 };
 
+enum TextureMapMode
+{
+    _Unknown_ = 0,
+        /** A texture coordinate u|v is translated to u%1|v%1
+     */
+    Wrap = GL_REPEAT,
+
+    /** Texture coordinates outside [0...1]
+     *  are clamped to the nearest valid value.
+     */
+    Clamp = GL_CLAMP_TO_EDGE,
+
+    /** If the texture coordinates for a pixel are outside [0...1]
+     *  the texture is not applied to that pixel
+     */
+    Decal = GL_CLAMP_TO_EDGE,
+
+    /** A texture coordinate u|v becomes u%1|v%1 if (u-(u%1))%2 is zero and
+     *  1-(u%1)|1-(v%1) otherwise
+     */
+    Mirror = GL_MIRRORED_REPEAT,
+};
+
 class Texture : public GraphicBase
 {
     GRAPHIC_DECLARE
@@ -97,7 +120,7 @@ public:
             const DataFormat &format = DataFormat::RGBA,
             const DataType &type = DataType::UnsignedByte);
 
-    Texture(const std::string& texName, const TextureType& textureType);
+    Texture(const std::string& texName, const TextureType& textureType, TextureMapMode s_mode = Mirror, TextureMapMode t_mode = Mirror);
     Texture(const TextureRef& tex, const TextureType& textureType);
 
     // for FrameBuffer
