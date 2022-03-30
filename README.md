@@ -1,7 +1,6 @@
 # OpenGL-Render-Engine
-Just for study Render Engine
 
-So I'm happy to be contacted if anybody want to study together
+For Study
 
 项目采用了ECS架构设计，便于后续组件的扩展开发
 
