@@ -19,4 +19,4 @@ So I'm happy to be contacted if anybody want to study together
 - Graphic：
   封装了Vertex、Texture、CubeMap、Shader、ShaderSetting、GlobalShader、Material
 - Render：
-  实现了 ForwardRenderPath，封装了Shadow Mapping、PostProcessing、FrameBuffer等相关功能
+  实现了 ForwardRenderPath、DeferredRenderPath，封装了Shadow Mapping、PostProcessing、FrameBuffer等相关功能
