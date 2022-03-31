@@ -8,6 +8,7 @@
 #include <iostream>
 using namespace Resource;
 
+#define ENABLE_LAZY_LOAD true
 
 std::string ResourceSystem::getResourceRootPath(eResourceType type)
 {
@@ -24,29 +25,37 @@ std::string ResourceSystem::getResourceRootPath(eResourceType type)
     }
 }
 
-void ResourceSystem::ImportResource(const char* path, eResourceType type)
+sResourceRef ResourceSystem::ImportResource(const char* path, eResourceType type)
 {
-    std::filesystem::path path_(path);
-    std::string filename = path_.filename().string();
-    sResourceRef ref = GetResource(filename.c_str(), type);
+    std::filesystem::path _relative_path_(path);
+    std::filesystem::path rootPath_(getResourceRootPath(type));
+    _relative_path_ = std::filesystem::relative(_relative_path_, rootPath_);
+    _relative_path_ = std::filesystem::weakly_canonical(_relative_path_);
+    
+    sResourceRef ref = sResourceRef::invalid;
+    ref = GetResource(_relative_path_.string().c_str(), type, false);
     if (ref.isNull())
     {
         ref = Resource::ResourceFactory::ImportResourceByType(path, type);
-        m_resourceMap[type][filename] = ref;
+        if (!ref.isNull())
+            m_resourceMap[type][_relative_path_.string()] = ref;
     }
     else
     {
         ref->loadFromPath(path);
     }
 
-    if (type == shader)
-    {
-        ShaderRef sRef = ref;
-        std::cout << "===" << path << "=== " << "content before" << std::endl;
-        std::cout << sRef->getContent() << std::endl;
-        std::cout << "===" << path << "=== " << "content over" << std::endl;
-    }
+    //if (type == shader && !ref.isNull())
+    //{
+    //    ShaderRef sRef = ref;
+    //    std::cout << "===" << path << "=== " << "content before" << std::endl;
+    //    std::cout << sRef->getContent() << std::endl;
+    //    std::cout << "===" << path << "=== " << "content over" << std::endl;
+    //}
+
+    return ref;
 }
+
 
 void ResourceSystem::InitShaderResource(const std::string& full_path,const std::string& relative_path)
 {
@@ -60,7 +69,7 @@ void ResourceSystem::InitShaderResource(const std::string& full_path,const std::
         std::filesystem::path it_path = it.path();
         if (std::filesystem::is_directory(it_path))
         {
-            InitShaderResource(it_path.string(), relative_path + it_path.filename().string() + "/");
+            InitShaderResource(it_path.string(), relative_path + it_path.filename().string() + "\\");
             continue;
         }
 
@@ -87,7 +96,7 @@ void ResourceSystem::InitTextureResource(const std::string& full_path,const std:
         std::filesystem::path it_path = it.path();
         if (std::filesystem::is_directory(it_path))
         {
-            InitTextureResource(it_path.string(), relative_path + it_path.filename().string() + "/");
+            InitTextureResource(it_path.string(), relative_path + it_path.filename().string() + "\\");
             continue;
         }
         std::string fileType = it_path.extension().string();
@@ -242,6 +251,12 @@ void ResourceSystem::Init()
         assert(false);
         return;
     }
+
+    if (ENABLE_LAZY_LOAD)
+    {
+        std::cout << "Lazy Load Mode" << std::endl;
+        return;
+    }
     for (int i = ResourceTypeBegin + 1; i < ResourceTypeEnd; i++)
     {
         InitResource((eResourceType)i);
@@ -272,11 +287,30 @@ void ResourceSystem::UnInit()
     m_graphices.clear();
 }
 
-sResourceRef ResourceSystem::GetResource(const char* name, eResourceType type)
+sResourceRef ResourceSystem::GetResource(const char* name, eResourceType type, bool loadIfNull)
 {
-    if (m_resourceMap[type].find(name) == m_resourceMap[type].end())
+    std::filesystem::path _name_(name);
+    _name_ = std::filesystem::weakly_canonical(_name_);
+    
+    auto it = m_resourceMap[type].find(_name_.string());
+    if (it != m_resourceMap[type].end())
+        return it->second;
+    if (!ENABLE_LAZY_LOAD || !loadIfNull)
+    {
         return sResourceRef::invalid;
-    return m_resourceMap[type][name];
+    }
+
+    std::string rootPath = getResourceRootPath(type);
+    std::string path = rootPath + "\\" + _name_.string();
+    sResourceRef ref = ImportResource(path.c_str(), type);
+    if (ref.isNull())
+    {
+        auto model_folder = m_rootResourcePath / "models";
+        path = model_folder.string() + "\\" + _name_.string();
+        ref = ImportResource(path.c_str(), type);
+    }
+
+    return ref;
 }
 
 void ResourceSystem::DeleteResource(const char* name, eResourceType type)

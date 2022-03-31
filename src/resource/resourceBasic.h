@@ -53,9 +53,9 @@ public:
     inline size_t getSize() const { return m_rawData.length(); }
     inline bool isReady() const { return m_isReady; }
     const ByteBuffer& rawData() const { return m_rawData; }
-    virtual void loadFromBuffer(ByteBuffer&& buf) { m_rawData = std::move(buf); }
-    virtual void loadFromBuffer(const ByteBuffer& buf) { m_rawData = buf; }
-    virtual void loadFromPath(const char* path) {}
+    virtual bool loadFromBuffer(ByteBuffer&& buf) { m_rawData = std::move(buf); return true; }
+    virtual bool loadFromBuffer(const ByteBuffer& buf) { m_rawData = buf; return true; }
+    virtual bool loadFromPath(const char* path) { return false; }
 };
 
 

@@ -123,9 +123,13 @@ template <class T>
 tResourceRef<T> ResourceFactory::ImportResource(const char *path)
 {
     std::shared_ptr<T> res = std::make_shared<T>();
-    res->loadFromPath(path);
-    tResourceRef<T> resRef(std::dynamic_pointer_cast<BaseResource>(res));
-    return resRef;
+    bool success = res->loadFromPath(path);
+    if (success)
+    {
+        tResourceRef<T> resRef(std::dynamic_pointer_cast<BaseResource>(res));
+        return resRef;
+    }
+    return sResourceRef::invalid;
 }
 
 //template ShaderRef ResourceFactory::ImportResource<ShaderResource>(const char *path);

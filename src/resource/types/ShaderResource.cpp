@@ -3,7 +3,7 @@
 
 using namespace Resource;
 
-void ShaderResource::loadFromPath(const char *path)
+bool ShaderResource::loadFromPath(const char *path)
 {
     m_rawData.clear();
 
@@ -13,10 +13,15 @@ void ShaderResource::loadFromPath(const char *path)
     char *fileContent = nullptr;
     size_t size;
     fileContent = Util::readFile_Native(path, size, true);
+    
+    if (!fileContent)
+        return false;
 
     if (size > 0 && fileContent)
         m_rawData.append(fileContent, size);
 
     delete[] fileContent;
     m_isReady = true;
+
+    return true;
 }

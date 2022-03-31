@@ -18,7 +18,7 @@ static TextureMapMode Convert(aiTextureMapMode mapmode)
     case aiTextureMapMode_Mirror:
         return TextureMapMode::Mirror;
     default:
-        return TextureMapMode::_Unknown_;
+        return TextureMapMode::Wrap;
     }
 }
 
@@ -88,7 +88,6 @@ void Model::processNode(aiNode *node, const aiScene *scene)
                 material->Get(AI_MATKEY_MAPPINGMODE_U(aiType, i), s_mode);
                 aiTextureMapMode t_mode;
                 material->Get(AI_MATKEY_MAPPINGMODE_V(aiType, i), t_mode);
-                
                 Texture *texture = ResourceSystem::LoadGraphicResource<Texture>(path + "- Texture", path, (TextureType)aiType, Convert(s_mode), Convert(t_mode)).GetGraphic();
                 textures.push_back(texture);
             }

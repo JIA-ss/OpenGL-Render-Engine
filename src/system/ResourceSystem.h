@@ -42,8 +42,8 @@ public:
     void Update() override;
     void UnInit() override;
 public:
-    void ImportResource(const char* path, eResourceType type);
-    sResourceRef GetResource(const char* name, eResourceType type);
+    sResourceRef ImportResource(const char* path, eResourceType type);
+    sResourceRef GetResource(const char* name, eResourceType type, bool loadIfNull = true);
     void DeleteResource(const char* name, eResourceType type);
 
 public:

@@ -13,7 +13,7 @@ public:
     const std::string& getName() const { return m_name; }
     const std::string& getPath() const { return m_path; }
     const char* getContent() const { return (char*)rawData().buffer(); }
-    virtual void loadFromPath(const char* path) override;
+    virtual bool loadFromPath(const char* path) override;
 };
 
 typedef tResourceRef<ShaderResource> ShaderRef;

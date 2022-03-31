@@ -1,6 +1,7 @@
 #include "test/graphicTest.h"
 #include "engine/Engine.h"
 #include "system/RenderSystem.h"
+#include "scripts/mainscript.h"
 void _test()
 {
     //Util::testJson();
@@ -16,9 +17,8 @@ int main()
 {
     Engine* engine = Engine::InitEngine();
     RenderSystem* renderSys = RenderSystem::Get();
-    renderSys->SetRenderPath(Render::Deferred);
-    _test();
-
+    renderSys->SetRenderPath(Render::Forward);
+    mainscript();
     engine->StartEngine();
     return 1;
 }

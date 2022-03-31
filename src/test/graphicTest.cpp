@@ -139,7 +139,7 @@ void GraphicTest::_model_forward_()
         glm::vec3(3.0, -3.0, 3.0)
     };
 
-    Model* model = ResourceSystem::LoadGraphicResource<Model>("model", "nanosuit/nanosuit.obj").GetGraphic();
+    Model* model = ResourceSystem::LoadGraphicResource<Model>("model", "aircraft/E 45 Aircraft_obj.obj").GetGraphic();
     for (int i = 0; i < objectPositions.size(); i++ )
     {
         sEntity* entity = sEntity::Create<sGameObject>("model" + std::to_string(i));

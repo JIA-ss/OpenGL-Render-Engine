@@ -154,6 +154,10 @@ void CameraControl::moveFrontOrBack(float targetSensitive, bool isFront)
     else
         cameraPos -= cameraSpeed * cameraFront;
     m_cam->setCameraPos(cameraPos);
+
+    //std::cout << "pos: " << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << " " << std::endl;
+    //std::cout << "front: " << m_cam->getCameraFront().x << " " << m_cam->getCameraFront().y << " " << m_cam->getCameraFront().z << " " << std::endl;
+    //std::cout << "pitch: " << m_cam->getPitch() << std::endl;
 }
 
 void CameraControl::moveUpOrDown(float targetSensitive, bool isUp)
