@@ -290,7 +290,7 @@ void ResourceSystem::UnInit()
 sResourceRef ResourceSystem::GetResource(const char* name, eResourceType type, bool loadIfNull)
 {
     std::filesystem::path _name_(name);
-    _name_ = std::filesystem::weakly_canonical(_name_);
+    //_name_ = std::filesystem::absolute(_name_);
     
     auto it = m_resourceMap[type].find(_name_.string());
     if (it != m_resourceMap[type].end())

@@ -28,6 +28,8 @@ public:
 
     Render::ForwardRendering& GetForwardRendering() { return m_forward; }
     Render::DeferredRendering& GetDeferredRendering() { return m_deferred; }
+
+    inline bool UseRayTracing() const { return m_switchRayTracing; }
 private:
     Entity::Camera* m_mainCamera = nullptr;
     Render::RenderPath m_renderPath;
@@ -36,4 +38,5 @@ private:
     Render::DeferredRendering m_deferred;
 
     Render::RenderQueue m_renderQueue;
+    bool m_switchRayTracing = true;
 };

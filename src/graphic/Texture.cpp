@@ -5,6 +5,33 @@ GRAPHIC_NAMESPACE_USING
 GRAPHIC_IMPLEMENT(Texture)
 
 std::unordered_map<std::string, Texture> Texture::collection = std::unordered_map<std::string, Texture>();
+Texture::Texture(const unsigned char* texBuf,  int width, int height,         
+            const InternalFormat &internalFormat,
+            const DataFormat &format,
+            const DataType &type)
+{
+    m_width = width;
+    m_height = height;
+    m_internalFormat = internalFormat;
+    m_dataFormat = format;
+    m_dataType = type;
+    m_type = Diffuse;
+    glGenTextures(1, &m_textureId);
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    glTexImage2D(GL_TEXTURE_2D,0, internalFormat, width, height, 0, format, type, texBuf);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    std::cout << "gen tex: " << GetName() << "\ttype: " << Texture::ToString(m_type) << std::endl;
+}
+
+void Texture::UpdateBuffer(unsigned char* buf)
+{
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    glTexImage2D(GL_TEXTURE_2D,0, m_internalFormat, m_width, m_height, 0, m_dataFormat, m_dataType, buf);
+}
+
 
 Texture::Texture(const std::string& texName,            
             const InternalFormat &internalFormat,

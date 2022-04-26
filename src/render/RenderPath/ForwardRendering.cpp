@@ -12,6 +12,18 @@ void ForwardRendering::InitForwardPath()
     m_shadowMapping.Init();
     m_shadowMapping.SetUp(Engine::GetWindowWidth(), Engine::GetWindowHeight(), &RenderSystem::Get()->getRenderQueue());
 
+    if (RenderSystem::Get()->UseRayTracing())
+    {
+        m_passes.push_back([=](){
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glClearColor(0,0,0,1);
+            GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+            glClear(mask);
+            this->GetRayTracingController().Update();
+        });
+        return;
+    }
+
     // 1st pass
     m_passes.push_back([this]()
     {

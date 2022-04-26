@@ -110,6 +110,10 @@ public:
 
 public:
     Texture() = default;
+    Texture(const unsigned char* texBuf, int width, int height,         
+            const InternalFormat &internalFormat = InternalFormat::RGBAInternal,
+            const DataFormat &format = DataFormat::RGBA,
+            const DataType &type = DataType::UnsignedByte);
     Texture(const std::string& texName,            
             const InternalFormat &internalFormat = InternalFormat::RGBAInternal,
             const DataFormat &format = DataFormat::RGBA,
@@ -140,7 +144,7 @@ public:
     int GetNRChannel() const;
     const TextureType &GetType() const;
     void Free() override;
-
+    void UpdateBuffer(unsigned char* buf);
 protected:
     unsigned int m_textureId = 0;
     TextureType m_type = TextureType::None;
@@ -148,6 +152,9 @@ private:
     TextureRef m_textureRef;
     int m_width = 0;
     int m_height = 0;
+    InternalFormat m_internalFormat;
+    DataFormat m_dataFormat;
+    DataType m_dataType;
 
 public:
     static Texture* Get(const std::string& id);

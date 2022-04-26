@@ -86,7 +86,20 @@
         "random": "cpp",
         "span": "cpp",
         "*.idl": "cpp",
-        "*.def": "cpp"
+        "*.def": "cpp",
+        "any": "cpp",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "csetjmp": "cpp",
+        "cwctype": "cpp",
+        "future": "cpp",
+        "memory_resource": "cpp",
+        "optional": "cpp",
+        "ranges": "cpp",
+        "scoped_allocator": "cpp",
+        "shared_mutex": "cpp",
+        "strstream": "cpp",
+        "typeindex": "cpp"
     },
     "cmake.configureOnOpen": true
 }

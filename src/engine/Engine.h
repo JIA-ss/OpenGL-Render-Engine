@@ -7,7 +7,7 @@
 #include <functional>
 
 #define DEFAULT_WINDOW_WIDTH    1600
-#define DEFAULT_WINDOW_HEIGHT   1024
+#define DEFAULT_WINDOW_HEIGHT   900
 #define DEFAULT_WINDOW_TITLE    "JoshuaEngine"
 
 class Engine
