@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "Triangle.h"
 #include "system/ResourceSystem.h"
 GRAPHIC_NAMESPACE_USING
 GRAPHIC_IMPLEMENT(Mesh)
@@ -43,6 +44,34 @@ Mesh::Mesh(aiMesh *mesh, Material *m, const std::string &name) : m_material(m), 
     m_material = m;
     loadFromAssimp(mesh);
     SetUpMesh();
+}
+
+void RecordTriangles(const std::vector<Vertex>& vertex, const std::vector<GLuint>& indices)
+{
+    for(int i = 0; i < indices.size(); i+=3)
+    {
+        Triangle::collections.emplace_back(
+            Triangle(
+                vertex[indices[i]].position, 
+                vertex[indices[i+1]].position, 
+                vertex[indices[i+2]].position
+                )
+            );
+    }
+
+    if (indices.empty())
+    {
+        for (int i = 0; i <vertex.size(); i+=3)
+        {
+                    Triangle::collections.emplace_back(
+            Triangle(
+                vertex[i].position, 
+                vertex[i+1].position, 
+                vertex[i+2].position
+                )
+            );
+        }
+    }
 }
 
 void Mesh::SetUpMesh()
