@@ -19,4 +19,7 @@ For Study
   封装了Vertex、Texture、CubeMap、Shader、ShaderSetting、GlobalShader、Material
 - Render：
   实现了 ForwardRenderPath、DeferredRenderPath，封装了Shadow Mapping、PostProcessing、FrameBuffer等相关功能
+  
+  
+  最近实现了 CPU的 Ray Tracing， 简单记录下，后续会 通过BVH优化，然后再encode 到GPU渲染
 ![ec1c3894d318c528808fcf3338365d4](https://user-images.githubusercontent.com/62920066/165901850-e3727ce7-0c64-40e8-8c23-1162596cfc86.png)
