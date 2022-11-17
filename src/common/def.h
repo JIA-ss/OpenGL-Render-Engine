@@ -51,7 +51,7 @@ private:                                                                        
     _TYPE_ m_##_NAME_ = registerPropertyId<_TYPE_>(#_NAME_, _VALUE_, &m_##_NAME_);              \
 public:                                                                                         \
     _TYPE_ get_##_NAME_() const { return m_##_NAME_; }                                          \
-    void set_##_NAME_(_TYPE_& val, bool notify = true)                                          \
+    void set_##_NAME_(const _TYPE_& val, bool notify = true)                                          \
     {                                                                                           \
         if (m_##_NAME_ != val)                                                                  \
         {                                                                                       \
@@ -69,7 +69,7 @@ private:                                                                        
     _TYPE_ m_##_NAME_ = registerPropertyId<_TYPE_>(#_NAME_, _VALUE_, &m_##_NAME_);              \
 public:                                                                                         \
     _TYPE_ get_##_NAME_() const { return m_##_NAME_; }                                          \
-    void set_##_NAME_(_TYPE_& val, bool notify = true)                                          \
+    void set_##_NAME_(const _TYPE_& val, bool notify = true)                                          \
     {                                                                                           \
         m_##_NAME_ = val;                                                                       \
         if (notify)                                                                             \

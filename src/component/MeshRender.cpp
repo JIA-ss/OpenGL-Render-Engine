@@ -97,7 +97,7 @@ void sMeshRender::OnEnable()
     sTransform* transform = entity->GetComponent<sTransform>();
     if (transform)
     {
-        auto& children = transform->getChildren();
+        auto children = transform->getChildren();
         for (auto& child : children)
         {
             Entity::sEntity* childEntity = child->get_entity();
@@ -116,7 +116,7 @@ void sMeshRender::OnDisable()
     sTransform* transform = entity->GetComponent<sTransform>();
     if (transform)
     {
-        auto& children = transform->getChildren();
+        auto children = transform->getChildren();
         for (auto& child : children)
         {
             Entity::sEntity* childEntity = child->get_entity();

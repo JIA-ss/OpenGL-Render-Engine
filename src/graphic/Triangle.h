@@ -26,9 +26,18 @@ public:
         { 
             center = (a + b + c)  / 3.0f;
         }
-    TRIANGLE_COMPARE_FUNC(x)
-    TRIANGLE_COMPARE_FUNC(y)
-    TRIANGLE_COMPARE_FUNC(z)
+    static bool cmp_x(const Triangle& t1, const Triangle& t2) { return t1.center.x < t2.center.x; }
+    static bool cmp_y(const Triangle& t1, const Triangle& t2) { return t1.center.y < t2.center.y; }
+    static bool cmp_z(const Triangle& t1, const Triangle& t2) { return t1.center.z < t2.center.z; }
+    inline float min_x() { return std::min(p1.x, std::min(p2.x, p3.x)); }
+    inline float min_y() { return std::min(p1.y, std::min(p2.y, p3.y)); }
+    inline float min_z() { return std::min(p1.z, std::min(p2.z, p3.z)); }
+    inline float max_x() { return std::max(p1.x, std::max(p2.x, p3.x)); }
+    inline float max_y() { return std::max(p1.y, std::max(p2.y, p3.y)); }
+    inline float max_z() { return std::max(p1.z, std::max(p2.z, p3.z)); }
+    //TRIANGLE_COMPARE_FUNC(x)
+    //TRIANGLE_COMPARE_FUNC(y)
+    //TRIANGLE_COMPARE_FUNC(z)
     bool IsInnerPoint(const glm::vec3& p) const;
     float Hit(const Ray& r) const;
     static std::vector<Triangle> collections;

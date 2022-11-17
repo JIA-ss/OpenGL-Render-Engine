@@ -49,7 +49,8 @@ std::map<unsigned int, RenderQueue::RenderSet>& RenderQueue::GetTargetOrderQueue
     default:
         break;
     }
-    return std::map<unsigned int, RenderSet>{};
+    static std::map<unsigned int, RenderSet> invalid{};
+    return invalid;
 }
 
 void RenderQueue::Enqueue(Component::sMeshRender* meshRender,unsigned int order)

@@ -27,7 +27,7 @@ struct sAtlasCell
 };
 
 
-class AtlasTextureResource : private TextureResource
+class AtlasTextureResource : public TextureResource
 {
 private:
     std::vector<sAtlasCell> m_metas;

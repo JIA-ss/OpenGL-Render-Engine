@@ -79,7 +79,7 @@ sEntity* sEntity::Clone(sEntity* entity)
     {
         sTransform* new_transform = new_entity->GetComponent<sTransform>();
         
-        auto& children = transform->getChildren();
+        auto children = transform->getChildren();
         for (auto& child : children)
         {
             sEntity* new_childEntity = Clone(child->get_entity());

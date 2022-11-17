@@ -280,9 +280,9 @@ void WriteColorBuffer(unsigned char* buffer, int x, int y, int width, int height
 
     unsigned char col[4] = 
     {
-        static_cast<int>(255 * std::clamp(r, 0.0f, 0.999f)), 
-        static_cast<int>(255 * std::clamp(g, 0.0f, 0.999f)), 
-        static_cast<int>(255 * std::clamp(b, 0.0f, 0.999f)), 
+        static_cast<unsigned char>(static_cast<int>(255 * std::clamp(r, 0.0f, 0.999f))), 
+        static_cast<unsigned char>(static_cast<int>(255 * std::clamp(g, 0.0f, 0.999f))), 
+        static_cast<unsigned char>(static_cast<int>(255 * std::clamp(b, 0.0f, 0.999f))), 
         255
     };
     memcpy(buffer + y * width * 4 + x * 4, col, 4);
