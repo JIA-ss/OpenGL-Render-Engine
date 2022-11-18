@@ -1,5 +1,6 @@
 #include "resourceBasic.h"
 #include "tools/ioUtil.h"
+#include <memory>
 #include <string.h>
 #include "types/ShaderResource.h"
 #include "types/TextureResource.h"
@@ -126,7 +127,10 @@ tResourceRef<T> ResourceFactory::ImportResource(const char *path)
     bool success = res->loadFromPath(path);
     if (success)
     {
-        tResourceRef<T> resRef(std::dynamic_pointer_cast<BaseResource>(res));
+        std::shared_ptr<BaseResource> proxy = std::dynamic_pointer_cast<BaseResource>(res);
+        assert(proxy);
+        tResourceRef<T> resRef(proxy);
+        assert(!resRef.isNull());
         return resRef;
     }
     return sResourceRef::invalid;

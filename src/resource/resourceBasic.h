@@ -86,11 +86,8 @@ public:
     tResourceRef() : sResourceRef() {}
     tResourceRef(const sResourceRef& other)
     {
-        if (other.getType() == m_type)
-        {
-            sResourceRef& _this = (*this);
-            _this = other;
-        }
+        sResourceRef& _this = (*this);
+        _this = other;
     }
 
     inline std::shared_ptr<T> get() const { return std::dynamic_pointer_cast<T>(m_resource); }

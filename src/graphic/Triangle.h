@@ -7,12 +7,6 @@
 #include <vector>
 GRAPHIC_NAMESPACE_BEGIN
 
-
-#define TRIANGLE_COMPARE_FUNC(_DIR_)    \
-    static bool cmp_##_DIR_(const Triangle& t1, const Triangle& t2) { return t1.center.##_DIR_ < t2.center.##_DIR_; }    \
-    inline float min_##_DIR_() const { return std::min(p1.##_DIR_, std::min(p2.##_DIR_, p3.##_DIR_)); } \
-    inline float max_##_DIR_() const { return std::max(p1.##_DIR_, std::max(p2.##_DIR_, p3.##_DIR_)); }
-
 class Ray;
 struct HitResult;
 class Triangle
@@ -35,9 +29,6 @@ public:
     inline float max_x() { return std::max(p1.x, std::max(p2.x, p3.x)); }
     inline float max_y() { return std::max(p1.y, std::max(p2.y, p3.y)); }
     inline float max_z() { return std::max(p1.z, std::max(p2.z, p3.z)); }
-    //TRIANGLE_COMPARE_FUNC(x)
-    //TRIANGLE_COMPARE_FUNC(y)
-    //TRIANGLE_COMPARE_FUNC(z)
     bool IsInnerPoint(const glm::vec3& p) const;
     float Hit(const Ray& r) const;
     static std::vector<Triangle> collections;
