@@ -38,5 +38,5 @@ private:
     Render::DeferredRendering m_deferred;
 
     Render::RenderQueue m_renderQueue;
-    bool m_switchRayTracing = true;
+    bool m_switchRayTracing = false;
 };
