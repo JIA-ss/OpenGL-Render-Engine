@@ -25,6 +25,3 @@ For Study
 ![ec1c3894d318c528808fcf3338365d4](https://user-images.githubusercontent.com/62920066/165901850-e3727ce7-0c64-40e8-8c23-1162596cfc86.png)
 
 
-
-- TODO:
-之前代码写的太垃圾了，打算重构一波，保留一些渲染相关的核心逻辑，引入entt库来大换血
