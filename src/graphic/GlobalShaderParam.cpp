@@ -1,4 +1,5 @@
 #include "GlobalShaderParam.h"
+#include "Tracy.hpp"
 
 GRAPHIC_NAMESPACE_USING
 
@@ -8,6 +9,7 @@ GlobalShaderParam::GlobalShaderParam()
 GlobalShaderParam* GlobalShaderParam::instance = nullptr;
 GlobalShaderParam *GlobalShaderParam::Get()
 {
+    ZoneScopedN("GlobalShaderParam::Get");
     if (instance)
     {
         return instance;
@@ -22,6 +24,7 @@ GlobalShaderParam *GlobalShaderParam::Get()
 
 GLuint GlobalShaderParam::GenBlock(const std::string& name, const GLsizeiptr &size, const void* data)
 {
+    ZoneScopedN("GlobalShaderParam::GenBlock");
     assert(m_params.find(name) == m_params.end());
 
     static unsigned int index = 0;
@@ -37,6 +40,7 @@ GLuint GlobalShaderParam::GenBlock(const std::string& name, const GLsizeiptr &si
 
 void GlobalShaderParam::SubData(const GLuint& UBO, const GLintptr &offset, const GLsizeiptr &size, const void *data)
 {
+    ZoneScopedN("GlobalShaderParam::SubData");
     glBindBuffer(GL_UNIFORM_BUFFER, UBO);
     glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -44,6 +48,7 @@ void GlobalShaderParam::SubData(const GLuint& UBO, const GLintptr &offset, const
 
 void GlobalShaderParam::SubData(const std::string& name, const GLintptr& offset, const GLsizeiptr& size, const void* data)
 {
+    ZoneScopedN("GlobalShaderParam::SubData");
     auto it = m_params.find(name);
     assert(it != m_params.end());
     GLuint UBO = it->second.ubo;
@@ -52,6 +57,7 @@ void GlobalShaderParam::SubData(const std::string& name, const GLintptr& offset,
 
 void GlobalShaderParam::ConfigureShaderParameterBlock(const GLuint& program)
 {
+    ZoneScopedN("GlobalShaderParam::ConfigureShaderParameterBlock");
     for (auto& [name, meta] : m_params)
     {
         auto uniformBlockIndex = glGetUniformBlockIndex(program, name.data());
@@ -62,6 +68,7 @@ void GlobalShaderParam::ConfigureShaderParameterBlock(const GLuint& program)
 
 GLuint GlobalShaderParam::GetGlobalParameterIndex(const std::string& name)
 {
+    ZoneScopedN("GlobalShaderParam::GetGlobalParameterIndex");
     auto it = m_params.find(name);
     assert(it != m_params.end());
     return it->second.index;
@@ -69,6 +76,7 @@ GLuint GlobalShaderParam::GetGlobalParameterIndex(const std::string& name)
 
 GLuint GlobalShaderParam::GetGlobalParameterUBO(const std::string& name)
 {
+    ZoneScopedN("GlobalShaderParam::GetGlobalParameterUBO");
     auto it = m_params.find(name);
     assert(it != m_params.end());
     return it->second.ubo;

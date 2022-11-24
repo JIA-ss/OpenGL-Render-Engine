@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Tracy.hpp"
 #include "render/RenderCommonHeader.h"
 
 #include <functional>
@@ -23,6 +24,7 @@ public:
 
     void Init(RenderPath path = Forward) 
     {
+        ZoneScopedN("RenderPathBase::Init");
         switch (path)
         {
         case Forward:
@@ -41,6 +43,7 @@ public:
 
     void RenderPasses()
     {
+        ZoneScopedN("RenderPathBase::RenderPasses");
         for (auto& pass : m_passes)
         {
             pass();

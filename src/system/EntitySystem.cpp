@@ -3,6 +3,7 @@
 
 void EntitySystem::Update()
 {
+    ZoneScopedN("EntitySystem::Update");
     auto it = m_dirtyTransforms.begin();
     while(it != m_dirtyTransforms.end())
     {
@@ -17,6 +18,7 @@ void EntitySystem::Update()
 
 void EntitySystem::UnInit()
 {
+    ZoneScopedN("EntitySystem::UnInit");
     auto it = m_entities.begin();
     while (it != m_entities.end())
     {

@@ -10,6 +10,7 @@ Texture::Texture(const unsigned char* texBuf,  int width, int height,
             const DataFormat &format,
             const DataType &type)
 {
+    ZoneScopedN("Texture::Texture");
     m_width = width;
     m_height = height;
     m_internalFormat = internalFormat;
@@ -28,6 +29,7 @@ Texture::Texture(const unsigned char* texBuf,  int width, int height,
 
 void Texture::UpdateBuffer(unsigned char* buf)
 {
+    ZoneScopedN("Texture::UpdateBuffer");
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     glTexImage2D(GL_TEXTURE_2D,0, m_internalFormat, m_width, m_height, 0, m_dataFormat, m_dataType, buf);
 }
@@ -38,6 +40,7 @@ Texture::Texture(const std::string& texName,
             const DataFormat &format,
             const DataType &type)
 {
+    ZoneScopedN("Texture::Texture");
     m_textureRef = ResourceSystem::Get()->GetResource(texName.c_str(), eResourceType::texture);
     const ubyte* data = m_textureRef->getTextureData();
     glGenTextures(1, &m_textureId);
@@ -55,6 +58,7 @@ Texture::Texture(const TextureRef& tex,
             const DataFormat &format,
             const DataType &type)
 {
+    ZoneScopedN("Texture::Texture");
     m_textureRef = tex;
     const ubyte* data = m_textureRef->getTextureData();
     glGenTextures(1, &m_textureId);
@@ -70,6 +74,7 @@ Texture::Texture(const TextureRef& tex,
 
 Texture::Texture(const std::string& texName, const TextureType& textureType, TextureMapMode s_mode, TextureMapMode t_mode)
 {
+    ZoneScopedN("Texture::Texture");
     std::cout << "gen tex: " << texName << "\ttype: " << Texture::ToString(textureType) << std::endl;
     m_textureRef = ResourceSystem::Get()->GetResource(texName.c_str(), eResourceType::texture);
     m_type = textureType;
@@ -84,6 +89,7 @@ Texture::Texture(const std::string& texName, const TextureType& textureType, Tex
 }
 Texture::Texture(const TextureRef& tex, const TextureType& textureType)
 {
+    ZoneScopedN("Texture::Texture");
     m_textureRef = tex;
     m_type = textureType;
     const ubyte* data = m_textureRef->getTextureData();
@@ -103,6 +109,7 @@ Texture::Texture(const TextureType& textureType,
             const DataFormat &format,
             const DataType &type)
 {
+    ZoneScopedN("Texture::Texture");
     m_type = textureType;
     m_height = height;
     m_width = width;
@@ -119,6 +126,7 @@ Texture::Texture(const TextureType& textureType,
 
 void Texture::Free()
 {
+    ZoneScopedN("Texture::Free");
     glDeleteTextures(1, &m_textureId);
     m_textureId = 0;
 }

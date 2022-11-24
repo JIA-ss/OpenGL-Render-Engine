@@ -16,6 +16,7 @@ public:
     static Engine*  Instance();
     static void     SetWindowInfo(int width, int height, const std::string& title);
     static Engine*  InitEngine();
+    static Engine*  InitCustomEngine();
 
     static int      GetWindowWidth() { return _window_width_; }
     static int      GetWindowHeight() { return _window_height_; }

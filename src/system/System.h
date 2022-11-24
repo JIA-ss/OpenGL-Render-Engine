@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <Tracy.hpp>
 
 #define SYSTEM_STATIC_TYPE(_CLASS_, _TYPE_)                                             \
 public:                                                                                 \
@@ -33,6 +34,7 @@ public:
         RenderSystem,
 
 
+        CustomSystem,
         End
     };
 public:

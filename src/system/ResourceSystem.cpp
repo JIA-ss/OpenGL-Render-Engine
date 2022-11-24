@@ -27,6 +27,7 @@ std::string ResourceSystem::getResourceRootPath(eResourceType type)
 
 sResourceRef ResourceSystem::ImportResource(const char* path, eResourceType type)
 {
+    ZoneScopedN("ResourceSystem::ImportResource");
     std::filesystem::path _relative_path_(path);
     std::filesystem::path rootPath_(getResourceRootPath(type));
     _relative_path_ = std::filesystem::relative(_relative_path_, rootPath_);
@@ -59,6 +60,7 @@ sResourceRef ResourceSystem::ImportResource(const char* path, eResourceType type
 
 void ResourceSystem::InitShaderResource(const std::string& full_path,const std::string& relative_path)
 {
+    ZoneScopedN("ResourceSystem::InitShaderResource");
     std::filesystem::path path = getResourceRootPath(shader);
     if (!full_path.empty())
         path = full_path;
@@ -86,6 +88,7 @@ void ResourceSystem::InitShaderResource(const std::string& full_path,const std::
 
 void ResourceSystem::InitTextureResource(const std::string& full_path,const std::string& relative_path)
 {
+    ZoneScopedN("ResourceSystem::InitTextureResource");
     std::filesystem::path path = getResourceRootPath(texture);
     if (!full_path.empty())
         path = full_path;
@@ -192,6 +195,7 @@ void ResourceSystem::InitAtlasTextureResource(const std::string& path,const std:
 
 void ResourceSystem::InitResource(eResourceType type)
 {
+    ZoneScopedN("ResourceSystem::InitResource");
     std::filesystem::path path = getResourceRootPath(type);
 
     switch (type)
@@ -242,6 +246,7 @@ void ResourceSystem::InitResource(eResourceType type)
 
 void ResourceSystem::Init()
 {
+    ZoneScopedN("ResourceSystem::Init");
     //m_rootResourcePath = Util::getSrcPath().parent_path() / "resources";
     //m_rootResourcePath = std::filesystem::path("F:\\StudyProj\\openGLStudy\\review\\resources");
     m_rootResourcePath = Util::getResourcePath();
@@ -265,7 +270,7 @@ void ResourceSystem::Init()
 
 void ResourceSystem::Update()
 {
-    
+    ZoneScopedN("ResourceSystem::Update");
 }
 
 void ResourceSystem::UnInit()

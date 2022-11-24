@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <Tracy.hpp>
 typedef unsigned char ubyte;
 typedef signed char sbyte;
 

@@ -259,6 +259,7 @@ void CameraControl::resolveResponse(CameraActions dir, float value) const
 
 void CameraControl::processActions() const
 {
+    ZoneScopedN("CameraControl::processActions");
     if (!m_enable)
         return;
     processMouseActions();
@@ -271,6 +272,7 @@ void CameraControl::processActions() const
 
 void Camera::update()
 {
+    ZoneScopedN("Camera::update");
     processControl();
     Graphic::GlobalShaderParam* gsp = Graphic::GlobalShaderParam::Get();
 

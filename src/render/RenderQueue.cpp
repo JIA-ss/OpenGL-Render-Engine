@@ -3,6 +3,7 @@
 #include "component/Transform.h"
 
 #include "system/RenderSystem.h"
+#include <Tracy.hpp>
 RENDER_NAMESPACE_USING
 
 bool RenderQueue::RenderElement::operator<(const RenderQueue::RenderElement& re) const 
@@ -12,6 +13,7 @@ bool RenderQueue::RenderElement::operator<(const RenderQueue::RenderElement& re)
 
 RenderQueue::TransparentRenderElement::TransparentRenderElement(Component::sMeshRender* _mesh)
 {
+    ZoneScopedN("RenderQueue::TransparentRenderElement::TransparentRenderElement");
     glm::vec3 cam_pos = RenderSystem::Get()->getCamera().getCameraPos();
     mesh = _mesh;
     Component::sTransform* trans =  mesh->get_entity()->GetComponent<Component::sTransform>();
@@ -55,12 +57,14 @@ std::map<unsigned int, RenderQueue::RenderSet>& RenderQueue::GetTargetOrderQueue
 
 void RenderQueue::Enqueue(Component::sMeshRender* meshRender,unsigned int order)
 {
+    ZoneScopedN("RenderQueue::Enqueue");
     auto& targetQue = GetTargetOrderQueue(GetTargetOrder(order));
     RenderElement element(meshRender);
     targetQue[order].insert(element);
 }
 void RenderQueue::Dequeue(Component::sMeshRender* meshRender,unsigned int order)
 {
+    ZoneScopedN("RenderQueue::Dequeue");
     auto& targetQue = GetTargetOrderQueue(GetTargetOrder(order));
     RenderElement element(meshRender);
     auto it = targetQue[order].find(element);
@@ -71,13 +75,14 @@ void RenderQueue::Dequeue(Component::sMeshRender* meshRender,unsigned int order)
 
 void RenderQueue::Render(Order order, Graphic::Shader* shader)
 {
-
+    ZoneScopedN("RenderQueue::Render");
     if (order == Transparent)
     {
         RenderTransparentObj(shader);
     }
     else
     {
+        ZoneScopedN("RenderQueue::Render Scene");
         if (order == Order::Background)
             glDepthFunc(GL_LEQUAL);
         
@@ -100,7 +105,7 @@ void RenderQueue::Render(Order order, Graphic::Shader* shader)
 
 void RenderQueue::RenderTransparentObj(Graphic::Shader* shader)
 {
-
+    ZoneScopedN("RenderQueue::RenderTransparentObj");
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     

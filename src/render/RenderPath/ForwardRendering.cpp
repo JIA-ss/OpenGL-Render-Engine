@@ -5,6 +5,7 @@ RENDER_NAMESPACE_USING
 
 void ForwardRendering::InitForwardPath()
 {
+    ZoneScopedN("ForwardRendering::InitForwardPath");
     m_postProcessing.SetActive(true);
     m_shadowMapping.SetActive(true);
 

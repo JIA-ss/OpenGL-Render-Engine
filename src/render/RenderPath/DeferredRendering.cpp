@@ -14,6 +14,7 @@ GRAPHIC_NAMESPACE_USING
 
 void DeferredRendering::InitDeferredPath()
 {
+    ZoneScopedN("DeferredRendering::InitDeferredPath");
     InitGBuffer(true);
 
     // geometry pass
@@ -36,6 +37,7 @@ void DeferredRendering::InitDeferredPath()
 
 void DeferredRendering::InitGBuffer(bool active)
 {
+    ZoneScopedN("DeferredRendering::InitGBuffer");
     if (active)
     {
         // Set up G-Buffer
@@ -73,6 +75,7 @@ void DeferredRendering::InitGBuffer(bool active)
 
 void DeferredRendering::GeomertyPass()
 {
+    ZoneScopedN("DeferredRendering::GeomertyPass");
     m_gBuffer.Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     auto& rq = RenderSystem::Get()->getRenderQueue();
@@ -82,6 +85,7 @@ void DeferredRendering::GeomertyPass()
 
 void DeferredRendering::LightPass()
 {
+    ZoneScopedN("DeferredRendering::LightPass");
     //glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

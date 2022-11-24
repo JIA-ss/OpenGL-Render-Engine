@@ -2,6 +2,7 @@
 
 void InputSystem::Init()
 {
+    ZoneScopedN("InputSystem::Init");
     m_windowSystem = SystemManager::Instance()->GetSystem<::WindowSystem>();
     glfwSetScrollCallback(m_windowSystem->getGLFWwindow(), [](GLFWwindow* window, double v1, double v2){
         SystemManager::Instance()->GetSystem<::InputSystem>()->scroll_callback(window,v1,v2);
@@ -10,6 +11,7 @@ void InputSystem::Init()
 
 void InputSystem::Update()
 {
+    ZoneScopedN("InputSystem::Update");
     double xPos, yPos;
     glfwGetCursorPos(m_windowSystem->getGLFWwindow(), &xPos, &yPos);
     m_lastFrameMousePos = m_curFrameMousePos;

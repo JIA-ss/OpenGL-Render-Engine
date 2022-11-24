@@ -7,6 +7,7 @@ RENDER_NAMESPACE_USING
 
 FrameBuffer::~FrameBuffer()
 {
+    ZoneScopedN("FrameBuffer::~FrameBuffer");
     if (m_frameBufferId != 0)
         glDeleteFramebuffers(1, &m_frameBufferId);
 
@@ -20,6 +21,7 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::Init()
 {
+    ZoneScopedN("FrameBuffer::Init");
     if (m_enable)
     {
         if (m_frameBufferId != 0)
@@ -38,6 +40,7 @@ void FrameBuffer::Init()
 }
 void FrameBuffer::SetUp() const
 {
+    ZoneScopedN("FrameBuffer::SetUp");
     if (!m_enable)
         return;
     glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferId);
@@ -64,6 +67,7 @@ void FrameBuffer::SetUp() const
 
 void FrameBuffer::Bind() const
 {
+    ZoneScopedN("FrameBuffer::Bind");
     if (!IsValid())
         return;
     glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferId);
@@ -85,6 +89,7 @@ void FrameBuffer::Bind() const
 
 void FrameBuffer::UnBind(GLuint targetBuffer) const
 {
+    ZoneScopedN("FrameBuffer::UnBind");
     if (!IsValid())
         return;
     glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
@@ -96,11 +101,12 @@ GLbitfield FrameBuffer::ClearMask() const
 }
 void FrameBuffer::Update() const
 {
-
+    ZoneScopedN("FrameBuffer::Update");
 }
 
 void FrameBuffer::Draw() const
 {
+    ZoneScopedN("FrameBuffer::Draw");
     if (!IsValid())
         return;
     m_outputMesh->draw();
@@ -152,6 +158,7 @@ Graphic::Texture* FrameBuffer::AddTextureAttachment(
         const Graphic::Texture::DataFormat& dataFormat,
         const Graphic::Texture::DataType& dataType)
 {
+    ZoneScopedN("FrameBuffer::AddTextureAttachment");
     auto it = m_textureBuffers.find(type);
     if (it == m_textureBuffers.end())
     {
@@ -168,6 +175,7 @@ Graphic::Texture* FrameBuffer::AddTextureAttachment(
 
 RenderBuffer* FrameBuffer::GetRenderBuffer(const AttachmentType& type)
 {
+    ZoneScopedN("FrameBuffer::GetRenderBuffer");
     auto it = m_renderBuffers.find(type);
     if (it == m_renderBuffers.end())
         return nullptr;
@@ -176,6 +184,7 @@ RenderBuffer* FrameBuffer::GetRenderBuffer(const AttachmentType& type)
 
 RenderBuffer* FrameBuffer::AddRenderBuffer(const AttachmentType& type, const RenderBuffer::InternalFormat& format)
 {
+    ZoneScopedN("FrameBuffer::AddRenderBuffer");
     auto it = m_renderBuffers.find(type);
     if (it == m_renderBuffers.end())
     {
@@ -191,6 +200,7 @@ RenderBuffer* FrameBuffer::AddRenderBuffer(const AttachmentType& type, const Ren
 
 void FrameBuffer::InitOutputMesh()
 {
+    ZoneScopedN("FrameBuffer::InitOutputMesh");
     std::vector<Graphic::Texture*> texs;
     for (auto&&[attachType, texture] : m_textureBuffers)
     {

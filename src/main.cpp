@@ -16,8 +16,7 @@ void _test()
 int main()
 {
     Engine* engine = Engine::InitEngine();
-    RenderSystem* renderSys = RenderSystem::Get();
-    renderSys->SetRenderPath(Render::Forward);
+    //Engine* engine = Engine::InitCustomEngine();
     mainscript();
     engine->StartEngine();
     return 1;

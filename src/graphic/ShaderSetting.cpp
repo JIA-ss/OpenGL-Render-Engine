@@ -7,6 +7,7 @@ GRAPHIC_NAMESPACE_USING
 
 void ShaderSetting::Use() const
 {
+    ZoneScopedN("ShaderSetting::Use");
     for (auto&& [name, param] : m_params)
     {
         //std::cout << name << "\tuse" << std::endl;
@@ -30,6 +31,7 @@ ShaderParamType ShaderSetting::ShaderParamBase::GetType() const
 
 void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
 {
+    ZoneScopedN("ShaderSetting::SetTextures");
     static const std::string NoneTex = "texture";
     static const std::string DiffuseTex = "diffuseTex";
     static const std::string SpecularTex = "specularTex";
@@ -164,6 +166,7 @@ void ShaderSetting::SetTextures(const std::vector<Texture*>& newTextures)
 template <>
 void ShaderSetting::ShaderParam<ShaderSetting::TextureParamValue>::Use()
 {
+    ZoneScopedN("ShaderParam<ShaderSetting::TextureParamValue>::Use");
     glActiveTexture(GL_TEXTURE0 + m_val.texUnit); 
     if(m_val.texture)
     {
@@ -238,6 +241,7 @@ void ShaderSetting::ShaderParam<ShaderSetting::TextureParamValue>::Use()
 
 void ShaderSetting::UpdateParameters(Shader* shader)
 {
+    ZoneScopedN("ShaderSetting::UpdateParameters");
     Render::RenderPath curRenderPath = RenderSystem::Get()->GetCurRenderPath();
     m_params.clear();
     auto program = shader->ID;
@@ -288,6 +292,7 @@ void ShaderSetting::UpdateParameters(Shader* shader)
 
 void* ShaderSetting::GetRawValue(const std::string& name)
 {
+    ZoneScopedN("ShaderSetting::GetRawValue");
     auto it = m_params.find(name);
     if (it == m_params.end())
         return nullptr;
@@ -296,6 +301,7 @@ void* ShaderSetting::GetRawValue(const std::string& name)
     
 void ShaderSetting::SetRawValue(const std::string& name, void* value)
 {
+    ZoneScopedN("ShaderSetting::SetRawValue");
     auto it = m_params.find(name);
     if (it == m_params.end())
         return;
@@ -305,6 +311,7 @@ void ShaderSetting::SetRawValue(const std::string& name, void* value)
 
 ShaderSetting::ShaderParamBase* ShaderSetting::GetRawParameter(const std::string& name)
 {
+    ZoneScopedN("ShaderSetting::GetRawParameter");
     auto it = m_params.find(name);
     if (it == m_params.end())
         return nullptr;
@@ -313,6 +320,7 @@ ShaderSetting::ShaderParamBase* ShaderSetting::GetRawParameter(const std::string
 
 void ShaderSetting::Assign(ShaderSetting* ss) const
 {
+    ZoneScopedN("ShaderSetting::Assign");
     for (auto it = m_params.begin(); it != m_params.end(); it++)
     {
         ShaderParamBase* param = ss->GetRawParameter(it->first);
@@ -325,6 +333,7 @@ void ShaderSetting::Assign(ShaderSetting* ss) const
 
 ShaderSetting ShaderSetting::Clone() const
 {
+    ZoneScopedN("ShaderSetting::Clone");
     ShaderSetting ss;
     for (auto it = m_params.begin(); it != m_params.end(); it++)
     {

@@ -5,6 +5,7 @@ using namespace Resource;
 
 bool ShaderResource::loadFromPath(const char *path)
 {
+    ZoneScopedN("ShaderResource::loadFromPath");
     m_rawData.clear();
 
     std::filesystem::path path_(path);

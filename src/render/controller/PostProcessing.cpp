@@ -5,6 +5,7 @@ RENDER_NAMESPACE_USING
 
 void PostProcessing::Init()
 {
+    ZoneScopedN("PostProcessing::Init");
     if (m_enable)
     {
         m_buffer.SetActive(true);
@@ -30,6 +31,7 @@ void PostProcessing::SetUp() const
 
 void PostProcessing::PrepareRenderToTexture()
 {
+    ZoneScopedN("PostProcessing::PrepareRenderToTexture");
     m_buffer.Bind();
     glEnable(GL_DEPTH_TEST);
     glClearColor(0,0,0,1);
@@ -39,6 +41,7 @@ void PostProcessing::PrepareRenderToTexture()
 
 void PostProcessing::TextureToScreen()
 {
+    ZoneScopedN("PostProcessing::TextureToScreen");
     m_buffer.UnBind();
     glDisable(GL_DEPTH_TEST);
     glClearColor(0,0,0,1);

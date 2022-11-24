@@ -4,6 +4,7 @@ RENDER_NAMESPACE_USING
 
 void ShadowMapping::Init()
 {
+    ZoneScopedN("ShadowMapping::Init");
     if (m_enable)
     {
         InitLightMatrice();
@@ -16,6 +17,7 @@ void ShadowMapping::Init()
 }
 void ShadowMapping::InitLightMatrice()
 {
+    ZoneScopedN("ShadowMapping::InitLightMatrice");
     Graphic::GlobalShaderParam* sp = Graphic::GlobalShaderParam::Get();
     sp->SubData("GlobalMatrices", 2 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(GetLightSpaceMatrice()));
     sp->SubData("GlobalPositions", 1 * sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(m_view_from));
@@ -24,6 +26,7 @@ void ShadowMapping::InitLightMatrice()
 
 void ShadowMapping::InitDepthMap()
 {
+    ZoneScopedN("ShadowMapping::InitDepthMap");
     glEnable(GL_DEPTH_TEST);
     m_depthMapFrameBuffer.SetActive(true);
     m_depthMapFrameBuffer.SetShader("FrameBuffer/Depth");
@@ -56,6 +59,7 @@ void ShadowMapping::InitDepthMap()
 
 void ShadowMapping::SetUp(int width, int height, RenderQueue* rdq)
 {
+    ZoneScopedN("ShadowMapping::SetUp");
     m_width = width;
     m_height = height;
     _Render_Queue_ = rdq;
@@ -84,6 +88,7 @@ void ShadowMapping::SetLightProjection(GLfloat left, GLfloat right, GLfloat top,
 
 glm::mat4 ShadowMapping::GetLightSpaceMatrice() const
 {
+    ZoneScopedN("ShadowMapping::GetLightSpaceMatrice");
     glm::mat4 proj(1.0f);
     if (m_proj_near != m_proj_far)
     {
@@ -100,6 +105,7 @@ glm::mat4 ShadowMapping::GetLightSpaceMatrice() const
 
 void ShadowMapping::RenderToDepthBuffer()
 {
+    ZoneScopedN("ShadowMapping::RenderToDepthBuffer");
     if (!m_enable)
         return;
     glViewport(0, 0, m_shadowPrecision, m_shadowPrecision);
@@ -113,6 +119,7 @@ void ShadowMapping::RenderToDepthBuffer()
 
 void ShadowMapping::RenderWithShadow(GLuint targetFrameId)
 {
+    ZoneScopedN("ShadowMapping::RenderWithShadow");
     if (!m_enable)
         return;
     glBindFramebuffer(GL_FRAMEBUFFER, targetFrameId);

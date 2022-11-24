@@ -1,4 +1,7 @@
 #include "Engine.h"
+#include "Tracy.hpp"
+#include "client/TracyProfiler.hpp"
+#include "system/CustomSystem.h"
 #include "system/WindowSystem.h"
 #include "system/InputSystem.h"
 #include "system/EntitySystem.h"
@@ -31,11 +34,15 @@ void Engine::SetWindowInfo(int width, int height, const std::string& title)
 
 Engine* Engine::InitEngine()
 {
+#if TRACY_ENABLE
+    if (!tracy::ProfilerIsOn())
+        tracy::StartupProfiler();
+#endif
+    ZoneScopedN("Engine::InitEngine")
     SystemManager::InitSingleTon();
     Engine* engine = Engine::Instance();
 
     _system_manager_ = SystemManager::Instance();
-    
     _window_system_ = _system_manager_->AddSystem<WindowSystem>();
     _window_system_->setWindowInfo(_window_width_, _window_height_, _window_title_);
 
@@ -47,6 +54,25 @@ Engine* Engine::InitEngine()
 
 
 
+    SystemManager::Instance()->Init();
+    return engine;
+}
+
+Engine* Engine::InitCustomEngine()
+{
+#if TRACY_ENABLE
+    if (!tracy::ProfilerIsOn())
+        tracy::StartupProfiler();
+#endif
+    ZoneScopedN("Engine::InitCustomEngine")
+    SystemManager::InitSingleTon();
+    Engine* engine = Engine::Instance();
+
+    _system_manager_ = SystemManager::Instance();
+    _window_system_ = _system_manager_->AddSystem<WindowSystem>();
+    _window_system_->setWindowInfo(_window_width_, _window_height_, _window_title_);
+
+    _system_manager_->AddSystem<CustomSystem>();
     SystemManager::Instance()->Init();
     return engine;
 }
@@ -66,4 +92,8 @@ void Engine::StartEngine()
 void Engine::StopEngine()
 {
     glfwSetWindowShouldClose(_window_system_->getGLFWwindow(), true);
+#if TRACY_ENABLE
+    if (tracy::ProfilerIsOn())
+        tracy::ShutdownProfiler();
+#endif
 }

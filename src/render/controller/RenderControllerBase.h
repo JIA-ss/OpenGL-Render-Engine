@@ -1,6 +1,6 @@
 #pragma once
 #include "render/RenderCommonHeader.h"
-
+#include <Tracy.hpp>
 RENDER_NAMESPACE_BEGIN
 
 class RenderControllerBase

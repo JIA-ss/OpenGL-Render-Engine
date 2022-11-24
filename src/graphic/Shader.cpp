@@ -11,6 +11,7 @@ GRAPHIC_IMPLEMENT(Shader)
 
 static unsigned int compileShader(const char* vShaderCode, const char* fShaderCode, const char* gShaderCode = nullptr, const char* name = nullptr)
 {
+    ZoneScopedN("compileShader");
     unsigned int shaderProgram, vertex, fragment, geometry;
     int success;
     char infoLog[512];
@@ -84,6 +85,7 @@ static unsigned int compileShader(const char* vShaderCode, const char* fShaderCo
 std::unordered_map<std::string, Shader*> Shader::collection = std::unordered_map<std::string, Shader*>();
 Shader* Shader::Get(const std::string& name)
 {
+    ZoneScopedN("Shader::Get");
     auto it = collection.find(name);
     if (it == collection.end())
         return nullptr;
@@ -92,6 +94,7 @@ Shader* Shader::Get(const std::string& name)
 
 Shader* Shader::Add(const std::string& name)
 {
+    ZoneScopedN("Shader::Add");
     auto it = collection.find(name);
     if (it != collection.end())
         return it->second;
@@ -102,6 +105,7 @@ Shader* Shader::Add(const std::string& name)
 
 Shader::Shader(const std::string& name)
 {
+    ZoneScopedN("Shader::Shader");
     Resource::ShaderRef vRef = ResourceSystem::Get()->GetResource((name + ".vs").c_str(), Resource::shader);
     Resource::ShaderRef fRef = ResourceSystem::Get()->GetResource((name + ".fs").c_str(), Resource::shader);
     Resource::ShaderRef gRef = ResourceSystem::Get()->GetResource((name + ".gs").c_str(), Resource::shader);
@@ -122,6 +126,7 @@ Shader::Shader(const std::string& name)
 
 Shader::Shader(const char* vsName, const char* fsName)
 {
+    ZoneScopedN("Shader::Shader");
     Resource::ShaderRef vRef = ResourceSystem::Get()->GetResource(vsName, Resource::shader);
     Resource::ShaderRef fRef = ResourceSystem::Get()->GetResource(fsName, Resource::shader);
 
@@ -144,46 +149,55 @@ Shader::Shader(const char* vsName, const char* fsName)
 
 void Shader::use() const
 {
+    ZoneScopedN("Shader::use");
     glUseProgram(ID);
 }
 
 void Shader::setBool(const std::string& name, bool value) const
 {
+    ZoneScopedN("Shader::setBool");
     glUniform1i(glGetUniformLocation(ID,name.c_str()),(int)value);
 }
 
 void Shader::setFloat(const std::string& name, float value) const
 {
+    ZoneScopedN("Shader::setFloat");
     glUniform1f(glGetUniformLocation(ID,name.c_str()),value);
 }
 
 void Shader::setInt(const std::string& name, int value) const
 {
+    ZoneScopedN("Shader::setInt");
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
 void Shader::setVec4(const std::string& name, float v1, float v2, float v3, float v4) const 
 {
+    ZoneScopedN("Shader::setVec4");
     glUniform4f(glGetUniformLocation(ID, name.c_str()), v1, v2, v3, v4);
 }
 
 void Shader::setVec3(const std::string& name, float v1, float v2, float v3) const 
 {
+    ZoneScopedN("Shader::setVec3");
     glUniform3f(glGetUniformLocation(ID, name.c_str()), v1, v2, v3);
 }
 
 void Shader::setMat3f(const std::string& name, const float* value) const
 {
+    ZoneScopedN("Shader::setMat3f");
     glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value);
 }
 
 void Shader::setMat4f(const std::string& name, const float* value) const
 {
+    ZoneScopedN("Shader::setMat4f");
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value);
 }
 
 void Shader::Free()
 {
+    ZoneScopedN("Shader::Free");
     glDeleteProgram(ID);
 }
 
@@ -196,19 +210,22 @@ void Shader::setUniform(const GLuint &location, const T& val)
 #define SET_UNIFORM_BASE_TYPE_SPECIALIZE(_CLASS_, _GL_FUNC_)                                    \
 template<> void Shader::setUniform<_CLASS_>(const GLuint& location, const _CLASS_& val)         \
 {                                                                                               \
+    ZoneScopedN("Shader::setUniform<" #_CLASS_ ">");                                            \
     _GL_FUNC_(location, val);                                                                   \
 }
 
 #define SET_UNIFORM_VEC_TYPE_SPECIALIZE(_CLASS_, _GL_FUNC_)                                     \
 template<> void Shader::setUniform<_CLASS_>(const GLuint& location, const _CLASS_& val)         \
 {                                                                                               \
+    ZoneScopedN("Shader::setUniform<" #_CLASS_ ">");                                            \
     _GL_FUNC_(location, 1, &val[0]);                                                            \
 }
 
 #define SET_UNIFORM_MAT_TYPE_SPECIALIZE(_CLASS_, _GL_FUNC_)                                     \
 template<> void Shader::setUniform<_CLASS_>(const GLuint& location, const _CLASS_& val)         \
 {                                                                                               \
-    _GL_FUNC_(location, 1, GL_FALSE, &val[0][0]);                                                            \
+    ZoneScopedN("Shader::setUniform<" #_CLASS_ ">");                                            \
+    _GL_FUNC_(location, 1, GL_FALSE, &val[0][0]);                                               \
 }
 
 

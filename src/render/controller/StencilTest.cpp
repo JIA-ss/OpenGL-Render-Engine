@@ -4,6 +4,7 @@ RENDER_NAMESPACE_USING
 
 void StencilTest::Init()
 {
+    ZoneScopedN("StencilTest::Init");
     if (m_enable)
     {
         glEnable(GL_STENCIL_TEST);
@@ -18,6 +19,7 @@ void StencilTest::Init()
 
 void StencilTest::SetUp() const
 {
+    ZoneScopedN("StencilTest::SetUp");
     if (m_enable)
     {
         if (m_mask != 0x00)
@@ -32,6 +34,7 @@ void StencilTest::SetUp() const
 
 GLbitfield StencilTest::ClearMask() const
 {
+    ZoneScopedN("StencilTest::ClearMask");
     if (m_enable)
         return GL_STENCIL_BUFFER_BIT;
     return 0;
@@ -39,7 +42,7 @@ GLbitfield StencilTest::ClearMask() const
 
 void StencilTest::Update() const
 {
-
+    ZoneScopedN("StencilTest::Update");
 }
 
 void StencilTest::EnableWrite(bool v)

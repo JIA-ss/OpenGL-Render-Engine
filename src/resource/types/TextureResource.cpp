@@ -5,6 +5,7 @@ using namespace Resource;
 
 bool TextureResource::loadFromPath(const char *path)
 {
+    ZoneScopedN("TextureResource::loadFromPath");
     m_rawData.clear();
 
     size_t size;

@@ -49,6 +49,7 @@ void WindowSystem::setWindowInfo(int width, int height, const std::string& title
 
 void WindowSystem::Init()
 {
+    ZoneScopedN("WindowSystem::Init");
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -97,5 +98,5 @@ void WindowSystem::Init()
 
 void WindowSystem::Update()
 {
-
+    ZoneScopedN("WindowSystem::Update");
 }

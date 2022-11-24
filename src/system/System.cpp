@@ -1,4 +1,5 @@
 #include "System.h"
+#include "Tracy.hpp"
 #include <iostream>
 
 IMPLEMENT_SINGLETON(SystemManager)
@@ -10,6 +11,8 @@ System::Type System::GetType() const { return m_type; }
 
 void SystemManager::Init()
 {
+
+    ZoneScopedN("SystemManager::Init");
     for (auto&[type, system] : m_systems)
     {
         std::cout << system->GetTypeStr() << " Init ..." << std::endl;
