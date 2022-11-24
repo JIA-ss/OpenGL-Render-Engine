@@ -67,6 +67,7 @@ private:
 template<typename T>
 void Mesh::SetShaderParam(const std::string& name, const T& val)
 {
+    ZoneScopedN("Mesh::SetShaderParam");
     m_material->SetShaderParam(name,val);
 }
 

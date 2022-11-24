@@ -20,6 +20,7 @@ COMPONENT_NAMESPACE_USING
 
 void generatePlane()
 {
+    ZoneScopedN("mainscript generatePlane")
     RenderSystem* rdSystem = RenderSystem::Get();
     
     Entity::Camera& cam = rdSystem->getCamera();
@@ -48,6 +49,7 @@ void generatePlane()
 
 void mainscript()
 {
+    ZoneScopedN("mainscript")
     generatePlane();
 
     std::vector<glm::vec3> objectPositions = 

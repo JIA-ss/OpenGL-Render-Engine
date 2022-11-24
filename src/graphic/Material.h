@@ -63,6 +63,7 @@ Material *Material::Add(const std::string &id, Args &&... args)
 template<typename T>
 bool Material::SetShaderParam(const std::string& name, const T& val)
 {
+    ZoneScopedN("Material::SetShaderParam");
     //unsigned int location = glGetUniformLocation(m_shader->ID, name.c_str());
     return m_params.SetParameter(name, val);
 }

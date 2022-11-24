@@ -5,6 +5,7 @@ GRAPHIC_NAMESPACE_USING
 GRAPHIC_IMPLEMENT(Mesh)
 Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<Vertex> &vertices, Material *mat, const std::string &name) : m_indices(indices), m_vertices(vertices), m_name(name)
 {
+    ZoneScopedN("Mesh::Mesh");
     EBO = 0;
     VAO = 0;
     VBO = 0;
@@ -14,6 +15,7 @@ Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<Vertex> &vertic
 
 Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<std::string>& texture, TextureType type, const std::string& name) : m_name(name)
 {
+    ZoneScopedN("Mesh::Mesh");
     m_indices = vertex.indices;
     m_vertices = vertex.vertices;
     EBO = 0;
@@ -25,6 +27,7 @@ Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vec
 
 Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vector<Texture*>& textures, const std::string& name) : m_name(name)
 {
+    ZoneScopedN("Mesh::Mesh");
     m_indices = vertex.indices;
     m_vertices = vertex.vertices;
     EBO = 0;
@@ -38,6 +41,7 @@ Mesh::Mesh(const VertexStream& vertex, const std::string& shader, const std::vec
 
 Mesh::Mesh(aiMesh *mesh, Material *m, const std::string &name) : m_material(m), m_name(name)
 {
+    ZoneScopedN("Mesh::Mesh");
     EBO = 0;
     VAO = 0;
     VBO = 0;
@@ -48,6 +52,7 @@ Mesh::Mesh(aiMesh *mesh, Material *m, const std::string &name) : m_material(m), 
 
 void RecordTriangles(const std::vector<Vertex>& vertex, const std::vector<GLuint>& indices)
 {
+    ZoneScopedN("Mesh::RecordTriangles");
     for(int i = 0; i < indices.size(); i+=3)
     {
         Triangle::collections.emplace_back(
@@ -76,6 +81,7 @@ void RecordTriangles(const std::vector<Vertex>& vertex, const std::vector<GLuint
 
 void Mesh::SetUpMesh()
 {
+    ZoneScopedN("Mesh::SetUpMesh");
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
@@ -111,6 +117,7 @@ void Mesh::SetUpMesh()
 
 void Mesh::Free()
 {
+    ZoneScopedN("Mesh::Free");
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     if (!m_indices.empty())
@@ -119,6 +126,7 @@ void Mesh::Free()
 
 void Mesh::loadFromAssimp(aiMesh *mesh)
 {
+    ZoneScopedN("Mesh::loadFromAssimp");
     for (size_t i = 0; i < mesh->mNumVertices; i++)
     {
         Vertex vertex;
@@ -178,6 +186,7 @@ void Mesh::loadFromAssimp(aiMesh *mesh)
 
 void Mesh::SetMaterial(Material *material)
 {
+    ZoneScopedN("Mesh::SetMaterial");
     m_material = material;
 }
 
@@ -188,6 +197,7 @@ void Mesh::SetMaterial(const std::string &name)
 
 void Mesh::SetVertices(std::vector<Vertex>&& vertices, std::vector<GLuint>&& indices)
 {
+    ZoneScopedN("Mesh::SetVertices");
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     if (!m_indices.empty())
@@ -204,6 +214,7 @@ void Mesh::SetRenderingIndex(const unsigned int& newIndex)
 
 void Mesh::draw(Shader* shader) const
 {
+    ZoneScopedN("Mesh::draw");
     m_material->UseMaterial(shader);
     glBindVertexArray(VAO);
     if (m_indices.empty())
@@ -215,6 +226,7 @@ void Mesh::draw(Shader* shader) const
 
 void Mesh::draw(Material* material, Shader* shader) const
 {
+    ZoneScopedN("Mesh::draw");
     material->UseMaterial(shader);
     glBindVertexArray(VAO);
     if (m_indices.empty())
@@ -226,6 +238,7 @@ void Mesh::draw(Material* material, Shader* shader) const
 
 Mesh* Mesh::Clone() const
 {
+    ZoneScopedN("Mesh::Clone");
     auto meshRes = ResourceSystem::LoadGraphicResource<Mesh>(m_name + "_copy");
     Mesh* mesh = meshRes.GetGraphic();
     mesh->m_name = meshRes.GetName();

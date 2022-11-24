@@ -23,6 +23,7 @@ int sMeshRender::get_pass() const
 
 void sMeshRender::draw() const 
 {
+    ZoneScopedN("sMeshRender::draw");
     if (!isValid())
         return;
     
@@ -75,6 +76,7 @@ void sMeshRender::draw() const
 
 void sMeshRender::once_draw(Graphic::Shader* shader)
 {
+    ZoneScopedN("sMeshRender::once_draw");
     if (!isValid())
         return;
     glm::mat4 model(0.0f);
@@ -91,6 +93,7 @@ void sMeshRender::once_draw(Graphic::Shader* shader)
 
 void sMeshRender::OnEnable()
 {
+    ZoneScopedN("sMeshRender::OnEnable");
     auto& rq = RenderSystem::Get()->getRenderQueue();
     rq.Enqueue(this, m_renderQueueOrder);
     Entity::sEntity* entity = get_entity();
@@ -110,6 +113,7 @@ void sMeshRender::OnEnable()
 
 void sMeshRender::OnDisable()
 {
+    ZoneScopedN("sMeshRender::OnDisable");
     auto& rq = RenderSystem::Get()->getRenderQueue();
     rq.Dequeue(this, m_renderQueueOrder);
     Entity::sEntity* entity = get_entity();

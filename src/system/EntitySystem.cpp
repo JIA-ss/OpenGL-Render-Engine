@@ -34,11 +34,13 @@ void EntitySystem::UnInit()
 
 void EntitySystem::registerEntity(Entity::sEntity* entity)
 {
+    ZoneScopedN("EntitySystem::registerEntity")
     m_entities.insert(entity);
 }
 
 void EntitySystem::unregisterEntity(Entity::sEntity* entity)
 {
+    ZoneScopedN("EntitySystem::unregisterEntity")
     auto it_entity = m_entities.find(entity);
     if (it_entity != m_entities.end())
         m_entities.erase(it_entity);

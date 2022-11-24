@@ -70,6 +70,7 @@ private:
 template <typename T, typename ... Args>
 GraphicResource<T> ResourceSystem::LoadGraphicResource(const std::string& name, Args&&... args)
 {
+    ZoneScopedN("ResourceSystem::LoadGraphicResource");
     size_t graphicId = T::GetStaticGraphicId();
     auto& graphicMap = ResourceSystem::Get()->m_graphices[graphicId];
     GraphicResource<T> res;
@@ -92,6 +93,7 @@ GraphicResource<T> ResourceSystem::LoadGraphicResource(const std::string& name, 
 template <typename T>
 T* ResourceSystem::GetGraphic(const std::string& name)
 {
+    ZoneScopedN("ResourceSystem::GetGraphic")
     size_t graphicId = T::GetStaticGraphicId();
     auto& graphicMap = ResourceSystem::Get()->m_graphices[graphicId];
     auto it = graphicMap.find(name);

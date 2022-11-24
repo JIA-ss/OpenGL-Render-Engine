@@ -116,12 +116,14 @@ private:
 template<typename T>
 void ShaderSetting::AddParameter(const std::string &name, const T &val, const unsigned int& location)
 {
+    ZoneScopedN("ShaderSetting::AddParameter");
     m_params.emplace(name, new ShaderParam<T>(val, location));
 }
 
 template<typename T>
 bool ShaderSetting::SetParameter(const std::string &name, const T &val)
 {
+    ZoneScopedN("ShaderSetting::SetShaderParam");
     auto it = m_params.find(name);
     if (it == m_params.end())
         return false;
@@ -132,6 +134,7 @@ bool ShaderSetting::SetParameter(const std::string &name, const T &val)
 template<typename T>
 T* ShaderSetting::GetParameter(const std::string& name)
 {
+    ZoneScopedN("ShaderSetting::GetParameter");
     auto it = m_params.find(name);
     if (it == m_params.end())
         return nullptr;
@@ -189,6 +192,7 @@ void* ShaderSetting::ShaderParam<T>::Get()
 template<typename T>
 void ShaderSetting::ShaderParam<T>::Use()
 {
+    ZoneScopedN("ShaderSetting::ShaderParam::Use");
     Shader::setUniform(m_loc, m_val);
 }
 

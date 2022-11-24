@@ -10,6 +10,7 @@ std::unordered_map<std::string, Material> Material::collection;
 
 Material::Material(const std::string& shader, const std::vector<std::string>& textures, TextureType type) : Material(1)
 {
+    ZoneScopedN("Material::Material");
     SetShader(shader);
     std::vector<Texture*> texes;
     for (auto&& tex : textures)
@@ -30,6 +31,7 @@ Material::Material(const unsigned int&renderIndex):Material()
 
 void Material::SetShader(const std::string &name)
 {
+    ZoneScopedN("Material::SetShader");
     Shader* shader = ResourceSystem::GetGraphic<Shader>(name);
     if (shader == nullptr)
         shader = ResourceSystem::LoadGraphicResource<Shader>(name,name).GetGraphic();
@@ -39,6 +41,7 @@ void Material::SetShader(const std::string &name)
 
 void Material::UseMaterial(Shader* shader) const
 {
+    ZoneScopedN("Material::UseMaterial");
     if (shader != nullptr)
     {
         ShaderSetting param;

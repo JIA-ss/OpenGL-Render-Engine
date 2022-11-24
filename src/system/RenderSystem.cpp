@@ -2,6 +2,7 @@
 #include "engine/Engine.h"
 #include "WindowSystem.h"
 #include "render/RenderPath/RenderPathBase.h"
+#include <TracyOpenGL.hpp>
 void RenderSystem::Init()
 {
     ZoneScopedN("RenderSystem::Init");
@@ -32,5 +33,6 @@ void RenderSystem::Update()
     m_forward.RenderPasses();
 
     glfwSwapBuffers(WindowSystem::Get()->getGLFWwindow());
+    //TracyGpuContext
     glfwPollEvents();
 }
