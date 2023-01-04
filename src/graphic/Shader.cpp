@@ -5,10 +5,10 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "ShaderSetting.h"
 GRAPHIC_NAMESPACE_USING
 
 GRAPHIC_IMPLEMENT(Shader)
-
 static unsigned int compileShader(const char* vShaderCode, const char* fShaderCode, const char* gShaderCode = nullptr, const char* name = nullptr)
 {
     ZoneScopedN("compileShader");
@@ -103,6 +103,19 @@ Shader* Shader::Add(const std::string& name)
     return shader;
 }
 
+void Shader::UpdateCommonSetting()
+{
+    m_common_setting = new ShaderSetting();
+    m_common_setting->UpdateParameters(this);
+}
+
+Shader::~Shader()
+{
+    if (m_common_setting)
+        delete m_common_setting;
+    m_common_setting = nullptr;
+}
+
 Shader::Shader(const std::string& name)
 {
     ZoneScopedN("Shader::Shader");
@@ -122,6 +135,7 @@ Shader::Shader(const std::string& name)
 
     ID = compileShader(vertexCode, fragmentCode, geometryCode, name.c_str());
     GlobalShaderParam::Get()->ConfigureShaderParameterBlock(ID);
+    UpdateCommonSetting();
 }
 
 Shader::Shader(const char* vsName, const char* fsName)
@@ -145,6 +159,7 @@ Shader::Shader(const char* vsName, const char* fsName)
     ID = compileShader(vertexCode, fragmentCode);
 
     GlobalShaderParam::Get()->ConfigureShaderParameterBlock(ID);
+    UpdateCommonSetting();
 }
 
 void Shader::use() const

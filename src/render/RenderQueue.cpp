@@ -85,7 +85,9 @@ void RenderQueue::Render(Order order, Graphic::Shader* shader)
         ZoneScopedN("RenderQueue::Render Scene");
         if (order == Order::Background)
             glDepthFunc(GL_LEQUAL);
-        
+        else if (order == Order::Overlay)
+            glDepthFunc(GL_ALWAYS);
+
         auto& targetQue = GetTargetOrderQueue(order);
         for (auto&&[renderIdx, renderSet] : targetQue)
         {

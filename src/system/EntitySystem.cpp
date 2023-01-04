@@ -14,6 +14,15 @@ void EntitySystem::Update()
 
         it = m_dirtyTransforms.erase(it);
     }
+
+    auto ui_it = m_dirtyUITransforms.begin();
+    while (ui_it != m_dirtyUITransforms.end())
+    {
+        if ((*ui_it) && (*ui_it)->IsDirty())
+        {
+            
+        }
+    }
 }
 
 void EntitySystem::UnInit()
@@ -30,6 +39,7 @@ void EntitySystem::UnInit()
 
     m_roots.clear();
     m_dirtyTransforms.clear();
+    m_dirtyUITransforms.clear();
 }
 
 void EntitySystem::registerEntity(Entity::sEntity* entity)
@@ -65,4 +75,9 @@ void EntitySystem::onParentChanged(sTransform* cur, sTransform* oldParent)
 void EntitySystem::onTransformChanged(sTransform* trans)
 {
     m_dirtyTransforms.insert(trans);
+}
+
+void EntitySystem::onUITransformChanged(sUITransform* transform)
+{
+    m_dirtyUITransforms.insert(transform);
 }

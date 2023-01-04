@@ -39,4 +39,8 @@ private:
 
     Render::RenderQueue m_renderQueue;
     bool m_switchRayTracing = false;
+
+private:
+    unsigned int m_frame_num = 0;
+    std::chrono::milliseconds m_frame_time_ms{0};
 };

@@ -31,8 +31,8 @@ public:
         FileWatcherSystem,
         ResourceSystem,
         EntitySystem,
+        UISystem,
         RenderSystem,
-
 
         CustomSystem,
         End

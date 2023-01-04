@@ -1,5 +1,6 @@
 #pragma once
 #include "System.h"
+#include "component/UITransform.h"
 #include "entity/Entity.h"
 #include "component/Transform.h"
 #include <set>
@@ -21,7 +22,7 @@ public:
 public:
     void onParentChanged(sTransform* cur, sTransform* oldParent);
     void onTransformChanged(sTransform* transform);
-
+    void onUITransformChanged(sUITransform* transform);
 private:
     void refreshDirtyTransforms();
 private:
@@ -29,4 +30,5 @@ private:
     std::set<Entity::sEntity*> m_roots;
 
     std::set<Component::sTransform*> m_dirtyTransforms;
+    std::set<Component::sUITransform*> m_dirtyUITransforms;
 };

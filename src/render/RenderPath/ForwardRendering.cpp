@@ -28,6 +28,7 @@ void ForwardRendering::InitForwardPath()
     // 1st pass
     m_passes.push_back([this]()
     {
+        ZoneScopedN("ForwardRendering::DepthPass");
         auto& postProcess = this->GetPostProcessingController();
         postProcess.PrepareRenderToTexture();
         auto& rq = RenderSystem::Get()->getRenderQueue();
@@ -41,6 +42,7 @@ void ForwardRendering::InitForwardPath()
     //2st pass
     m_passes.push_back([this]()
     {
+        ZoneScopedN("ForwardRendering::LightPass");
         this->GetPostProcessingController().TextureToScreen();
         auto& rq = RenderSystem::Get()->getRenderQueue();
         rq.Render(RenderQueue::Overlay);

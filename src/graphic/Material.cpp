@@ -44,11 +44,9 @@ void Material::UseMaterial(Shader* shader) const
     ZoneScopedN("Material::UseMaterial");
     if (shader != nullptr)
     {
-        ShaderSetting param;
-        param.UpdateParameters(shader);
-        m_params.Assign(&param);
+        m_params.Assign(shader->getCommonSetting());
         shader->use();
-        param.Use();
+        shader->getCommonSetting()->Use();
     }
     else
     {

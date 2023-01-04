@@ -6,7 +6,7 @@
 
 
 GRAPHIC_NAMESPACE_BEGIN
-
+class ShaderSetting;
 class Shader : public GraphicBase
 {
     GRAPHIC_DECLARE
@@ -16,7 +16,10 @@ public:
     Shader(const Shader& other) 
     {
         ID = other.ID;
+        UpdateCommonSetting();
     }
+    ~Shader();
+    inline ShaderSetting* getCommonSetting() { return m_common_setting; }
     unsigned int ID;
     void use() const;
     void setBool(const std::string& name, bool value) const;
@@ -31,7 +34,9 @@ public:
 
     template<typename T>
     static void setUniform(const GLuint &location, const T& val);
-
+private:
+    void UpdateCommonSetting();
+    ShaderSetting* m_common_setting = nullptr;
 public:
     static Shader* Get(const std::string& name);
     static Shader* Add(const std::string& name);

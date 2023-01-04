@@ -1,4 +1,5 @@
 #include "Vertex.h"
+#include "glm/fwd.hpp"
 
 GRAPHIC_NAMESPACE_USING
 
@@ -11,6 +12,20 @@ const std::vector<Vertex> Vertex::quad = {
 };
 
 const std::vector<unsigned int> Vertex::quadElement = {
+    2,3,0,
+    0,1,2
+};
+
+const std::vector<Vertex2D> Vertex2D::quad2D
+{
+    Vertex2D{glm::vec2(1.0, 1.0), glm::vec2(1.0, 1.0)},
+    Vertex2D{glm::vec2(1.0, -1.0), glm::vec2(1.0, 0.0)},
+    Vertex2D{glm::vec2(-1.0, -1.0), glm::vec2(0.0, 0.0)},
+    Vertex2D{glm::vec2(-1.0, 1.0), glm::vec2(0.0, 1.0)},
+};
+
+const std::vector<unsigned int> Vertex2D::quad2DElement
+{
     2,3,0,
     0,1,2
 };
