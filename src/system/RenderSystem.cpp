@@ -1,7 +1,12 @@
 #include "RenderSystem.h"
 #include "engine/Engine.h"
 #include "WindowSystem.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 #include "render/RenderPath/RenderPathBase.h"
+#include "system/DebugSystem.h"
+#include "system/System.h"
 #include <TracyOpenGL.hpp>
 #include <chrono>
 void RenderSystem::Init()
@@ -38,6 +43,7 @@ void RenderSystem::Update()
 
     {
         ZoneScopedN("RenderSystem::Update SwapWindowBuffers");
+        SystemManager::Instance()->GetSystem<::DebugSystem>()->DrawGUI();
         glfwSwapBuffers(WindowSystem::Get()->getGLFWwindow());
     }
     {

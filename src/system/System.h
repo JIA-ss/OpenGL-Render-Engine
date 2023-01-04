@@ -33,6 +33,7 @@ public:
         EntitySystem,
         UISystem,
         RenderSystem,
+        DebugSystem,
 
         CustomSystem,
         End

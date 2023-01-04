@@ -10,7 +10,7 @@ set(LIBUV_PATH ${LIB_DIR}/libuv)
 set(ASSIMP_PATH ${LIB_DIR}/assimp)
 set(JSON_PATH ${LIB_DIR}/json)
 set(TRACY_PATH ${LIB_DIR}/tracy_profiler)
-
+set(IMGUI_DIR ${LIB_DIR}/imgui)
 
 set(ALL_LIBS 
     GLAD
@@ -38,6 +38,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(createSrcGroups.cmake)
 
 FILE(
+    GLOB_RECURSE IMGUI_FILES
+    ${IMGUI_DIR}/*.h
+    ${IMGUI_DIR}/*.cpp
+)
+
+FILE(
     GLOB_RECURSE MAIN_SRC_FILES
     
     #include files
@@ -62,7 +68,7 @@ add_library(GLAD ${GLAD_DIR}/src/glad.c)
 
 add_definitions(-D_RESOURCE_PATH_=\"${CMAKE_CURRENT_SOURCE_DIR}/resources\")
 
-add_executable(OpenGL_Study ${MAIN_SRC_FILES})
+add_executable(OpenGL_Study ${MAIN_SRC_FILES} ${IMGUI_FILES})
 
 target_link_libraries(OpenGL_Study GLAD glfw3 opengl32.lib uv uv_a assimp-vc142-mtd nlohmann_json tracy_profiler)
 target_link_directories(OpenGL_Study

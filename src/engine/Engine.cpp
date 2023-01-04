@@ -2,6 +2,7 @@
 #include "Tracy.hpp"
 #include "client/TracyProfiler.hpp"
 #include "system/CustomSystem.h"
+#include "system/DebugSystem.h"
 #include "system/WindowSystem.h"
 #include "system/InputSystem.h"
 #include "system/EntitySystem.h"
@@ -51,7 +52,7 @@ Engine* Engine::InitEngine()
     _system_manager_->AddSystem<RenderSystem>();
     _system_manager_->AddSystem<FileWatcherSystem>();
     _system_manager_->AddSystem<ResourceSystem>();
-
+    _system_manager_->AddSystem<DebugSystem>();
 
 
     SystemManager::Instance()->Init();
