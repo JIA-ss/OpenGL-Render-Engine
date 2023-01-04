@@ -33,16 +33,35 @@ void DebugSystem::DrawGUI()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    DrawSceneHierarchy();
+    DrawResourceHierarchy();
+
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void DebugSystem::DrawSceneHierarchy()
+{
     bool show_another_window = true;
     if (show_another_window)
     {
-        ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
+        ImGui::Begin("Hierarchy", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        ImGui::Text("This is Scene Hierarchy");
         if (ImGui::Button("Close Me"))
             show_another_window = false;
         ImGui::End();
     }
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+void DebugSystem::DrawResourceHierarchy()
+{
+    bool show_another_window = true;
+    if (show_another_window)
+    {
+        ImGui::Begin("Resources", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        ImGui::Text("This is Resources Hierarchy");
+        if (ImGui::Button("Close Me"))
+            show_another_window = false;
+        ImGui::End();
+    }
 }

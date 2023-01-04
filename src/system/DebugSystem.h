@@ -9,4 +9,7 @@ public:
     void Init() override;
 public:
     void DrawGUI();
+private:
+    void DrawSceneHierarchy();
+    void DrawResourceHierarchy();
 };
